@@ -279,6 +279,10 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">💊 补剂清单</div>
 <div id="supplementMemo"></div>
 </div>
+<div class="card">
+<div class="card-title">🔥 减脂部位与体脂率对应区间</div>
+<div id="fatLossZones"></div>
+</div>
 </div>
 
 <!-- TAB 6: 花费 -->
@@ -1071,6 +1075,26 @@ function initMemo(){
     sp+='<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--t1)">'+s.name+'</span><span style="font-size:11px;color:var(--t3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--t3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'</div></div>';
   });
   $('supplementMemo').innerHTML=sp;
+
+  // 减脂部位与体脂率对应区间
+  const zones=[
+    {range:'29→26%',parts:'脸、手臂、小腿',icon:'🟢',status:'你在这',note:'当前~29%，四肢正在变细'},
+    {range:'26→23%',parts:'胸、上背、肩、大腿',icon:'🟡',status:'下一站',note:'胸开始变紧变薄'},
+    {range:'23→20%',parts:'腹部开始松动，腰线出现',icon:'🟡',status:'关键期',note:'肚子真正开始变小'},
+    {range:'20→18%',parts:'下腹、腰侧大面积消退',icon:'🟠',status:'突破期',note:'腹部明显平坦'},
+    {range:'<18%',parts:'腹肌轮廓可见',icon:'🔴',status:'终极目标',note:'完全暴露腹部线条'}
+  ];
+  let z='';
+  zones.forEach((zn,i)=>{
+    const highlight=zn.status==='你在这'?'background:rgba(0,200,100,0.08);border-left:3px solid #00c864;':'border-left:3px solid transparent;';
+    z+='<div style="padding:10px 8px;'+highlight+'border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">';
+    z+='<div><div style="font-size:13px;color:var(--t1);font-weight:500">'+zn.icon+' 体脂 '+zn.range+'</div>';
+    z+='<div style="font-size:11px;color:var(--t2);margin-top:3px">'+zn.parts+'</div></div>';
+    z+='<div style="text-align:right"><div style="font-size:11px;color:var(--orange);font-weight:500">'+zn.status+'</div>';
+    z+='<div style="font-size:10px;color:var(--t3);margin-top:3px">'+zn.note+'</div></div></div>';
+  });
+  z+='<div style="margin-top:10px;font-size:11px;color:var(--t3)">💡 当前体脂率~29%（8/2），距腹部明显变化还需降至23%以下。男性腹部脂肪α受体密度高，天然最后消退。</div>';
+  $('fatLossZones').innerHTML=z;
 }
 
 // ===== INIT =====
