@@ -3,30 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f1115">
+<meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>健康管理工作台 | 大笔哥</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YaF562J566h55CG5bel5L2cIiwic2hvcnRfbmFtZSI6Iui3r+W+hCAiLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjExMTUiLCJ0aGVtZV9jb2xvciI6IiMwZjExMTUifQ==">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWkp+eslOWTpSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzAwMDAwMCIsInRoZW1lX2NvbG9yIjoiIzAwMDAwMCJ9">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#110f0e;color:#f0ebe5;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#110f0e;--card:#1e1b18;--inset:#151210;--t1:#f0ebe5;--t2:#9a9088;--t3:#5a5550;--blue:#5b9bd5;--green:#5cb85c;--orange:#ff9f1c;--red:#ff6b35;--purple:#c77dba;--teal:#4ecdc4;--warm:#ff9f1c;--warm2:#ffbf69;--bdr:rgba(255,220,180,0.06);--bdr2:rgba(255,220,180,0.15);--r:14px;--rs:10px}
+body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#000;color:#fff;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#000;--card:#1A1A1A;--inset:#0A0A0A;--t1:#fff;--t2:#888;--t3:#555;--blue:#00B8D4;--green:#00E676;--orange:#FFB300;--red:#FF3D00;--purple:#B388FF;--teal:#00BFA5;--warm:#FFB300;--warm2:#FF8F00;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:12px;--rs:8px}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
-.header{position:sticky;top:0;z-index:100;background:rgba(17,15,14,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.header{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--red));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
 .header-title{font-size:15px;font-weight:600;color:var(--t1)}
 .header-sub{font-size:11px;color:var(--t2);margin-top:1px}
 .header-date{font-size:11px;color:var(--t3);text-align:right}
-.tab-bar{position:sticky;top:60px;z-index:99;background:rgba(17,15,14,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tab-bar{position:sticky;top:60px;z-index:99;background:rgba(0,0,0,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .tab-bar::-webkit-scrollbar{display:none}
 .tab-item{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--t2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
 .tab-item.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
 .tab-content{display:none;padding-top:16px}
 .tab-content.active{display:block}
-.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;border:1px solid var(--bdr)}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;border:none}
 .card-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:14px}
 .big-num{font-size:36px;font-weight:800;color:var(--t1);line-height:1.1}
 .big-num .unit{font-size:14px;font-weight:400;color:var(--t2)}
@@ -244,8 +244,8 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="refCompareArea"></div>
 </div>
 <div class="card">
-<div class="card-title">📏 腰围趋势</div>
-<div id="bodyWaistChart"></div>
+<div class="card-title">📏 各围度距目标差距</div>
+<div id="bodyPartDistance"></div>
 </div>
 <div class="card">
 <div class="card-title">📅 日期范围</div>
@@ -806,18 +806,17 @@ function filterBody(){
   const bfd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null);
   $('bfChart').innerHTML=makeLineChart(bfd,'date','bf',chartW,180,'#5cb85c','体脂率',true);
   
-  const wst=DIM.filter(d=>d.date>=s&&d.date<=e).map(d=>({date:d.date,waist:d.waist}));
-  $('bodyWaistChart').innerHTML=makeLineChart(wst,'date','waist',chartW,160,'#ffbf69','腰围',true);
+  renderBodyPartDistance();
   
   // Reference comparison
   const baseline=WD.find(d=>d.date==='2026-06-07');
   const latest=WD.filter(d=>d.bf!=null).pop();
   const latestDim=DIM[DIM.length-1];
   const refs=[
-    {name:'体重',icon:'⚖️',cur:latest.weight,unit:'kg',ref:'<75',target:75,base:baseline.weight,lower:true},
+    {name:'体重',icon:'⚖️',cur:latest.weight,unit:'kg',ref:'≤70',target:70,base:baseline.weight,lower:true},
     {name:'体脂率',icon:'📉',cur:latest.bf,unit:'%',ref:'13-15%',target:14,base:baseline.bf,lower:true},
-    {name:'内脏脂肪',icon:'🫀',cur:latest.vf,unit:'级',ref:'<10',target:9,base:baseline.vf,lower:true},
-    {name:'腰围',icon:'📏',cur:latestDim?latestDim.waist:null,unit:'cm',ref:'<85',target:85,base:DIM[0].waist,lower:true},
+    {name:'内脏脂肪',icon:'🫀',cur:latest.vf,unit:'级',ref:'≤7',target:7,base:baseline.vf,lower:true},
+    {name:'腰围',icon:'📏',cur:latestDim?latestDim.waist:null,unit:'cm',ref:'76-80',target:78,base:DIM[0].waist,lower:true},
     {name:'肌肉量',icon:'💪',cur:latest.muscle,unit:'kg',ref:'维持>55',target:55,base:baseline.muscle,lower:false},
     {name:'去脂体重',icon:'🏃',cur:latest.ffm,unit:'kg',ref:'保持',target:58,base:baseline.ffm,lower:false}
   ];
@@ -843,7 +842,7 @@ function filterBody(){
   $('refCompareArea').innerHTML=rc;
   
   // Achievement rate (latest already defined above in ref compare)
-  const startW=89.85,targetW=75,targetBF=15;
+  const startW=89.85,targetW=70,targetBF=14;
   const curW=latest.weight,curBF=latest.bf;
   const lostW=startW-curW,needLoseW=startW-targetW;
   const lostBF=31.5-curBF,needLoseBF=31.5-targetBF;
@@ -868,6 +867,83 @@ function filterBody(){
   const dtbody=document.querySelector('#dimTable tbody');
   const dims=DIM.filter(d=>d.date>=s&&d.date<=e);
   dtbody.innerHTML=dims.map(d=>'<tr><td>'+d.date.slice(5)+'</td><td>'+d.waist+'</td><td>'+d.hip+'</td><td>'+d.chest+'</td><td>'+d.thigh+'</td><td>'+d.armFlex+'</td><td>'+d.armRelax+'</td><td style="font-size:10px">'+d.note+'</td></tr>').join('');
+}
+
+// ===== 各围度距目标差距 =====
+function renderBodyPartDistance(){
+  const bf=29.6; // 当前体脂率%
+  const tgtBF=14; // 目标体脂率%
+  const parts=[
+    {name:'腰围',icon:'📏',cur:94.5,tgt:78,coeff:0.08,dir:'fat-down'},
+    {name:'臀围',icon:'🍑',cur:102.5,tgt:92,coeff:0.06,dir:'fat-down'},
+    {name:'胸围',icon:'🫁',cur:104.5,tgt:103,coeff:0.05,dir:'muscle-up'},
+    {name:'上臂围',icon:'💪',cur:35.5,tgt:37,coeff:0.04,dir:'muscle-up'},
+    {name:'大腿围',icon:'🦵',cur:50.5,tgt:51,coeff:0.05,dir:'muscle-up'}
+  ];
+  let h='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">';
+  h+='<thead><tr style="border-bottom:1px solid var(--bdr)">';
+  h+='<th style="text-align:left;padding:6px 4px;color:var(--t2);font-weight:500">部位</th>';
+  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">当前</th>';
+  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">目标</th>';
+  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">差距</th>';
+  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">脂肪层</th>';
+  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">肌肉层</th>';
+  h+='</tr></thead><tbody>';
+  parts.forEach(p=>{
+    const curFat=+(p.cur*bf/100*p.coeff).toFixed(2);
+    const tgtFat=+(p.tgt*tgtBF/100*p.coeff).toFixed(2);
+    const curMuscle=+(p.cur-curFat*2).toFixed(1);
+    const tgtMuscle=+(p.tgt-tgtFat*2).toFixed(1);
+    const fatDiff=(curFat-tgtFat).toFixed(2);
+    const muscleDiff=(tgtMuscle-curMuscle).toFixed(1);
+    const totalGap=(p.cur-p.tgt).toFixed(1);
+    const dirArrow=p.dir==='fat-down'?'↓减脂':'↑增肌';
+    const gapColor=p.cur>p.tgt?'var(--orange)':'var(--green)';
+    h+='<tr style="border-bottom:1px solid var(--bdr)">';
+    h+='<td style="padding:8px 4px;color:var(--t1);font-weight:600;white-space:nowrap">'+p.icon+' '+p.name+'</td>';
+    h+='<td style="text-align:center;padding:8px 4px;color:var(--t1);font-weight:700;font-size:14px">'+p.cur+'</td>';
+    h+='<td style="text-align:center;padding:8px 4px;color:var(--t3)">'+p.tgt+'</td>';
+    h+='<td style="text-align:center;padding:8px 4px;font-weight:700;color:'+gapColor+'">'+(p.cur>p.tgt?'−':'+')+(p.cur>p.tgt?Math.abs(totalGap):totalGap)+'cm</td>';
+    h+='<td style="text-align:center;padding:8px 4px"><span style="color:var(--orange);font-weight:600">'+curFat+'</span><span style="color:var(--t3)">→</span><span style="color:var(--green)">'+tgtFat+'</span><span style="color:var(--t3);font-size:9px">cm</span></td>';
+    h+='<td style="text-align:center;padding:8px 4px"><span style="color:var(--orange);font-weight:600">'+curMuscle+'</span><span style="color:var(--t3)">→</span><span style="color:var(--green)">'+tgtMuscle+'</span><span style="color:var(--t3);font-size:9px">cm</span></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  h+='<div style="margin-top:12px;font-size:10px;color:var(--t3);line-height:1.6">';
+  h+='💡 脂肪层=围度×体脂率×分布系数 | 肌肉层=围度−脂肪层×2<br>';
+  h+='分布系数：腰0.08 臀0.06 胸0.05 臂0.04 腿0.05<br>';
+  h+='⚠️ 腰/臀围肌肉层也在降——整体围度缩小不止减脂，核心也在缩减';
+  h+='</div>';
+  // 进度达成率可视化
+  h+='<div style="margin-top:16px">';
+  parts.forEach(p=>{
+    const curFat=+(p.cur*bf/100*p.coeff).toFixed(2);
+    const tgtFat=+(p.tgt*tgtBF/100*p.coeff).toFixed(2);
+    const curMuscle=+(p.cur-curFat*2).toFixed(1);
+    const tgtMuscle=+(p.tgt-tgtFat*2).toFixed(1);
+    const fatGoalDrop=curFat-tgtFat;
+    const muscleGoalGain=tgtMuscle-curMuscle;
+    h+='<div style="margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:3px">';
+    h+='<span style="font-size:11px;color:var(--t1);font-weight:500">'+p.icon+' '+p.name+'</span>';
+    h+='<span style="font-size:10px;color:var(--t3)">脂肪↓'+fatGoalDrop.toFixed(2)+'cm | 肌肉'+(muscleGoalGain>=0?'↑':'↓')+Math.abs(muscleGoalGain).toFixed(1)+'cm</span>';
+    h+='</div>';
+    // 双进度条：脂肪缩短 + 肌肉增长
+    h+='<div style="display:flex;gap:4px;align-items:center">';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:9px;color:var(--t3);margin-bottom:2px">脂肪达成</div>';
+    h+='<div style="height:6px;background:var(--inset);border-radius:3px;overflow:hidden"><div style="width:0%;height:100%;border-radius:3px;background:var(--orange);transition:width 0.6s"></div></div>';
+    h+='</div>';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:9px;color:var(--t3);margin-bottom:2px">肌肉达成</div>';
+    h+='<div style="height:6px;background:var(--inset);border-radius:3px;overflow:hidden"><div style="width:0%;height:100%;border-radius:3px;background:var(--green);transition:width 0.6s"></div></div>';
+    h+='</div>';
+    h+='</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  h+='<div style="margin-top:8px;font-size:10px;color:var(--t3)">📌 进度条随每次体测数据更新自动推进</div>';
+  $('bodyPartDistance').innerHTML=h;
 }
 
 // ===== TAB 6: EXPENSE =====
