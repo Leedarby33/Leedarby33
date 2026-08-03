@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f5f5f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>综合工作台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#f5f5f7;--card:#ffffff;--inset:#f0f0f2;--t1:#1d1d1f;--t2:#86868b;--t3:#aeaeb2;--blue:#007aff;--green:#34c759;--orange:#ff9500;--red:#ff3b30;--purple:#af52de;--teal:#5ac8fa;--yellow:#ffcc00;--pink:#ff2d55;--bdr:rgba(0,0,0,0.06);--bdr2:rgba(0,0,0,0.12);--r:14px;--rs:10px}
+.container{max-width:480px;margin:0 auto;padding:0 16px 80px}
+.header{position:sticky;top:0;z-index:100;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
+.header-title{font-size:15px;font-weight:600;color:var(--t1)}
+.header-sub{font-size:11px;color:var(--t2);margin-top:1px}
+.header-date{font-size:11px;color:var(--t3);text-align:right}
+.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.main-tabs::-webkit-scrollbar{display:none}
+.main-tab{flex-shrink:0;padding:10px 24px;border-radius:12px 12px 0 0;font-size:14px;font-weight:600;color:var(--t2);background:transparent;border:1px solid transparent;border-bottom:none;cursor:pointer;transition:all 0.2s}
+.main-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+.main-panel{display:none}
+.main-panel.active{display:block}
+.sub-tabs{display:flex;gap:6px;padding:12px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sub-tabs::-webkit-scrollbar{display:none}
+.sub-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--t2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
+.sub-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+.sub-panel{display:none}
+.sub-panel.active{display:block;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;border:1px solid var(--bdr)}
+.card-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.big-num{font-size:36px;font-weight:800;color:var(--t1);line-height:1.1}
+.big-num .unit{font-size:14px;font-weight:400;color:var(--t2)}
+.big-sub{font-size:12px;color:var(--t2);margin-top:4px}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.kpi-item{background:var(--inset);border-radius:var(--rs);padding:16px 12px;text-align:center}
+.kpi-value{font-size:22px;font-weight:700}
+.kpi-value.income{color:var(--green)}
+.kpi-value.expense{color:var(--red)}
+.kpi-value.balance{color:var(--blue)}
+.kpi-label{font-size:11px;color:var(--t2);margin-top:4px}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat-item{background:var(--inset);border-radius:var(--rs);padding:14px;position:relative;overflow:hidden}
+.cat-item::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+.cat-icon{font-size:16px;margin-bottom:4px}
+.cat-name{font-size:12px;color:var(--t2);margin-bottom:2px}
+.cat-amount{font-size:18px;font-weight:700;color:var(--t1)}
+.cat-pct{font-size:11px;color:var(--t3);margin-top:2px}
+.tx-list{display:flex;flex-direction:column;gap:0}
+.tx-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--bdr)}
+.tx-item:last-child{border-bottom:none}
+.tx-left{flex:1;min-width:0}
+.tx-name{font-size:13px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-meta{font-size:11px;color:var(--t3);margin-top:2px}
+.tx-amount{font-size:15px;font-weight:600;white-space:nowrap;margin-left:12px}
+.tx-amount.income{color:var(--green)}
+.tx-amount.expense{color:var(--t2)}
+.tx-emoji{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--inset);margin-right:10px;flex-shrink:0}
+.section-title{font-size:13px;font-weight:600;color:var(--blue);margin:16px 0 10px;padding-left:2px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--t3);font-size:13px}
+.empty-state .icon{font-size:40px;margin-bottom:12px;opacity:0.5}
+.date-filter{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.date-filter input{background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;flex:1}
+.date-filter span{color:var(--t3);font-size:12px;flex-shrink:0}
+.date-filter select{background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none}
+.day-summary{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:12px}
+.day-summary .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.day-summary .row:last-child{margin-bottom:0}
+.day-summary .label{font-size:12px;color:var(--t2)}
+.day-summary .val{font-size:16px;font-weight:700}
+.day-summary .val.inc{color:var(--green)}
+.day-summary .val.exp{color:var(--red)}
+.month-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.month-card{background:var(--inset);border-radius:var(--rs);padding:16px;text-align:center}
+.month-card .month-name{font-size:12px;color:var(--t2);margin-bottom:8px}
+.month-card .month-exp{font-size:20px;font-weight:700;color:var(--red);margin-bottom:4px}
+.month-card .month-inc{font-size:14px;font-weight:600;color:var(--green)}
+.month-card .month-bal{font-size:12px;color:var(--t3);margin-top:4px}
+.income-section{background:var(--inset);border-radius:var(--rs);padding:14px;margin-top:12px}
+.income-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.income-row:last-child{border-bottom:none}
+.income-row .name{font-size:13px;color:var(--t2)}
+.income-row .amt{font-size:14px;font-weight:600;color:var(--green)}
+.income-total{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:6px;border-top:1px solid var(--bdr2)}
+.income-total .name{font-size:14px;font-weight:600;color:var(--t1)}
+.income-total .amt{font-size:18px;font-weight:700;color:var(--green)}
+.progress-bar{height:6px;background:var(--inset);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.pz-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--t3);text-align:center}
+.pz-placeholder .icon{font-size:60px;margin-bottom:16px;opacity:0.3}
+.pz-placeholder .title{font-size:16px;color:var(--t2);margin-bottom:8px}
+.pz-placeholder .desc{font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar">综</div>
+      <div>
+        <div class="header-title">综合工作台</div>
+        <div class="header-sub">排盘 · 记账 · 待购入</div>
+      </div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+
+  <div class="main-tabs">
+    <div class="main-tab" data-main="paipan" onclick="switchMain('paipan')">排盘</div>
+    <div class="main-tab active" data-main="jizhang" onclick="switchMain('jizhang')">记账</div>
+    <div class="main-tab" data-main="daigou" onclick="switchMain('daigou')">待购入</div>
+  </div>
+
+  <!-- 排盘 Panel -->
+  <div class="main-panel" id="panel-paipan">
+    <div class="sub-tabs">
+      <div class="sub-tab active" data-sub="pz-recommend" onclick="switchSub('pz-recommend')">推荐</div>
+      <div class="sub-tab" data-sub="pz-detail" onclick="switchSub('pz-detail')">吉时表</div>
+      <div class="sub-tab" data-sub="pz-info" onclick="switchSub('pz-info')">排盘信息</div>
+    </div>
+    <div class="sub-panel active" id="sub-pz-recommend"></div>
+    <div class="sub-panel" id="sub-pz-detail"></div>
+    <div class="sub-panel" id="sub-pz-info"></div>
+  </div>
+
+  <!-- 记账 Panel -->
+  <div class="main-panel active" id="panel-jizhang">
+    <div class="sub-tabs">
+      <div class="sub-tab active" data-sub="overview" onclick="switchSub('overview')">总览</div>
+      <div class="sub-tab" data-sub="today" onclick="switchSub('today')">当日</div>
+      <div class="sub-tab" data-sub="week" onclick="switchSub('week')">当周</div>
+      <div class="sub-tab" data-sub="month" onclick="switchSub('month')">当月</div>
+      <div class="sub-tab" data-sub="detail" onclick="switchSub('detail')">明细</div>
+    </div>
+
+    <!-- 总览 -->
+    <div class="sub-panel active" id="sub-overview"></div>
+
+    <!-- 当日 -->
+    <div class="sub-panel" id="sub-today"></div>
+
+    <!-- 当周 -->
+    <div class="sub-panel" id="sub-week"></div>
+
+    <!-- 当月 -->
+    <div class="sub-panel" id="sub-month"></div>
+
+    <!-- 明细 -->
+    <div class="sub-panel" id="sub-detail"></div>
+  </div>
+
+  <!-- 待购入 Panel -->
+  <div class="main-panel" id="panel-daigou"></div>
+</div>
+
+<script>
+// ========== DATA ==========
+const transactions = [{"date": "2026-06-01", "category": "餐饮", "item": "袁记云饺鸡肉云吞12个", "amount": 16.1}, {"date": "2026-06-02", "category": "餐饮", "item": "沙县鸡腿饭", "amount": 18.2}, {"date": "2026-06-07", "category": "餐饮", "item": "晚饭：钵钵鸡+酸菜土豆+米饭", "amount": 79.7}, {"date": "2026-06-08", "category": "餐饮", "item": "午餐外卖（金枪鱼滑蛋轻蔬碗）", "amount": 23.2}, {"date": "2026-06-09", "category": "餐饮", "item": "午餐外卖（刘家牛肉饭·广东菜心牛肉盖饭+拉丝鸡蛋炒番茄）", "amount": 21.18}, {"date": "2026-06-11", "category": "餐饮", "item": "午餐外卖（七碗湘·小炒黄牛肉盖码饭+煎蛋+小菜）", "amount": 20.0}, {"date": "2026-06-12", "category": "餐饮", "item": "午餐外卖（滑蛋炒牛肉+番茄炒蛋+米饭）", "amount": 20.8}, {"date": "2026-06-14", "category": "餐饮", "item": "晚餐外卖（钵钵鸡套餐+米饭+肉汁萝卜+例汤）", "amount": 25.9}, {"date": "2026-06-15", "category": "餐饮", "item": "午餐外卖（西芹炒牛肉+清炒莴笋丝+白灼菜心+糙米饭）", "amount": 24.8}, {"date": "2026-06-16", "category": "餐饮", "item": "午餐外卖（春野·小炒黄牛肉+西红柿炒蛋+米饭）", "amount": 27.8}, {"date": "2026-06-17", "category": "餐饮", "item": "午餐外卖（口水鸡+虾仁滑蛋+糙米饭）", "amount": 21.8}, {"date": "2026-06-18", "category": "餐饮", "item": "午餐：袁记云饺（玉米鲜肉9个+黑猪肉9个=18个）", "amount": 23.9}, {"date": "2026-06-19", "category": "娱乐", "item": "剑网三凌波赴九幽外观", "amount": 279.9}, {"date": "2026-06-19", "category": "娱乐", "item": "剑网三110橙武拓印券", "amount": 330.89}, {"date": "2026-06-19", "category": "娱乐", "item": "剑网三120大橙武拓印券", "amount": 269.9}, {"date": "2026-06-19", "category": "娱乐", "item": "剑网三点卡充值", "amount": 15.0}, {"date": "2026-06-21", "category": "餐饮", "item": "午餐外卖（黔家阿婆·招牌鲜牛肉+7种配菜+蘸水+米饭）", "amount": 21.9}, {"date": "2026-06-22", "category": "餐饮", "item": "午餐外卖（烤牛肉拌饭）", "amount": 22.3}, {"date": "2026-06-23", "category": "餐饮", "item": "午餐外卖（蒜蓉粉丝虾套餐）", "amount": 24.1}, {"date": "2026-06-24", "category": "餐饮", "item": "午餐外卖", "amount": 20.3}, {"date": "2026-06-25", "category": "餐饮", "item": "午餐外卖", "amount": 21.0}, {"date": "2026-06-26", "category": "餐饮", "item": "午餐外卖（广东菜心牛肉+苦瓜牛肉+番茄炒蛋+牛骨清汤）", "amount": 24.08}, {"date": "2026-06-27", "category": "个人生活", "item": "咖啡豆", "amount": 190.0}, {"date": "2026-06-29", "category": "餐饮", "item": "午餐外卖（蔓味轻食·原切菲力鸡胸牛排配蔬果沙拉）", "amount": 18.0}, {"date": "2026-06-30", "category": "餐饮", "item": "午餐外卖（原切眼肉牛排+太阳蛋+土豆泥+时蔬）", "amount": 37.02}, {"date": "2026-05-31", "category": "交通", "item": "峨眉岭停车费", "amount": 45.5}, {"date": "2026-06-01", "category": "交通", "item": "停车费", "amount": 10.5}, {"date": "2026-06-08", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-06-08", "category": "交通", "item": "周末停车费（两天）", "amount": 87.0}, {"date": "2026-06-09", "category": "交通", "item": "昨晚停车费", "amount": 9.0}, {"date": "2026-06-09", "category": "交通", "item": "上班停车费", "amount": 8.5}, {"date": "2026-06-09", "category": "交通", "item": "车辆充电充值", "amount": 200.0}, {"date": "2026-06-11", "category": "交通", "item": "晚上停车费", "amount": 11.5}, {"date": "2026-06-12", "category": "交通", "item": "早上停车费", "amount": 7.5}, {"date": "2026-06-12", "category": "交通", "item": "单位停车费", "amount": 11.5}, {"date": "2026-06-15", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-06-16", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-06-17", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-06-22", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-06-22", "category": "交通", "item": "充电费", "amount": 25.5}, {"date": "2026-06-23", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-06-24", "category": "交通", "item": "停车费（早上，家没车位停前面停车场）", "amount": 10.5}, {"date": "2026-06-24", "category": "交通", "item": "停车费（下班）", "amount": 11.5}, {"date": "2026-06-25", "category": "交通", "item": "停车费（一趟）", "amount": 8.5}, {"date": "2026-06-29", "category": "交通", "item": "停车费", "amount": 10.5}, {"date": "2026-06-30", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-06-01", "category": "娱乐", "item": "B站UP主充电包月", "amount": 10.0}, {"date": "2026-06-01", "category": "娱乐", "item": "B站充电会员", "amount": 10.0}, {"date": "2026-06-01", "category": "娱乐", "item": "京东Plus年卡", "amount": 99.0}, {"date": "2026-06-02", "category": "娱乐", "item": "剑网三璀璨钱途礼盒", "amount": 387.8}, {"date": "2026-06-02", "category": "娱乐", "item": "剑网三120级小铁×200", "amount": 50.0}, {"date": "2026-06-02", "category": "娱乐", "item": "剑网三奇遇后续代练", "amount": 18.0}, {"date": "2026-06-24", "category": "娱乐", "item": "WPS全年会员", "amount": 243.0}, {"date": "2026-06-26", "category": "娱乐", "item": "扣子旗舰版续费", "amount": 178.9}, {"date": "2026-06-26", "category": "娱乐", "item": "剑网三买积分", "amount": 99.9}, {"date": "2026-06-01", "category": "固定支出", "item": "党费（6月）", "amount": 30.0}, {"date": "2026-06-15", "category": "固定支出", "item": "房贷净支出", "amount": 6071.17}, {"date": "2026-06-14", "category": "补剂", "item": "MyProtein分离乳清蛋白粉抹茶拿铁味1kg", "amount": 379.03}, {"date": "2026-06-14", "category": "补剂", "item": "欧德堡东方PRO4.0脱脂牛奶", "amount": 71.68}, {"date": "2026-06-17", "category": "补剂", "item": "Now Foods ADAM男士多维90粒×2", "amount": 456.8}, {"date": "2026-06-17", "category": "补剂", "item": "海力生95%高纯EPA鱼油5送3（690粒）", "amount": 912.65}, {"date": "2026-06-30", "category": "补剂", "item": "普通乳清柔滑巧克力5kg蛋白粉", "amount": 1088.0}, {"date": "2026-06-17", "category": "训练", "item": "多德士TK605哑铃凳（家用尊享款全折叠）", "amount": 179.55}, {"date": "2026-06-17", "category": "训练", "item": "BlenderBottle Pro28钢铁侠800ml摇摇杯", "amount": 114.69}, {"date": "2026-06-01", "category": "个人护理", "item": "博朗CCR清洗液16盒装", "amount": 261.36}, {"date": "2026-07-02", "category": "餐饮", "item": "午餐：鸡胸牛肉双拼沙拉碗", "amount": 18.62}, {"date": "2026-07-03", "category": "餐饮", "item": "午餐：毛豆米烧鸡+南京素什锦", "amount": 27.9}, {"date": "2026-07-06", "category": "餐饮", "item": "午餐：双倍鸡胸鲜蔬杂粮饭", "amount": 27.9}, {"date": "2026-07-07", "category": "餐饮", "item": "儿子晚餐（单人份）", "amount": 39.9}, {"date": "2026-07-10", "category": "餐饮", "item": "午餐外卖（给儿子点）", "amount": 49.4}, {"date": "2026-07-14", "category": "餐饮", "item": "午餐：海底捞海肠捞饭+50g烤牛肉粒", "amount": 33.2}, {"date": "2026-07-15", "category": "餐饮", "item": "午餐：延边辣牛肉汤单人餐", "amount": 22.5}, {"date": "2026-07-16", "category": "餐饮", "item": "午餐：CrazyCat失控猫能量碗", "amount": 28.8}, {"date": "2026-07-17", "category": "餐饮", "item": "请胡老师小孩吃饭·日料", "amount": 288.0}, {"date": "2026-07-18", "category": "餐饮", "item": "早餐：陈香贵（清汤牛肉面+5串羊肉小串+煎蛋）", "amount": 29.0}, {"date": "2026-07-18", "category": "餐饮", "item": "晚餐：牛排套餐（含儿子意面+沙拉）", "amount": 127.9}, {"date": "2026-07-19", "category": "餐饮", "item": "午餐：炸鸡外卖", "amount": 52.6}, {"date": "2026-07-19", "category": "餐饮", "item": "晚餐：馄饨外卖", "amount": 18.9}, {"date": "2026-07-20", "category": "餐饮", "item": "午餐：RYETURN轻食", "amount": 26.9}, {"date": "2026-07-21", "category": "餐饮", "item": "午餐：嫩煎鸡胸肉+应季烤时蔬+低GI谷物饭", "amount": 25.9}, {"date": "2026-07-22", "category": "餐饮", "item": "午餐：香煎鱼柳配杂蔬饭", "amount": 33.1}, {"date": "2026-07-23", "category": "餐饮", "item": "午餐：炙烤黑椒鸡胸肉时蔬糙米谷物饭+加料金枪鱼", "amount": 25.5}, {"date": "2026-07-24", "category": "餐饮", "item": "午餐", "amount": 27.9}, {"date": "2026-07-26", "category": "餐饮", "item": "晚饭（牛蛙米线+里脊肉串）", "amount": 48.0}, {"date": "2026-07-27", "category": "餐饮", "item": "午餐：嫩滑蛋羹（鸡胸肉）杂粮拌饭+白灼西兰花", "amount": 26.9}, {"date": "2026-07-28", "category": "餐饮", "item": "午餐：香煎鸡胸烤蔬杂粮饭+奇亚籽酸奶+菠菜鸡肉丸", "amount": 36.5}, {"date": "2026-07-29", "category": "餐饮", "item": "午餐：杭椒牛肉套餐", "amount": 30.3}, {"date": "2026-07-30", "category": "餐饮", "item": "午餐：葱香杏鲍菇鸡胸肉+清炒小青菜+豆芽炒韭菜+糙米饭", "amount": 24.1}, {"date": "2026-07-31", "category": "餐饮", "item": "午餐：寿司", "amount": 22.9}, {"date": "2026-07-01", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-07-02", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-07-06", "category": "交通", "item": "停车费", "amount": 45.5}, {"date": "2026-07-06", "category": "交通", "item": "停车费（单位）", "amount": 8.5}, {"date": "2026-07-06", "category": "交通", "item": "货拉拉出门停车", "amount": 7.0}, {"date": "2026-07-07", "category": "交通", "item": "打车（停车换地方）", "amount": 12.9}, {"date": "2026-07-07", "category": "交通", "item": "出门办事停车", "amount": 37.0}, {"date": "2026-07-10", "category": "交通", "item": "打车（帮老婆取电瓶车）", "amount": 12.5}, {"date": "2026-07-13", "category": "交通", "item": "停车费（早×2）", "amount": 63.5}, {"date": "2026-07-13", "category": "交通", "item": "停车费（下班）", "amount": 8.5}, {"date": "2026-07-14", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-15", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-16", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-17", "category": "交通", "item": "停车费", "amount": 45.5}, {"date": "2026-07-18", "category": "交通", "item": "停车费", "amount": 45.5}, {"date": "2026-07-18", "category": "交通", "item": "停车费（接老婆孩子）", "amount": 12.0}, {"date": "2026-07-20", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-21", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-07-22", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-23", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-24", "category": "交通", "item": "汽车保养", "amount": 588.0}, {"date": "2026-07-24", "category": "交通", "item": "打车", "amount": 22.3}, {"date": "2026-07-25", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-07-26", "category": "交通", "item": "停车费", "amount": 49.0}, {"date": "2026-07-26", "category": "交通", "item": "停车费（7/27补报，属7/26）", "amount": 6.0}, {"date": "2026-07-27", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-27", "category": "交通", "item": "充电（预充50退23.38）", "amount": 26.62}, {"date": "2026-07-28", "category": "交通", "item": "机场停车费", "amount": 13.5}, {"date": "2026-07-28", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-28", "category": "交通", "item": "交通罚款补交", "amount": 350.0}, {"date": "2026-07-29", "category": "交通", "item": "停车费", "amount": 8.5}, {"date": "2026-07-30", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-31", "category": "交通", "item": "打车（回家）", "amount": 35.0}, {"date": "2026-07-31", "category": "交通", "item": "停车费", "amount": 11.5}, {"date": "2026-07-13", "category": "固定支出", "item": "党费", "amount": 30.0}, {"date": "2026-07-15", "category": "固定支出", "item": "房贷净支出", "amount": 6525.07}, {"date": "2026-07-13", "category": "补剂", "item": "惯爱他达拉非5mg×3盒", "amount": 251.0}, {"date": "2026-07-13", "category": "补剂", "item": "Nutricost KSM-66 600mg×2盒", "amount": 286.94}, {"date": "2026-07-09", "category": "训练", "item": "哈他天然橡胶PU瑜伽垫183×68cm/5mm", "amount": 209.0}, {"date": "2026-07-05", "category": "数码产品", "item": "小米Clip耳夹式耳机", "amount": 799.0}, {"date": "2026-07-05", "category": "娱乐", "item": "百度网盘24小时会员", "amount": 9.9}, {"date": "2026-07-07", "category": "个人生活", "item": "观夏昆仑煮雪藤条香薰（200ml）", "amount": 293.0}, {"date": "2026-07-08", "category": "娱乐", "item": "剑网三代练：凌波争铸吴钩", "amount": 15.0}, {"date": "2026-07-08", "category": "娱乐", "item": "剑网三代练：凌波塞外宝驹包赛季", "amount": 6.0}, {"date": "2026-07-08", "category": "娱乐", "item": "Coze积分充值10万", "amount": 100.0}, {"date": "2026-07-11", "category": "娱乐", "item": "Coze积分充值", "amount": 100.0}, {"date": "2026-07-13", "category": "娱乐", "item": "Coze积分充值", "amount": 100.0}, {"date": "2026-07-17", "category": "娱乐", "item": "Coze积分充值", "amount": 100.0}, {"date": "2026-07-20", "category": "娱乐", "item": "B站充电", "amount": 19.0}, {"date": "2026-07-21", "category": "娱乐", "item": "B站充电充值卡", "amount": 200.0}, {"date": "2026-07-22", "category": "娱乐", "item": "Coze积分充值", "amount": 100.0}, {"date": "2026-07-26", "category": "娱乐", "item": "游戏捆绑包（侠影录+地府有点忙）", "amount": 82.26}, {"date": "2026-07-31", "category": "娱乐", "item": "扣子积分充值", "amount": 100.0}, {"date": "2026-07-31", "category": "娱乐", "item": "App Store订阅", "amount": 27.0}, {"date": "2026-07-28", "category": "个人护理", "item": "宝拉珍选水杨酸身体乳+精华液", "amount": 365.49}, {"date": "2026-07-30", "category": "个人护理", "item": "碧柔UV水感防晒精华 50g×2", "amount": 88.29}, {"date": "2026-07-17", "category": "个人生活", "item": "烟（两条+一包）", "amount": 483.0}, {"date": "2026-07-23", "category": "个人生活", "item": "鸭舌头（周黑鸭）", "amount": 280.0}, {"date": "2026-07-26", "category": "个人生活", "item": "烟", "amount": 23.0}, {"date": "2026-07-26", "category": "个人生活", "item": "剪头发", "amount": 150.0}, {"date": "2026-07-28", "category": "个人生活", "item": "茶叶（六妙一日茶老白茶龙珠300g）", "amount": 153.0}, {"date": "2026-08-03", "category": "娱乐", "item": "Coze积分充值", "amount": 100.0}, {"date": "2026-08-03", "category": "固定支出", "item": "党费（8月）", "amount": 30.0}, {"date": "2026-08-03", "category": "餐饮", "item": "午餐：谨食·鸡牛虾饼三拼能量碗（油醋汁）", "amount": 27.9}, {"date": "2026-08-03", "category": "交通", "item": "汽车贴膜", "amount": 1000}, {"date": "2026-08-03", "category": "交通", "item": "停车费", "amount": 9.5}];
+const incomeRecords = [{"date": "2026-06-01", "item": "初始余额", "amount": 9475.65}, {"date": "2026-06-10", "item": "工资", "amount": 11711.34}, {"date": "2026-07-10", "item": "工资", "amount": 9023.48}, {"date": "2026-08-03", "item": "Nike Invincible 3退货", "amount": 631.8}];
+const catTotals = {"餐饮": 1632.6, "娱乐": 3051.45, "个人生活": 1572.0, "交通": 3087.82, "固定支出": 12686.24, "补剂": 3446.1, "训练": 503.24, "个人护理": 715.14, "数码产品": 799.0};
+const totalIncome = 30842.27;
+const totalExpense = 27493.59;
+const balance = 3348.68;
+const startDate = '2026-06-01';
+
+const catConfig = {
+  '固定支出': {emoji:'🏠',color:'#ff6b6b',desc:'房贷·党费'},
+  '餐饮': {emoji:'🍜',color:'#ffa502'},
+  '补剂': {emoji:'💊',color:'#2ed573'},
+  '训练': {emoji:'🏋️',color:'#1e90ff'},
+  '个人护理': {emoji:'🧴',color:'#ff6b81'},
+  '交通': {emoji:'🚗',color:'#747d8c',desc:'停车·充电·保养·打车'},
+  '娱乐': {emoji:'🎮',color:'#a55eea',desc:'游戏·订阅·积分'},
+  '医疗': {emoji:'💊',color:'#ff4757'},
+  '穿戴': {emoji:'👟',color:'#ff7f50'},
+  '个人生活': {emoji:'🚬',color:'#57606f',desc:'烟·茶·零食·理发·香氛'},
+  '数码产品': {emoji:'📱',color:'#3742fa'}
+};
+
+const allCatOrder = ['固定支出','餐饮','补剂','训练','个人护理','交通','娱乐','医疗','穿戴','个人生活','数码产品'];
+
+// ========== HELPERS ==========
+function fmt(n) { return n.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtWan(n) { if(Math.abs(n)>=10000) return (n/10000).toFixed(2)+'万'; return fmt(n); }
+
+function formatDate(d) {
+  const parts = d.split('-');
+  return parseInt(parts[1]) + '/' + parseInt(parts[2]);
+}
+
+function isToday(dateStr) {
+  const now = new Date();
+  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
+  return dateStr === `${y}-${m}-${d}`;
+}
+
+function getWeekRange() {
+  const now = new Date();
+  const day = now.getDay() || 7;
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - day + 1);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  const f = d => d.toISOString().slice(0,10);
+  return [f(mon), f(sun)];
+}
+
+function getMonthRange() {
+  const now = new Date();
+  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0');
+  const start = `${y}-${m}-01`;
+  const lastDay = new Date(y, parseInt(m), 0).getDate();
+  const end = `${y}-${m}-${String(lastDay).padStart(2,'0')}`;
+  return [start, end];
+}
+
+function filterByDate(items, start, end) {
+  return items.filter(t => t.date >= start && t.date <= end);
+}
+
+function calcExpense(list) { return list.reduce((s,t) => s + t.amount, 0); }
+function calcIncome(list) { return list.reduce((s,t) => s + t.amount, 0); }
+
+function groupByCategory(list) {
+  const g = {};
+  list.forEach(t => { g[t.category] = (g[t.category]||0) + t.amount; });
+  return g;
+}
+
+function daysSinceStart() {
+  const s = new Date(startDate);
+  const n = new Date();
+  return Math.max(1, Math.floor((n - s) / 86400000) + 1);
+}
+
+// ========== RENDER: 总览 ==========
+function renderOverview() {
+  const days = daysSinceStart();
+  const dailyAvg = totalExpense / days;
+  const catOrder = allCatOrder.filter(c => catTotals[c] && catTotals[c] > 0).sort((a,b) => catTotals[b] - catTotals[a]);
+
+  let html = `
+    <div class="card">
+      <div class="card-title">📊 记账总览</div>
+      <div class="kpi-grid">
+        <div class="kpi-item">
+          <div class="kpi-value income">¥${(totalIncome/10000).toFixed(2)}万</div>
+          <div class="kpi-label">总收入</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-value expense">¥${(totalExpense/10000).toFixed(2)}万</div>
+          <div class="kpi-label">总支出</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-value balance">¥${(balance/10000).toFixed(2)}万</div>
+          <div class="kpi-label">结余</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--t3)">
+        记账天数 ${days} 天 · 日均支出 ¥${fmt(dailyAvg)}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📂 支出分类</div>
+      <div class="cat-grid">`;
+
+  catOrder.forEach(cat => {
+    const cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
+    const amt = catTotals[cat] || 0;
+    const pct = totalExpense > 0 ? (amt / totalExpense * 100).toFixed(1) : 0;
+    html += `
+        <div class="cat-item" style="--cat-color:${cfg.color}">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
+          <div class="cat-icon">${cfg.emoji}</div>
+          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
+          <div class="cat-amount">¥${fmt(amt)}</div>
+          <div class="cat-pct">${pct}%</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
+        </div>`;
+  });
+
+  html += `</div></div>`;
+
+  // Income section
+  html += `
+    <div class="card">
+      <div class="card-title">💰 收入明细</div>
+      <div class="income-section">`;
+  incomeRecords.forEach(r => {
+    html += `<div class="income-row"><span class="name">${formatDate(r.date)} ${r.item}</span><span class="amt">+¥${fmt(r.amount)}</span></div>`;
+  });
+  html += `
+        <div class="income-total"><span class="name">累计收入</span><span class="amt">+¥${fmt(totalIncome)}</span></div>
+      </div>
+    </div>`;
+
+  // 最近明细
+  const recent = [...transactions].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 15);
+  html += `
+    <div class="card">
+      <div class="card-title">📋 最近明细</div>
+      <div class="tx-list">`;
+  recent.forEach(tx => {
+    const cfg = catConfig[tx.category] || {emoji:'📦',color:'#888'};
+    html += `
+        <div class="tx-item">
+          <div class="tx-emoji">${cfg.emoji}</div>
+          <div class="tx-left">
+            <div class="tx-name">${tx.item}</div>
+            <div class="tx-meta">${formatDate(tx.date)} · ${tx.category}</div>
+          </div>
+          <div class="tx-amount expense">-¥${fmt(tx.amount)}</div>
+        </div>`;
+  });
+  html += `</div></div>`;
+
+  document.getElementById('sub-overview').innerHTML = html;
+}
+
+// ========== RENDER: Period (当日/当周/当月) ==========
+function renderPeriod(panelId, start, end, label) {
+  const panel = document.getElementById(panelId);
+  const txs = filterByDate(transactions, start, end);
+  const incs = filterByDate(incomeRecords.map(r => ({date:r.date, category:'收入', item:r.item, amount:r.amount})), start, end);
+
+  if (txs.length === 0 && incs.length === 0) {
+    panel.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <div>${label}暂无记录</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--t3)">记账数据从 2026/6/1 开始</div>
+      </div>`;
+    return;
+  }
+
+  const expTotal = calcExpense(txs);
+  const incTotal = calcIncome(incs);
+  const grouped = groupByCategory(txs);
+  const catOrder = Object.keys(grouped).sort((a,b) => grouped[b] - grouped[a]);
+
+  let html = `
+    <div class="day-summary">
+      <div class="row"><span class="label">${label}支出</span><span class="val exp">¥${fmt(expTotal)}</span></div>
+      <div class="row"><span class="label">${label}收入</span><span class="val inc">¥${fmt(incTotal)}</span></div>
+      <div class="row"><span class="label">${label}笔数</span><span class="val" style="color:var(--t1)">${txs.length} 笔</span></div>
+    </div>`;
+
+  if (catOrder.length > 0) {
+    html += `<div class="card"><div class="card-title">分类汇总</div><div class="cat-grid">`;
+    catOrder.forEach(cat => {
+      const cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
+      const amt = grouped[cat];
+      const pct = expTotal > 0 ? (amt/expTotal*100).toFixed(1) : 0;
+      html += `
+        <div class="cat-item">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
+          <div class="cat-icon">${cfg.emoji}</div>
+          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
+          <div class="cat-amount">¥${fmt(amt)}</div>
+          <div class="cat-pct">${pct}%</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (txs.length > 0) {
+    html += `<div class="card"><div class="card-title">支出明细</div><div class="tx-list">`;
+    txs.slice().reverse().forEach(t => {
+      const cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">${cfg.emoji}</div>
+          <div class="tx-left">
+            <div class="tx-name">${t.item}</div>
+            <div class="tx-meta">${formatDate(t.date)} · ${t.category}</div>
+          </div>
+          <div class="tx-amount expense">-¥${fmt(t.amount)}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (incs.length > 0) {
+    html += `<div class="card"><div class="card-title">💰 收入</div><div class="tx-list">`;
+    incs.slice().reverse().forEach(r => {
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">💰</div>
+          <div class="tx-left">
+            <div class="tx-name">${r.item}</div>
+            <div class="tx-meta">${formatDate(r.date)}</div>
+          </div>
+          <div class="tx-amount income">+¥${fmt(r.amount)}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  panel.innerHTML = html;
+}
+
+// ========== RENDER: 当月 ==========
+function renderMonth() {
+  const [mStart, mEnd] = getMonthRange();
+  renderPeriod('sub-month', mStart, mEnd, '本月');
+
+  // Add month comparison at top
+  const panel = document.getElementById('sub-month');
+  const existing = panel.innerHTML;
+
+  // Calculate June vs July
+  const juneTxs = transactions.filter(t => t.date >= '2026-06-01' && t.date <= '2026-06-30');
+  const julyTxs = transactions.filter(t => t.date >= '2026-07-01' && t.date <= '2026-07-31');
+  const juneExp = calcExpense(juneTxs);
+  const julyExp = calcExpense(julyTxs);
+  const juneInc = calcIncome(incomeRecords.filter(r => r.date >= '2026-06-01' && r.date <= '2026-06-30'));
+  const julyInc = calcIncome(incomeRecords.filter(r => r.date >= '2026-07-01' && r.date <= '2026-07-31'));
+
+  // Check if current month has data
+  const curMonthTxs = filterByDate(transactions, mStart, mEnd);
+  if (curMonthTxs.length === 0) {
+    panel.innerHTML = `
+      <div class="month-compare">
+        <div class="month-card">
+          <div class="month-name">6月</div>
+          <div class="month-exp">¥${fmt(juneExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(juneInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(juneInc - juneExp)}</div>
+        </div>
+        <div class="month-card">
+          <div class="month-name">7月</div>
+          <div class="month-exp">¥${fmt(julyExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(julyInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(julyInc - julyExp)}</div>
+        </div>
+      </div>
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <div>本月暂无记录</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--t3)">以上为历史月份对比</div>
+      </div>`;
+  } else {
+    const header = `
+      <div class="month-compare">
+        <div class="month-card">
+          <div class="month-name">6月</div>
+          <div class="month-exp">¥${fmt(juneExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(juneInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(juneInc - juneExp)}</div>
+        </div>
+        <div class="month-card">
+          <div class="month-name">7月</div>
+          <div class="month-exp">¥${fmt(julyExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(julyInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(julyInc - julyExp)}</div>
+        </div>
+      </div>` + existing;
+    panel.innerHTML = header;
+  }
+}
+
+// ========== RENDER: 明细 ==========
+function renderDetail() {
+  const panel = document.getElementById('sub-detail');
+  let html = `
+    <div class="date-filter">
+      <select id="filterPreset" onchange="onPresetChange()">
+        <option value="all">全部</option>
+        <option value="jun">6月</option>
+        <option value="jul">7月</option>
+        <option value="custom">自定义</option>
+      </select>
+      <input type="date" id="filterStart" style="display:none" onchange="applyFilter()">
+      <span id="filterSep" style="display:none">至</span>
+      <input type="date" id="filterEnd" style="display:none" onchange="applyFilter()">
+    </div>
+    <div id="detailList"></div>`;
+  panel.innerHTML = html;
+  applyFilter();
+}
+
+function onPresetChange() {
+  const v = document.getElementById('filterPreset').value;
+  const s = document.getElementById('filterStart');
+  const e = document.getElementById('filterEnd');
+  const sep = document.getElementById('filterSep');
+
+  if (v === 'custom') {
+    s.style.display = '';
+    e.style.display = '';
+    sep.style.display = '';
+    s.value = '2026-06-01';
+    e.value = '2026-07-31';
+    applyFilter();
+  } else {
+    s.style.display = 'none';
+    e.style.display = 'none';
+    sep.style.display = 'none';
+    applyFilter();
+  }
+}
+
+function applyFilter() {
+  const preset = document.getElementById('filterPreset').value;
+  let start = '', end = '9999-12-31';
+
+  if (preset === 'jun') { start = '2026-06-01'; end = '2026-06-30'; }
+  else if (preset === 'jul') { start = '2026-07-01'; end = '2026-07-31'; }
+  else if (preset === 'custom') {
+    start = document.getElementById('filterStart').value || '2026-06-01';
+    end = document.getElementById('filterEnd').value || '2026-07-31';
+  }
+
+  const txs = filterByDate(transactions, start || '0000-01-01', end);
+  const incs = filterByDate(incomeRecords, start || '0000-01-01', end);
+
+  // Combine and sort
+  const all = [
+    ...txs.map(t => ({...t, type:'expense'})),
+    ...incs.map(r => ({date:r.date, item:r.item, amount:r.amount, category:'收入', type:'income'}))
+  ].sort((a,b) => b.date.localeCompare(a.date) || (a.type === 'income' ? -1 : 1));
+
+  const expTotal = calcExpense(txs);
+  const incTotal = calcIncome(incs.map(r => ({amount:r.amount})));
+
+  let html = `
+    <div class="day-summary">
+      <div class="row"><span class="label">支出合计</span><span class="val exp">¥${fmt(expTotal)}</span></div>
+      <div class="row"><span class="label">收入合计</span><span class="val inc">¥${fmt(incTotal)}</span></div>
+      <div class="row"><span class="label">共 ${all.length} 笔</span><span class="val" style="color:var(--t3);font-size:13px">${start||'起始'} ~ ${end==='9999-12-31'?'至今':end}</span></div>
+    </div>
+    <div class="card"><div class="tx-list">`;
+
+  all.forEach(t => {
+    if (t.type === 'income') {
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">💰</div>
+          <div class="tx-left">
+            <div class="tx-name">${t.item}</div>
+            <div class="tx-meta">${formatDate(t.date)} · 收入</div>
+          </div>
+          <div class="tx-amount income">+¥${fmt(t.amount)}</div>
+        </div>`;
+    } else {
+      const cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">${cfg.emoji}</div>
+          <div class="tx-left">
+            <div class="tx-name">${t.item}</div>
+            <div class="tx-meta">${formatDate(t.date)} · ${t.category}</div>
+          </div>
+          <div class="tx-amount expense">-¥${fmt(t.amount)}</div>
+        </div>`;
+    }
+  });
+
+  html += `</div></div>`;
+  document.getElementById('detailList').innerHTML = html;
+}
+
+// ========== RENDER: 待购入 ==========
+function renderDaigou() {
+  const wishlist = [
+    {
+      icon: '👓',
+      name: '林德伯格 Blok 眼镜框',
+      status: '待购入',
+      priority: '高',
+      price: '2000-3000',
+      notes: [
+        '等减到70kg后去专柜试框',
+        '丹麦设计，5.5g超轻，含镜片整副17-19g',
+        '南京/上海试框记型号 → 香港买框+内地配镜片'
+      ],
+      timing: '2026年双11前后'
+    },
+    {
+      icon: '🔬',
+      name: '蔡司新清锐 1.60 铂金膜',
+      status: '待购入',
+      priority: '高',
+      price: '500-700',
+      notes: [
+        '已验证5年满意度，膜层耐用',
+        '如果智锐有大折扣优先智锐',
+        '主人度数：325/350，无散光'
+      ],
+      timing: '与镜框同步，双11蹲好价'
+    },
+    {
+      icon: '🔬',
+      name: '蔡司智锐 1.60 铂金膜（备选）',
+      status: '备选',
+      priority: '中',
+      price: '1000-1500',
+      notes: [
+        '比新清锐多瞳孔优化技术，夜视/边缘更清晰',
+        '仅在有大折扣时升级，否则选新清锐',
+        '门店砍后实际到手约1000-1500'
+      ],
+      timing: '与镜框同步'
+    },
+    {
+      icon: '🌿',
+      name: 'Coral Aria 大地调扩香精油 200ml',
+      status: '待购入',
+      priority: '高',
+      price: '~400',
+      notes: [
+        '阿联酋品牌，专做扩香精油，香调表仿大地原版',
+        '观夏昆仑煮雪与大地区别大，这个是目前最接近的替代方案',
+        '需配扩香机使用，建议先试小样'
+      ],
+      timing: '观夏用完或不想用了再买'
+    }
+  ];
+
+  let html = `
+    <div class="card">
+      <div class="card-title">🎯 愿望清单</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:14px">想买的、计划买的，想好了再下手</div>`;
+
+  wishlist.forEach((item, idx) => {
+    const borderColor = item.priority === '高' ? 'var(--red)' : item.priority === '中' ? 'var(--orange)' : 'var(--t3)';
+    html += `
+      <div style="background:var(--inset);border-radius:var(--rs);padding:16px;margin-bottom:12px;border-left:4px solid ${borderColor}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:24px">${item.icon}</span>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:600;color:var(--t1)">${item.name}</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:2px">预算 ¥${item.price}</div>
+          </div>
+          <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:${item.priority === '高' ? 'rgba(255,59,48,0.15)' : 'rgba(255,149,0,0.15)'};color:${borderColor};font-weight:600">${item.status}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">`;
+    item.notes.forEach(note => {
+      html += `<div style="font-size:12px;color:var(--t2);padding:4px 8px;background:rgba(0,0,0,0.04);border-radius:6px">• ${note}</div>`;
+    });
+    html += `
+        </div>
+        <div style="font-size:11px;color:var(--orange)">⏰ 时机：${item.timing}</div>
+      </div>`;
+  });
+
+  html += `
+    </div>
+    <div class="card">
+      <div class="card-title">📝 配镜总预算参考</div>
+      <div class="day-summary">
+        <div class="row"><span class="label">镜框（林德伯格Blok）</span><span class="val" style="color:var(--t1);font-size:14px">¥2,000-3,000</span></div>
+        <div class="row"><span class="label">镜片（新清锐/智锐）</span><span class="val" style="color:var(--t1);font-size:14px">¥500-1,500</span></div>
+        <div class="row"><span class="label">整副预算</span><span class="val" style="color:var(--orange);font-size:16px">¥3,000-5,000</span></div>
+        <div class="row"><span class="label">蹲好价渠道</span><span class="val" style="color:var(--green);font-size:13px">什么值得买</span></div>
+      </div>
+    </div>`;
+
+  document.getElementById('panel-daigou').innerHTML = html;
+}
+
+// ========== TAB SWITCHING ==========
+function switchMain(name) {
+  document.querySelectorAll('.main-tab').forEach(el => el.classList.toggle('active', el.dataset.main === name));
+  document.querySelectorAll('.main-panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + name));
+}
+
+function switchSub(name) {
+  document.querySelectorAll('.sub-tab').forEach(el => el.classList.toggle('active', el.dataset.sub === name));
+  document.querySelectorAll('.sub-panel').forEach(el => el.classList.toggle('active', el.id === 'sub-' + name));
+}
+
+// ========== 排盘 DATA ==========
+const pzWeek = '第12周（8/3-8/9）';
+const pzAccounts = [
+  {name:'李大笔', school:'霸刀', rg:'丁', sq:true, icon:'🔥'},
+  {name:'凌波', school:'凌雪阁', rg:'壬', sq:false, icon:'🌊'},
+  {name:'龙醒', school:'丐帮', rg:'丙', sq:true, icon:'🐉'}
+];
+const pzDays = [
+  {dt:'8/3',wd:'一',gz:'己酉',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
+  {dt:'8/4',wd:'二',gz:'庚戌',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:''},
+  {dt:'8/5',wd:'三',gz:'辛亥',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
+  {dt:'8/6',wd:'四',gz:'壬子',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
+  {dt:'8/7',wd:'五',gz:'癸丑',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:''},
+  {dt:'8/8',wd:'六',gz:'甲寅',jq:'立秋上元',ju:8,kw:'子丑',kwG:'坎1+坤2+艮8',note:'周末全天'},
+  {dt:'8/9',wd:'日',gz:'乙卯',jq:'立秋上元',ju:8,kw:'子丑',kwG:'坎1+坤2+艮8',note:'周末全天'}
+];
+const pzRecommend = {
+  '李大笔': [
+    {dt:'8/6(四)',t:'戌时(19-21)',gong:'乾6',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/6(四)',t:'子时(23-24)',gong:'离9',men:'休门',tag:'三奇得使★⚡+人遁★',pri:'A'},
+    {dt:'8/8(六)',t:'巳时(09-11)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/8(六)',t:'申时(15-17)',gong:'乾6',men:'开门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'丑时(01-03)',gong:'兑7',men:'生门',tag:'三奇得使★⚡+地遁★',pri:'A'},
+    {dt:'8/9(日)',t:'寅时(03-05)',gong:'乾6',men:'开门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'未时(13-15)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'酉时(17-19)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'}
+  ],
+  '凌波': [
+    {dt:'8/3(一)',t:'戌时(19-21)',gong:'乾6',men:'开门',tag:'',pri:'B'},
+    {dt:'8/4(二)',t:'亥时(21-23)',gong:'艮8',men:'休门',tag:'',pri:'B'},
+    {dt:'8/6(四)',t:'戌时(19-21)',gong:'坤2',men:'开门',tag:'',pri:'B'},
+    {dt:'8/7(五)',t:'戌时(19-21)',gong:'乾6',men:'开门',tag:'玉女守门★',pri:'A'},
+    {dt:'8/7(五)',t:'亥时(21-23)',gong:'坎1',men:'生门',tag:'玉女守门★',pri:'A'},
+    {dt:'8/8(六)',t:'寅时(03-05)',gong:'兑7',men:'休门',tag:'',pri:'B'},
+    {dt:'8/8(六)',t:'巳时(09-11)',gong:'巽4',men:'休门',tag:'',pri:'B'},
+    {dt:'8/8(六)',t:'亥时(21-23)',gong:'兑7',men:'开门',tag:'玉女守门★',pri:'A'}
+  ],
+  '龙醒': [
+    {dt:'8/3(一)',t:'戌时(19-21)',gong:'艮8',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/4(二)',t:'戌时(19-21)',gong:'艮8',men:'开门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
+    {dt:'8/5(三)',t:'子时(23-24)',gong:'艮8',men:'开门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/7(五)',t:'戌时(19-21)',gong:'艮8',men:'生门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
+    {dt:'8/7(五)',t:'亥时(21-23)',gong:'兑7',men:'开门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
+    {dt:'8/8(六)',t:'酉时(17-19)',gong:'乾6',men:'休门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'卯时(05-07)',gong:'乾6',men:'休门',tag:'三奇得使★⚡',pri:'A'}
+  ]
+};
+const pzFiltered = {
+  '李大笔': [
+    {dt:'8/8(六)',t:'辰时(07-09)',gong:'坤2',men:'生门',reason:'空亡'},
+    {dt:'8/8(六)',t:'酉时(17-19)',gong:'坎1',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'卯时(05-07)',gong:'坎1',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'午时(11-13)',gong:'坤2',men:'生门',reason:'空亡'}
+  ],
+  '凌波': [
+    {dt:'8/5(三)',t:'戌时(19-21)',gong:'巽4',men:'开门',reason:'空亡'},
+    {dt:'8/7(五)',t:'子时(23-24)',gong:'坎1',men:'休门',reason:'空亡'},
+    {dt:'8/8(六)',t:'子时(00-01)',gong:'坎1',men:'休门',reason:'空亡'},
+    {dt:'8/8(六)',t:'午时(11-13)',gong:'艮8',men:'开门',reason:'空亡'},
+    {dt:'8/9(日)',t:'丑时(01-03)',gong:'坤2',men:'休门',reason:'空亡'},
+    {dt:'8/9(日)',t:'未时(13-15)',gong:'巽4',men:'休门',reason:'击刑'},
+    {dt:'8/9(日)',t:'申时(15-17)',gong:'坤2',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'酉时(17-19)',gong:'巽4',men:'休门',reason:'击刑'},
+    {dt:'8/9(日)',t:'戌时(19-21)',gong:'艮8',men:'开门',reason:'空亡'}
+  ],
+  '龙醒': [
+    {dt:'8/8(六)',t:'未时(13-15)',gong:'艮8',men:'休门',reason:'空亡'},
+    {dt:'8/8(六)',t:'亥时(21-23)',gong:'坎1',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'辰时(07-09)',gong:'坤2',men:'开门',reason:'空亡'},
+    {dt:'8/9(日)',t:'亥时(21-23)',gong:'坎1',men:'开门',reason:'空亡'}
+  ]
+};
+
+// ========== RENDER: 排盘 ==========
+function renderPZRecommend() {
+  let html = `<div class="card">
+    <div class="card-title">🔮 ${pzWeek} 试炼排盘</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:12px">奇门遁甲·转盘·增强版v9 | 已过滤凶格（门迫+空亡+击刑）</div>
+    <div class="day-summary">
+      <div class="row"><span class="label">8/3-8/7</span><span class="val" style="color:var(--orange);font-size:14px">大暑下元 · 阴遁4局</span></div>
+      <div class="row"><span class="label">8/8-8/9</span><span class="val" style="color:var(--purple);font-size:14px">立秋上元 · 阴遁8局</span></div>
+    </div>
+  </div>`;
+
+  pzAccounts.forEach(acc => {
+    const recs = pzRecommend[acc.name] || [];
+    const best = recs.find(r => r.pri === 'A') || recs[0];
+    const sqTag = acc.sq ? '<span style="color:var(--yellow);font-size:11px;margin-left:6px">⚡三奇</span>' : '';
+    html += `<div class="card">
+      <div class="card-title">${acc.icon} ${acc.name}（${acc.school}·日干${acc.rg}）${sqTag}</div>`;
+    if (best) {
+      const isTop = best.tag.includes('三奇得使');
+      html += `<div style="background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px;border-left:4px solid ${isTop ? 'var(--yellow)' : 'var(--green)'}">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:4px">🎯 首选</div>
+        <div style="font-size:16px;font-weight:700;color:var(--t1)">${best.dt} ${best.t}</div>
+        <div style="font-size:13px;color:${isTop ? 'var(--yellow)' : 'var(--green)'};margin-top:4px">${best.gong} ${best.men} ${best.tag || '★吉门'}</div>
+      </div>`;
+    }
+    if (recs.length > 1) {
+      html += `<div style="font-size:12px;color:var(--t2);margin-bottom:6px">全部可用 ${recs.length} 个时段：</div>`;
+      recs.slice(0, 4).forEach(r => {
+        const c = r.pri === 'A' ? 'var(--yellow)' : 'var(--t2)';
+        html += `<div style="font-size:12px;color:var(--t3);padding:4px 0;border-bottom:1px solid var(--bdr)">
+          <span style="color:${c};font-weight:600">${r.dt}</span> ${r.t} · ${r.gong}${r.men} ${r.tag || '★'}</div>`;
+      });
+      if (recs.length > 4) {
+        html += `<div style="font-size:11px;color:var(--t3);margin-top:4px">等 ${recs.length - 4} 个更多时段...</div>`;
+      }
+    } else if (recs.length === 0) {
+      html += `<div style="font-size:13px;color:var(--red);padding:10px 0">⚠️ 本周无可用吉时</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // 凶格过滤汇总
+  const totalFiltered = Object.values(pzFiltered).reduce((s, a) => s + a.length, 0);
+  html += `<div class="card">
+    <div class="card-title" style="color:var(--red)">⚠️ 凶格过滤</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:8px">共排除 ${totalFiltered} 个吉门时段（门迫/空亡/击刑）</div>`;
+  pzAccounts.forEach(acc => {
+    const items = pzFiltered[acc.name] || [];
+    if (items.length > 0) {
+      html += `<div style="font-size:12px;color:var(--t2);margin-bottom:4px;margin-top:8px">${acc.name} 被排除 ${items.length} 个：</div>`;
+      items.slice(0, 3).forEach(f => {
+        html += `<div style="font-size:11px;color:var(--t3);padding:2px 0">· ${f.dt} ${f.t} ${f.gong}${f.men} ← ${f.reason}</div>`;
+      });
+      if (items.length > 3) html += `<div style="font-size:11px;color:var(--t3)">...等共 ${items.length} 个</div>`;
+    }
+  });
+  html += `</div>`;
+
+  document.getElementById('sub-pz-recommend').innerHTML = html;
+}
+
+function renderPZDetail() {
+  let html = '';
+  pzAccounts.forEach(acc => {
+    const recs = pzRecommend[acc.name] || [];
+    html += `<div class="card">
+      <div class="card-title">${acc.icon} ${acc.name} · 吉时表</div>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+          <th style="text-align:left;padding:6px 4px">日期</th>
+          <th style="text-align:left;padding:6px 4px">时段</th>
+          <th style="text-align:left;padding:6px 4px">宫·门</th>
+          <th style="text-align:left;padding:6px 4px">吉格</th>
+        </tr>`;
+    recs.forEach(r => {
+      const isA = r.pri === 'A';
+      html += `<tr style="border-bottom:1px solid var(--bdr)">
+          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--t2)'};font-weight:${isA ? 600 : 400}">${r.dt}</td>
+          <td style="padding:8px 4px;color:var(--t1)">${r.t}</td>
+          <td style="padding:8px 4px;color:var(--t1)">${r.gong} ${r.men}</td>
+          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--green)'}">${r.tag || '★吉门'}</td>
+        </tr>`;
+    });
+    html += `</table></div></div>`;
+  });
+  document.getElementById('sub-pz-detail').innerHTML = html;
+}
+
+function renderPZInfo() {
+  let html = `<div class="card">
+    <div class="card-title">📅 每日干支与局数</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+        <th style="text-align:left;padding:6px 4px">日期</th>
+        <th style="text-align:left;padding:6px 4px">干支</th>
+        <th style="text-align:left;padding:6px 4px">节气·元</th>
+        <th style="text-align:left;padding:6px 4px">局数</th>
+        <th style="text-align:left;padding:6px 4px">空亡</th>
+      </tr>`;
+  pzDays.forEach(d => {
+    const juColor = d.ju === 4 ? 'var(--orange)' : 'var(--purple)';
+    html += `<tr style="border-bottom:1px solid var(--bdr)">
+        <td style="padding:8px 4px;color:var(--t1)">${d.dt}(${d.wd})</td>
+        <td style="padding:8px 4px;color:var(--t1)">${d.gz}</td>
+        <td style="padding:8px 4px;color:var(--t2)">${d.jq}</td>
+        <td style="padding:8px 4px;color:${juColor};font-weight:600">阴${d.ju}局</td>
+        <td style="padding:8px 4px;color:var(--t3)">${d.kw}(${d.kwG})</td>
+      </tr>`;
+  });
+  html += `</table></div></div>`;
+
+  html += `<div class="card">
+    <div class="card-title">📖 排盘说明</div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.8">
+      <div>• 工作日仅排19:00后（戌时19-21起）</div>
+      <div>• 周末/节假日全天可排</div>
+      <div>• 英语课日(周一/三/四)亥时(21-23)已避开</div>
+      <div>• 子时(23-01)采用23:00换日约定</div>
+      <div style="margin-top:8px;color:var(--t3)">凶格过滤：门迫+空亡+击刑，满足任一即剔除</div>
+      <div style="color:var(--t3)">吉格标注：青龙返首/飞鸟跌穴/玉女守门/天遁/地遁/人遁</div>
+      <div style="margin-top:8px;color:var(--t3);font-style:italic">仅供游戏娱乐参考</div>
+    </div>
+  </div>`;
+  document.getElementById('sub-pz-info').innerHTML = html;
+}
+
+// ========== INIT ==========
+function init() {
+  // Set header date
+  const now = new Date();
+  document.getElementById('headerDate').textContent = now.toISOString().slice(0,10);
+
+  renderOverview();
+  renderPeriod('sub-today', now.toISOString().slice(0,10), now.toISOString().slice(0,10), '今日');
+  const [wStart, wEnd] = getWeekRange();
+  renderPeriod('sub-week', wStart, wEnd, '本周');
+  renderMonth();
+  renderDetail();
+  renderDaigou();
+  renderPZRecommend();
+  renderPZDetail();
+  renderPZInfo();
+}
+
+init();</script>
+</body>
+</html>
