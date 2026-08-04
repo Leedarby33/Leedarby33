@@ -525,8 +525,8 @@ function saveDailyWeight(){
     feedback.innerHTML='<span style="color:var(--green)">✓ 已记录今日体重 '+val+'kg</span>';
   }
   input.value='';
-  if(typeof renderOverview==='function')renderOverview();
-  if(typeof renderBody==='function')renderBody();
+  if(typeof initOverview==="function")initOverview();
+  if(typeof filterBody==="function")filterBody();
 }
 function initNav(){
   const todayStr=getTodayStr();
