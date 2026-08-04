@@ -260,7 +260,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="date-range">
 <input type="date" id="bodyStart" value="2026-05-26" onchange="filterBody()">
 <span>至</span>
-<input type="date" id="bodyEnd" value="2026-08-04" onchange="filterBody()">
+<input type="date" id="bodyEnd" value="2026-08-05" onchange="filterBody()">
 </div>
 </div>
 <div class="card">
@@ -1247,6 +1247,12 @@ function initMemo(){
 }
 
 // ===== INIT =====
+// 动态设置日期选择器的结束日期为今天
+const today=new Date();
+const todayISO=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+if($("trainEnd"))$("trainEnd").value=todayISO;
+if($("dietEnd"))$("dietEnd").value=todayISO;
+if($("bodyEnd"))$("bodyEnd").value=todayISO;
 initNav();
 initOverview();
 filterTraining();
