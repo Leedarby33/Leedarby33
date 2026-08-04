@@ -753,150 +753,82 @@ function makePieChart(slices,w,h){
 
 
 function drawWeightProgressChart(containerId, data, targetKg, targetDate, height174){
-  const w=450, h=340;
-  const pad={l:48,r:55,t:30,b:40};
+  const w=450, h=300;
+  const pad={l:44,r:16,t:20,b:32};
   const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
   
-  // Current BMI
-  const latestW=data[data.length-1].weight;
-  const curBMI=(latestW/(height174*height174)).toFixed(1);
+  // Two BMI reference lines
+  const bmi24=24*height174*height174; // ~72.7
+  const bmi30=30*height174*height174; // ~90.8
   
-  // BMI lines for height 1.74m
-  const bmiLines=[
-    {bmi:30, kg:(30*height174*height174), color:'#00E676', label:'BMI 30'},
-    {bmi:24, kg:(24*height174*height174), color:'#00B8D4', label:'BMI 24'},
-    {bmi:19, kg:(19*height174*height174), color:'#FFB300', label:'BMI 19'}
-  ];
-  
-  // Date range: first data point to target date
-  const startDate=new Date(data[0].date+'T00:00:00');
-  const endDate=new Date(targetDate+'T00:00:00');
-  const startTs=startDate.getTime(), endTs=endDate.getTime();
+  // Date range
+  const startTs=new Date(data[0].date+'T00:00:00').getTime();
+  const endTs=new Date(targetDate+'T00:00:00').getTime();
   const totalDays=(endTs-startTs)/86400000;
   
-  // Y range
-  const allKg=bmiLines.map(b=>b.kg).concat(data.map(d=>d.weight)).concat([targetKg]);
-  const yMin=Math.min(...allKg)-3;
-  const yMax=Math.max(...allKg)+3;
+  // Y range: show from a bit below target to a bit above highest data
+  const allVals=data.map(d=>d.weight).concat([targetKg,bmi24,bmi30]);
+  const yMin=Math.floor(Math.min(...allVals)-2);
+  const yMax=Math.ceil(Math.max(...allVals)+2);
   const yRange=yMax-yMin;
   
-  function xPx(dateStr){
-    const d=new Date(dateStr+'T00:00:00').getTime();
-    return pad.l+cw*((d-startTs)/totalDays);
-  }
-  function yPx(kg){
-    return pad.t+ch*(1-(kg-yMin)/yRange);
-  }
-  
-  let html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
-  html+='<div style="font-size:12px;color:var(--t2)">当前BMI <span style="font-size:18px;font-weight:700;color:var(--orange)">'+curBMI+'</span></div>';
-  html+='<div style="display:flex;gap:10px;font-size:10px">';
-  html+='<span style="color:#00E676">━━ BMI30</span>';
-  html+='<span style="color:#00B8D4">━━ BMI24</span>';
-  html+='<span style="color:#FFB300">━━ BMI19</span>';
-  html+='</div></div>';
+  function xPx(ds){return pad.l+cw*((new Date(ds+'T00:00:00').getTime()-startTs)/totalDays/86400000);}
+  function yPx(v){return pad.t+ch*(1-(v-yMin)/yRange);}
   
   let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg" style="max-height:'+h+'px">';
   
-  // Grid lines
-  const gridVals=[];
-  for(let v=Math.ceil(yMin);v<=Math.floor(yMax);v+=5) gridVals.push(v);
-  gridVals.forEach(v=>{
+  // Y-axis grid + labels
+  for(let v=Math.ceil(yMin/5)*5;v<=yMax;v+=5){
     const y=yPx(v);
-    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>';
-    svg+='<text x="'+(pad.l-6)+'" y="'+(y+4)+'" fill="#666" font-size="10" text-anchor="end">'+v+'</text>';
-  });
-  
-  // BMI reference lines
-  bmiLines.forEach(b=>{
-    const y=yPx(b.kg);
-    if(y>=pad.t-5 && y<=pad.t+ch+5){
-      svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="'+b.color+'" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>';
-      svg+='<text x="'+(w-pad.r+4)+'" y="'+(y+4)+'" fill="'+b.color+'" font-size="9" font-weight="600">'+b.kg.toFixed(1)+'</text>';
-    }
-  });
-  
-  // Target line (subtle fill from target to bottom)
-  const targetY=yPx(targetKg);
-  svg+='<rect x="'+pad.l+'" y="'+targetY+'" width="'+cw+'" height="'+(pad.t+ch-targetY)+'" fill="#FF6D00" opacity="0.03"/>';
-  svg+='<line x1="'+pad.l+'" y1="'+targetY+'" x2="'+(w-pad.r)+'" y2="'+targetY+'" stroke="#FF6D00" stroke-width="1" stroke-dasharray="3,5" opacity="0.4"/>';
-  
-  // Linear regression
-  const n=data.length;
-  let sumX=0,sumY=0,sumXY=0,sumX2=0;
-  data.forEach(d=>{
-    const x=(new Date(d.date+'T00:00:00').getTime()-startTs)/86400000;
-    sumX+=x; sumY+=d.weight; sumXY+=x*d.weight; sumX2+=x*x;
-  });
-  const slope=(n*sumXY-sumX*sumY)/(n*sumX2-sumX*sumX);
-  const intercept=(sumY-slope*sumX)/n;
-  
-  // Trend line
-  const tStartKg=intercept;
-  const tEndKg=slope*totalDays+intercept;
-  svg+='<line x1="'+pad.l+'" y1="'+yPx(tStartKg)+'" x2="'+(pad.l+cw)+'" y2="'+yPx(tEndKg)+'" stroke="#FF3D00" stroke-width="2" stroke-dasharray="8,5" opacity="0.6"/>';
-  
-  // X-axis labels (months)
-  const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  let labelDate=new Date(startDate);
-  labelDate.setDate(1);
-  if(labelDate<=startDate) labelDate.setMonth(labelDate.getMonth()+1);
-  while(labelDate<=endDate){
-    const ds=labelDate.toISOString().slice(0,10);
-    const x=xPx(ds);
-    if(x>=pad.l+10 && x<=w-pad.r-10){
-      svg+='<line x1="'+x+'" y1="'+pad.t+'" x2="'+x+'" y2="'+(h-pad.b)+'" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>';
-      svg+='<text x="'+x+'" y="'+(h-pad.b+16)+'" fill="#666" font-size="10" text-anchor="middle">'+months[labelDate.getMonth()]+'</text>';
-    }
-    labelDate.setMonth(labelDate.getMonth()+1);
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.06)"/>';
+    svg+='<text x="'+(pad.l-5)+'" y="'+(y+4)+'" fill="#666" font-size="10" text-anchor="end">'+v+'</text>';
   }
   
-  // Connecting line between dots (subtle)
-  let pathD='';
+  // BMI 30 line (green)
+  const y30=yPx(bmi30);
+  svg+='<line x1="'+pad.l+'" y1="'+y30+'" x2="'+(w-pad.r)+'" y2="'+y30+'" stroke="#00E676" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>';
+  svg+='<text x="'+(pad.l+4)+'" y="'+(y30-5)+'" fill="#00E676" font-size="10" font-weight="600">BMI 30 = '+bmi30.toFixed(1)+'kg</text>';
+  
+  // BMI 24 line (blue)
+  const y24=yPx(bmi24);
+  svg+='<line x1="'+pad.l+'" y1="'+y24+'" x2="'+(w-pad.r)+'" y2="'+y24+'" stroke="#00B8D4" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>';
+  svg+='<text x="'+(pad.l+4)+'" y="'+(y24-5)+'" fill="#00B8D4" font-size="10" font-weight="600">BMI 24 = '+bmi24.toFixed(1)+'kg</text>';
+  
+  // X-axis month labels
+  const mos=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  let ld=new Date(data[0].date+'T00:00:00');
+  ld.setDate(1); ld.setMonth(ld.getMonth()+1);
+  while(ld.getTime()<=endTs){
+    const ds=ld.toISOString().slice(0,10);
+    const x=xPx(ds);
+    if(x>pad.l+15 && x<w-pad.r-15){
+      svg+='<text x="'+x+'" y="'+(h-8)+'" fill="#666" font-size="10" text-anchor="middle">'+mos[ld.getMonth()]+'</text>';
+    }
+    ld.setMonth(ld.getMonth()+1);
+  }
+  
+  // Scatter dots with weight labels
   data.forEach((d,i)=>{
-    const x=xPx(d.date);
-    const y=yPx(d.weight);
-    pathD+=(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
-  });
-  svg+='<path d="'+pathD+'" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>';
-  
-  // Scatter dots - BIG and visible
-  data.forEach((d,i)=>{
-    const x=xPx(d.date);
-    const y=yPx(d.weight);
-    // Outer glow
-    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="7" fill="rgba(255,255,255,0.08)"/>';
-    // Main dot
-    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="4.5" fill="#fff" stroke="#222" stroke-width="1.5"/>';
+    const x=xPx(d.date), y=yPx(d.weight);
+    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="5" fill="#fff"/>';
+    // Label every point if not too crowded, else every other
+    const showLabel = data.length<=20 || i%2===0 || i===data.length-1;
+    if(showLabel){
+      svg+='<text x="'+x.toFixed(1)+'" y="'+(y-9)+'" fill="#ccc" font-size="8" text-anchor="middle">'+d.weight.toFixed(1)+'</text>';
+    }
   });
   
-  // Start point label
-  const first=data[0];
-  svg+='<text x="'+xPx(first.date)+'" y="'+(yPx(first.weight)-14)+'" fill="#00E676" font-size="12" text-anchor="middle" font-weight="700">起点 '+first.weight.toFixed(1)+'kg</text>';
-  svg+='<circle cx="'+xPx(first.date)+'" cy="'+yPx(first.weight)+'" r="7" fill="none" stroke="#00E676" stroke-width="2" opacity="0.8"/>';
+  // Start marker
+  svg+='<circle cx="'+xPx(data[0].date).toFixed(1)+'" cy="'+yPx(data[0].weight).toFixed(1)+'" r="7" fill="none" stroke="#00E676" stroke-width="2"/>';
   
-  // Latest point label
-  const last=data[data.length-1];
-  svg+='<text x="'+xPx(last.date)+'" y="'+(yPx(last.weight)-14)+'" fill="#fff" font-size="12" text-anchor="middle" font-weight="700">'+last.weight.toFixed(1)+'kg</text>';
-  
-  // Target point
-  const targetX=xPx(targetDate);
-  svg+='<circle cx="'+targetX+'" cy="'+targetY+'" r="8" fill="#FF6D00" opacity="0.8"/>';
-  svg+='<circle cx="'+targetX+'" cy="'+targetY+'" r="12" fill="none" stroke="#FF6D00" stroke-width="1.5" opacity="0.3"/>';
-  svg+='<text x="'+targetX+'" y="'+(targetY-18)+'" fill="#FF6D00" font-size="13" text-anchor="middle" font-weight="700">目标 '+targetKg+'kg</text>';
-  
-  // Legend at bottom
-  const legY=h-6;
-  svg+='<circle cx="'+(pad.l+5)+'" cy="'+(legY-3)+'" r="4" fill="#fff" stroke="#222" stroke-width="1.5"/>';
-  svg+='<text x="'+(pad.l+14)+'" y="'+legY+'" fill="#888" font-size="9">称重记录</text>';
-  svg+='<line x1="'+(pad.l+70)+'" y1="'+(legY-3)+'" x2="'+(pad.l+88)+'" y2="'+(legY-3)+'" stroke="#FF3D00" stroke-width="2" stroke-dasharray="4,3"/>';
-  svg+='<text x="'+(pad.l+93)+'" y="'+legY+'" fill="#888" font-size="9">趋势线</text>';
-  svg+='<circle cx="'+(pad.l+140)+'" cy="'+(legY-3)+'" r="4" fill="#FF6D00"/>';
-  svg+='<text x="'+(pad.l+149)+'" y="'+legY+'" fill="#888" font-size="9">目标</text>';
+  // Target marker
+  const tx=xPx(targetDate), ty=yPx(targetKg);
+  svg+='<circle cx="'+tx+'" cy="'+ty+'" r="7" fill="#FF6D00" opacity="0.85"/>';
+  svg+='<circle cx="'+tx+'" cy="'+ty+'" r="11" fill="none" stroke="#FF6D00" stroke-width="1.5" opacity="0.35"/>';
+  svg+='<text x="'+tx+'" y="'+(ty-14)+'" fill="#FF6D00" font-size="12" text-anchor="middle" font-weight="700">目标 '+targetKg+'kg</text>';
   
   svg+='</svg>';
-  html+=svg;
-  $(containerId).innerHTML=html;
+  $(containerId).innerHTML=svg;
 }
 
 // ===== TAB 2: OVERVIEW =====
