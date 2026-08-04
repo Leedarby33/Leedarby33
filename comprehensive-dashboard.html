@@ -133,6 +133,7 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
   <div class="main-panel active" id="panel-jizhang">
     <div class="sub-tabs">
       <div class="sub-tab active" data-sub="overview" onclick="switchSub('overview')">总览</div>
+      <div class="sub-tab" data-sub="add" onclick="switchSub('add')">+ 记账</div>
       <div class="sub-tab" data-sub="today" onclick="switchSub('today')">当日</div>
       <div class="sub-tab" data-sub="week" onclick="switchSub('week')">当周</div>
       <div class="sub-tab" data-sub="month" onclick="switchSub('month')">当月</div>
@@ -153,6 +154,42 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 
     <!-- 明细 -->
     <div class="sub-panel" id="sub-detail"></div>
+
+    <!-- 记账 -->
+    <div class="sub-panel" id="sub-add">
+      <div class="card" style="padding:20px">
+        <h3 style="margin:0 0 16px 0;font-size:16px;font-weight:600">新增支出</h3>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">日期</label>
+            <input type="date" id="add-date" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">金额 (元)</label>
+            <input type="number" id="add-amount" step="0.01" placeholder="0.00" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">分类</label>
+            <select id="add-category" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
+              <option value="餐饮">餐饮</option>
+              <option value="交通">交通</option>
+              <option value="娱乐">娱乐</option>
+              <option value="固定支出">固定支出</option>
+              <option value="补剂">补剂</option>
+              <option value="训练">训练</option>
+              <option value="个人护理">个人护理</option>
+              <option value="个人生活">个人生活</option>
+              <option value="数码产品">数码产品</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">备注</label>
+            <input type="text" id="add-item" placeholder="消费项目" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
+          </div>
+          <button onclick="addTransaction()" style="margin-top:8px;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">提交</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 待购入 Panel -->
