@@ -753,9 +753,13 @@ function makePieChart(slices,w,h){
 
 
 function drawWeightProgressChart(containerId, data, targetKg, targetDate, height174){
-  const w=450, h=280;
-  const pad={l:44,r:20,t:25,b:35};
+  const w=450, h=340;
+  const pad={l:48,r:55,t:30,b:40};
   const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+  
+  // Current BMI
+  const latestW=data[data.length-1].weight;
+  const curBMI=(latestW/(height174*height174)).toFixed(1);
   
   // BMI lines for height 1.74m
   const bmiLines=[
@@ -768,12 +772,12 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   const startDate=new Date(data[0].date+'T00:00:00');
   const endDate=new Date(targetDate+'T00:00:00');
   const startTs=startDate.getTime(), endTs=endDate.getTime();
-  const totalDays=(endTs-startTs)/(86400000);
+  const totalDays=(endTs-startTs)/86400000;
   
-  // Y range: from below lowest BMI line to above highest weight
+  // Y range
   const allKg=bmiLines.map(b=>b.kg).concat(data.map(d=>d.weight)).concat([targetKg]);
   const yMin=Math.min(...allKg)-3;
-  const yMax=Math.max(...allKg)+2;
+  const yMax=Math.max(...allKg)+3;
   const yRange=yMax-yMin;
   
   function xPx(dateStr){
@@ -784,30 +788,40 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
     return pad.t+ch*(1-(kg-yMin)/yRange);
   }
   
+  let html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+  html+='<div style="font-size:12px;color:var(--t2)">当前BMI <span style="font-size:18px;font-weight:700;color:var(--orange)">'+curBMI+'</span></div>';
+  html+='<div style="display:flex;gap:10px;font-size:10px">';
+  html+='<span style="color:#00E676">━━ BMI30</span>';
+  html+='<span style="color:#00B8D4">━━ BMI24</span>';
+  html+='<span style="color:#FFB300">━━ BMI19</span>';
+  html+='</div></div>';
+  
   let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg" style="max-height:'+h+'px">';
   
-  // Grid lines (horizontal)
-  const gridStep=Math.ceil(yRange/6);
-  for(let v=Math.ceil(yMin);v<=yMax;v+=gridStep){
+  // Grid lines
+  const gridVals=[];
+  for(let v=Math.ceil(yMin);v<=Math.floor(yMax);v+=5) gridVals.push(v);
+  gridVals.forEach(v=>{
     const y=yPx(v);
-    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
-    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#555" font-size="9" text-anchor="end">'+v+'</text>';
-  }
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>';
+    svg+='<text x="'+(pad.l-6)+'" y="'+(y+4)+'" fill="#666" font-size="10" text-anchor="end">'+v+'</text>';
+  });
   
-  // BMI reference lines (horizontal, dashed)
+  // BMI reference lines
   bmiLines.forEach(b=>{
     const y=yPx(b.kg);
-    if(y>=pad.t && y<=pad.t+ch){
-      svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="'+b.color+'" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>';
-      svg+='<text x="'+(w-pad.r+2)+'" y="'+(y+3)+'" fill="'+b.color+'" font-size="8" font-weight="600">'+b.label+' ('+b.kg.toFixed(1)+'kg)</text>';
+    if(y>=pad.t-5 && y<=pad.t+ch+5){
+      svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="'+b.color+'" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>';
+      svg+='<text x="'+(w-pad.r+4)+'" y="'+(y+4)+'" fill="'+b.color+'" font-size="9" font-weight="600">'+b.kg.toFixed(1)+'</text>';
     }
   });
   
-  // Target horizontal line (subtle)
+  // Target line (subtle fill from target to bottom)
   const targetY=yPx(targetKg);
-  svg+='<line x1="'+pad.l+'" y1="'+targetY+'" x2="'+(w-pad.r)+'" y2="'+targetY+'" stroke="#FF6D00" stroke-width="1" stroke-dasharray="2,4" opacity="0.3"/>';
+  svg+='<rect x="'+pad.l+'" y="'+targetY+'" width="'+cw+'" height="'+(pad.t+ch-targetY)+'" fill="#FF6D00" opacity="0.03"/>';
+  svg+='<line x1="'+pad.l+'" y1="'+targetY+'" x2="'+(w-pad.r)+'" y2="'+targetY+'" stroke="#FF6D00" stroke-width="1" stroke-dasharray="3,5" opacity="0.4"/>';
   
-  // Linear regression for trend line
+  // Linear regression
   const n=data.length;
   let sumX=0,sumY=0,sumXY=0,sumX2=0;
   data.forEach(d=>{
@@ -817,61 +831,72 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   const slope=(n*sumXY-sumX*sumY)/(n*sumX2-sumX*sumX);
   const intercept=(sumY-slope*sumX)/n;
   
-  // Draw trend line (red dashed) from first data point to target date or where it hits target
-  const trendStartX=pad.l;
-  const trendStartY=yPx(intercept);
-  const trendEndDay=totalDays;
-  const trendEndKg=slope*trendEndDay+intercept;
-  const trendEndX=pad.l+cw;
-  const trendEndY=yPx(trendEndKg);
-  svg+='<line x1="'+trendStartX+'" y1="'+trendStartY+'" x2="'+trendEndX+'" y2="'+trendEndY+'" stroke="#FF3D00" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.7"/>';
+  // Trend line
+  const tStartKg=intercept;
+  const tEndKg=slope*totalDays+intercept;
+  svg+='<line x1="'+pad.l+'" y1="'+yPx(tStartKg)+'" x2="'+(pad.l+cw)+'" y2="'+yPx(tEndKg)+'" stroke="#FF3D00" stroke-width="2" stroke-dasharray="8,5" opacity="0.6"/>';
   
-  // X-axis date labels
+  // X-axis labels (months)
   const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
   let labelDate=new Date(startDate);
   labelDate.setDate(1);
   if(labelDate<=startDate) labelDate.setMonth(labelDate.getMonth()+1);
   while(labelDate<=endDate){
-    const x=xPx(labelDate.toISOString().slice(0,10));
-    if(x>=pad.l && x<=w-pad.r){
-      svg+='<text x="'+x+'" y="'+(h-8)+'" fill="#555" font-size="9" text-anchor="middle">'+months[labelDate.getMonth()]+'</text>';
-      svg+='<line x1="'+x+'" y1="'+(pad.t)+'" x2="'+x+'" y2="'+(h-pad.b)+'" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>';
+    const ds=labelDate.toISOString().slice(0,10);
+    const x=xPx(ds);
+    if(x>=pad.l+10 && x<=w-pad.r-10){
+      svg+='<line x1="'+x+'" y1="'+pad.t+'" x2="'+x+'" y2="'+(h-pad.b)+'" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>';
+      svg+='<text x="'+x+'" y="'+(h-pad.b+16)+'" fill="#666" font-size="10" text-anchor="middle">'+months[labelDate.getMonth()]+'</text>';
     }
     labelDate.setMonth(labelDate.getMonth()+1);
   }
   
-  // Data points (scatter dots)
-  data.forEach(d=>{
+  // Connecting line between dots (subtle)
+  let pathD='';
+  data.forEach((d,i)=>{
     const x=xPx(d.date);
     const y=yPx(d.weight);
-    svg+='<circle cx="'+x+'" cy="'+y+'" r="4" fill="#fff" stroke="#333" stroke-width="1.5"/>';
-    // Show value for first, last, and every ~10th point
+    pathD+=(i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
   });
-  // Label first and last
-  const first=data[0], last=data[data.length-1];
-  svg+='<text x="'+xPx(first.date)+'" y="'+(yPx(first.weight)-10)+'" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">'+first.weight.toFixed(1)+'</text>';
-  svg+='<text x="'+xPx(last.date)+'" y="'+(yPx(last.weight)-10)+'" fill="#fff" font-size="10" text-anchor="middle" font-weight="700">'+last.weight.toFixed(1)+'</text>';
+  svg+='<path d="'+pathD+'" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>';
   
-  // Start point marker (green dot)
-  svg+='<circle cx="'+xPx(first.date)+'" cy="'+yPx(first.weight)+'" r="5" fill="none" stroke="#00E676" stroke-width="2"/>';
+  // Scatter dots - BIG and visible
+  data.forEach((d,i)=>{
+    const x=xPx(d.date);
+    const y=yPx(d.weight);
+    // Outer glow
+    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="7" fill="rgba(255,255,255,0.08)"/>';
+    // Main dot
+    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="4.5" fill="#fff" stroke="#222" stroke-width="1.5"/>';
+  });
   
-  // Target point (orange dot)
+  // Start point label
+  const first=data[0];
+  svg+='<text x="'+xPx(first.date)+'" y="'+(yPx(first.weight)-14)+'" fill="#00E676" font-size="12" text-anchor="middle" font-weight="700">起点 '+first.weight.toFixed(1)+'kg</text>';
+  svg+='<circle cx="'+xPx(first.date)+'" cy="'+yPx(first.weight)+'" r="7" fill="none" stroke="#00E676" stroke-width="2" opacity="0.8"/>';
+  
+  // Latest point label
+  const last=data[data.length-1];
+  svg+='<text x="'+xPx(last.date)+'" y="'+(yPx(last.weight)-14)+'" fill="#fff" font-size="12" text-anchor="middle" font-weight="700">'+last.weight.toFixed(1)+'kg</text>';
+  
+  // Target point
   const targetX=xPx(targetDate);
-  svg+='<circle cx="'+targetX+'" cy="'+targetY+'" r="6" fill="#FF6D00" opacity="0.9"/>';
-  svg+='<circle cx="'+targetX+'" cy="'+targetY+'" r="9" fill="none" stroke="#FF6D00" stroke-width="1.5" opacity="0.4"/>';
-  svg+='<text x="'+targetX+'" y="'+(targetY-14)+'" fill="#FF6D00" font-size="11" text-anchor="middle" font-weight="700">目标 '+targetKg+'kg</text>';
+  svg+='<circle cx="'+targetX+'" cy="'+targetY+'" r="8" fill="#FF6D00" opacity="0.8"/>';
+  svg+='<circle cx="'+targetX+'" cy="'+targetY+'" r="12" fill="none" stroke="#FF6D00" stroke-width="1.5" opacity="0.3"/>';
+  svg+='<text x="'+targetX+'" y="'+(targetY-18)+'" fill="#FF6D00" font-size="13" text-anchor="middle" font-weight="700">目标 '+targetKg+'kg</text>';
   
-  // Legend
-  const legY=h-3;
-  svg+='<circle cx="'+(pad.l+10)+'" cy="'+(legY-3)+'" r="3" fill="#fff" stroke="#333" stroke-width="1"/>';
-  svg+='<text x="'+(pad.l+18)+'" y="'+legY+'" fill="#888" font-size="8">体重</text>';
-  svg+='<line x1="'+(pad.l+50)+'" y1="'+(legY-3)+'" x2="'+(pad.l+65)+'" y2="'+(legY-3)+'" stroke="#FF3D00" stroke-width="1.5" stroke-dasharray="4,3"/>';
-  svg+='<text x="'+(pad.l+70)+'" y="'+legY+'" fill="#888" font-size="8">趋势</text>';
-  svg+='<circle cx="'+(pad.l+105)+'" cy="'+(legY-3)+'" r="3" fill="#FF6D00"/>';
-  svg+='<text x="'+(pad.l+113)+'" y="'+legY+'" fill="#888" font-size="8">目标</text>';
+  // Legend at bottom
+  const legY=h-6;
+  svg+='<circle cx="'+(pad.l+5)+'" cy="'+(legY-3)+'" r="4" fill="#fff" stroke="#222" stroke-width="1.5"/>';
+  svg+='<text x="'+(pad.l+14)+'" y="'+legY+'" fill="#888" font-size="9">称重记录</text>';
+  svg+='<line x1="'+(pad.l+70)+'" y1="'+(legY-3)+'" x2="'+(pad.l+88)+'" y2="'+(legY-3)+'" stroke="#FF3D00" stroke-width="2" stroke-dasharray="4,3"/>';
+  svg+='<text x="'+(pad.l+93)+'" y="'+legY+'" fill="#888" font-size="9">趋势线</text>';
+  svg+='<circle cx="'+(pad.l+140)+'" cy="'+(legY-3)+'" r="4" fill="#FF6D00"/>';
+  svg+='<text x="'+(pad.l+149)+'" y="'+legY+'" fill="#888" font-size="9">目标</text>';
   
   svg+='</svg>';
-  $(containerId).innerHTML=svg;
+  html+=svg;
+  $(containerId).innerHTML=html;
 }
 
 // ===== TAB 2: OVERVIEW =====
