@@ -159,7 +159,7 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
     <div class="sub-panel" id="sub-add">
       <div class="card" style="padding:20px">
         <h3 style="margin:0 0 16px 0;font-size:16px;font-weight:600">新增支出</h3>
-        <div style="display:flex;flex-direction:column;gap:12px">
+        <div id="add-form" style="display:flex;flex-direction:column;gap:12px">
           <div>
             <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">日期</label>
             <input type="date" id="add-date" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
@@ -187,7 +187,17 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
             <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">备注</label>
             <input type="text" id="add-item" placeholder="消费项目" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
           </div>
-          <button onclick="addTransaction()" style="margin-top:8px;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">提交</button>
+          <button onclick="previewTransaction()" style="margin-top:8px;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">预览</button>
+        </div>
+        <div id="add-confirm" style="display:none;margin-top:16px">
+          <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div style="font-size:13px;color:var(--t2);margin-bottom:8px">请确认以下记账信息：</div>
+            <div id="confirm-detail" style="font-size:15px;font-weight:500;line-height:1.8"></div>
+          </div>
+          <div style="display:flex;gap:12px">
+            <button onclick="confirmTransaction()" style="flex:1;padding:12px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">✓ 确认录入</button>
+            <button onclick="cancelPreview()" style="flex:1;padding:12px;background:var(--bdr2);color:var(--t1);border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">取消</button>
+          </div>
         </div>
       </div>
     </div>
@@ -236,6 +246,1040 @@ const catConfig = {
 const allCatOrder = ['固定支出','餐饮','补剂','训练','个人护理','交通','娱乐','医疗','穿戴','个人生活','数码产品'];
 
 // ========== HELPERS ==========
+function fmt(n) { return n.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtWan(n) { if(Math.abs(n)>=10000) return (n/10000).toFixed(2)+'万'; return fmt(n); }
+
+function formatDate(d) {
+  const parts = d.split('-');
+  return parseInt(parts[1]) + '/' + parseInt(parts[2]);
+}
+
+function isToday(dateStr) {
+  const now = new Date();
+  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
+  return dateStr === `${y}-${m}-${d}`;
+}
+
+function getWeekRange() {
+  const now = new Date();
+  const day = now.getDay() || 7;
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - day + 1);
+  const sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  const f = d => d.toISOString().slice(0,10);
+  return [f(mon), f(sun)];
+}
+
+function getMonthRange() {
+  const now = new Date();
+  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0');
+  const start = `${y}-${m}-01`;
+  const lastDay = new Date(y, parseInt(m), 0).getDate();
+  const end = `${y}-${m}-${String(lastDay).padStart(2,'0')}`;
+  return [start, end];
+}
+
+function filterByDate(items, start, end) {
+  return items.filter(t => t.date >= start && t.date <= end);
+}
+
+function calcExpense(list) { return list.reduce((s,t) => s + t.amount, 0); }
+function calcIncome(list) { return list.reduce((s,t) => s + t.amount, 0); }
+
+function groupByCategory(list) {
+  const g = {};
+  list.forEach(t => { g[t.category] = (g[t.category]||0) + t.amount; });
+  return g;
+}
+
+function daysSinceStart() {
+  const s = new Date(startDate);
+  const n = new Date();
+  return Math.max(1, Math.floor((n - s) / 86400000) + 1);
+}
+
+// ========== RENDER: 总览 ==========
+function renderOverview() {
+  const days = daysSinceStart();
+  const dailyAvg = totalExpense / days;
+  const catOrder = allCatOrder.filter(c => catTotals[c] && catTotals[c] > 0).sort((a,b) => catTotals[b] - catTotals[a]);
+
+  let html = `
+    <div class="card">
+      <div class="card-title">📊 记账总览</div>
+      <div class="kpi-grid">
+        <div class="kpi-item">
+          <div class="kpi-value income">¥${(totalIncome/10000).toFixed(2)}万</div>
+          <div class="kpi-label">总收入</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-value expense">¥${(totalExpense/10000).toFixed(2)}万</div>
+          <div class="kpi-label">总支出</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-value balance">¥${(balance/10000).toFixed(2)}万</div>
+          <div class="kpi-label">结余</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--t3)">
+        记账天数 ${days} 天 · 日均支出 ¥${fmt(dailyAvg)}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📂 支出分类</div>
+      <div class="cat-grid">`;
+
+  catOrder.forEach(cat => {
+    const cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
+    const amt = catTotals[cat] || 0;
+    const pct = totalExpense > 0 ? (amt / totalExpense * 100).toFixed(1) : 0;
+    html += `
+        <div class="cat-item" style="--cat-color:${cfg.color}">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
+          <div class="cat-icon">${cfg.emoji}</div>
+          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
+          <div class="cat-amount">¥${fmt(amt)}</div>
+          <div class="cat-pct">${pct}%</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
+        </div>`;
+  });
+
+  html += `</div></div>`;
+
+  // Income section
+  html += `
+    <div class="card">
+      <div class="card-title">💰 收入明细</div>
+      <div class="income-section">`;
+  incomeRecords.forEach(r => {
+    html += `<div class="income-row"><span class="name">${formatDate(r.date)} ${r.item}</span><span class="amt">+¥${fmt(r.amount)}</span></div>`;
+  });
+  html += `
+        <div class="income-total"><span class="name">累计收入</span><span class="amt">+¥${fmt(totalIncome)}</span></div>
+      </div>
+    </div>`;
+
+  // 最近明细
+  const recent = [...transactions].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 15);
+  html += `
+    <div class="card">
+      <div class="card-title">📋 最近明细</div>
+      <div class="tx-list">`;
+  recent.forEach(tx => {
+    const cfg = catConfig[tx.category] || {emoji:'📦',color:'#888'};
+    html += `
+        <div class="tx-item">
+          <div class="tx-emoji">${cfg.emoji}</div>
+          <div class="tx-left">
+            <div class="tx-name">${tx.item}</div>
+            <div class="tx-meta">${formatDate(tx.date)} · ${tx.category}</div>
+          </div>
+          <div class="tx-amount expense">-¥${fmt(tx.amount)}</div>
+        </div>`;
+  });
+  html += `</div></div>`;
+
+  document.getElementById('sub-overview').innerHTML = html;
+}
+
+// ========== RENDER: Period (当日/当周/当月) ==========
+function renderPeriod(panelId, start, end, label) {
+  const panel = document.getElementById(panelId);
+  const txs = filterByDate(transactions, start, end);
+  const incs = filterByDate(incomeRecords.map(r => ({date:r.date, category:'收入', item:r.item, amount:r.amount})), start, end);
+
+  if (txs.length === 0 && incs.length === 0) {
+    panel.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <div>${label}暂无记录</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--t3)">记账数据从 2026/6/1 开始</div>
+      </div>`;
+    return;
+  }
+
+  const expTotal = calcExpense(txs);
+  const incTotal = calcIncome(incs);
+  const grouped = groupByCategory(txs);
+  const catOrder = Object.keys(grouped).sort((a,b) => grouped[b] - grouped[a]);
+
+  let html = `
+    <div class="day-summary">
+      <div class="row"><span class="label">${label}支出</span><span class="val exp">¥${fmt(expTotal)}</span></div>
+      <div class="row"><span class="label">${label}收入</span><span class="val inc">¥${fmt(incTotal)}</span></div>
+      <div class="row"><span class="label">${label}笔数</span><span class="val" style="color:var(--t1)">${txs.length} 笔</span></div>
+    </div>`;
+
+  if (catOrder.length > 0) {
+    html += `<div class="card"><div class="card-title">分类汇总</div><div class="cat-grid">`;
+    catOrder.forEach(cat => {
+      const cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
+      const amt = grouped[cat];
+      const pct = expTotal > 0 ? (amt/expTotal*100).toFixed(1) : 0;
+      html += `
+        <div class="cat-item">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
+          <div class="cat-icon">${cfg.emoji}</div>
+          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
+          <div class="cat-amount">¥${fmt(amt)}</div>
+          <div class="cat-pct">${pct}%</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (txs.length > 0) {
+    html += `<div class="card"><div class="card-title">支出明细</div><div class="tx-list">`;
+    txs.slice().reverse().forEach(t => {
+      const cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">${cfg.emoji}</div>
+          <div class="tx-left">
+            <div class="tx-name">${t.item}</div>
+            <div class="tx-meta">${formatDate(t.date)} · ${t.category}</div>
+          </div>
+          <div class="tx-amount expense">-¥${fmt(t.amount)}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (incs.length > 0) {
+    html += `<div class="card"><div class="card-title">💰 收入</div><div class="tx-list">`;
+    incs.slice().reverse().forEach(r => {
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">💰</div>
+          <div class="tx-left">
+            <div class="tx-name">${r.item}</div>
+            <div class="tx-meta">${formatDate(r.date)}</div>
+          </div>
+          <div class="tx-amount income">+¥${fmt(r.amount)}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  panel.innerHTML = html;
+}
+
+// ========== RENDER: 当月 ==========
+function renderMonth() {
+  const [mStart, mEnd] = getMonthRange();
+  renderPeriod('sub-month', mStart, mEnd, '本月');
+
+  // Add month comparison at top
+  const panel = document.getElementById('sub-month');
+  const existing = panel.innerHTML;
+
+  // Calculate June vs July
+  const juneTxs = transactions.filter(t => t.date >= '2026-06-01' && t.date <= '2026-06-30');
+  const julyTxs = transactions.filter(t => t.date >= '2026-07-01' && t.date <= '2026-07-31');
+  const juneExp = calcExpense(juneTxs);
+  const julyExp = calcExpense(julyTxs);
+  const juneInc = calcIncome(incomeRecords.filter(r => r.date >= '2026-06-01' && r.date <= '2026-06-30'));
+  const julyInc = calcIncome(incomeRecords.filter(r => r.date >= '2026-07-01' && r.date <= '2026-07-31'));
+
+  // Check if current month has data
+  const curMonthTxs = filterByDate(transactions, mStart, mEnd);
+  if (curMonthTxs.length === 0) {
+    panel.innerHTML = `
+      <div class="month-compare">
+        <div class="month-card">
+          <div class="month-name">6月</div>
+          <div class="month-exp">¥${fmt(juneExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(juneInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(juneInc - juneExp)}</div>
+        </div>
+        <div class="month-card">
+          <div class="month-name">7月</div>
+          <div class="month-exp">¥${fmt(julyExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(julyInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(julyInc - julyExp)}</div>
+        </div>
+      </div>
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <div>本月暂无记录</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--t3)">以上为历史月份对比</div>
+      </div>`;
+  } else {
+    const header = `
+      <div class="month-compare">
+        <div class="month-card">
+          <div class="month-name">6月</div>
+          <div class="month-exp">¥${fmt(juneExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(juneInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(juneInc - juneExp)}</div>
+        </div>
+        <div class="month-card">
+          <div class="month-name">7月</div>
+          <div class="month-exp">¥${fmt(julyExp)}</div>
+          <div class="month-inc">收入 ¥${fmt(julyInc)}</div>
+          <div class="month-bal">结余 ¥${fmt(julyInc - julyExp)}</div>
+        </div>
+      </div>` + existing;
+    panel.innerHTML = header;
+  }
+}
+
+// ========== RENDER: 明细 ==========
+function renderDetail() {
+  const panel = document.getElementById('sub-detail');
+  let html = `
+    <div class="date-filter">
+      <select id="filterPreset" onchange="onPresetChange()">
+        <option value="all">全部</option>
+        <option value="jun">6月</option>
+        <option value="jul">7月</option>
+        <option value="custom">自定义</option>
+      </select>
+      <input type="date" id="filterStart" style="display:none" onchange="applyFilter()">
+      <span id="filterSep" style="display:none">至</span>
+      <input type="date" id="filterEnd" style="display:none" onchange="applyFilter()">
+    </div>
+    <div id="detailList"></div>`;
+  panel.innerHTML = html;
+  applyFilter();
+}
+
+function onPresetChange() {
+  const v = document.getElementById('filterPreset').value;
+  const s = document.getElementById('filterStart');
+  const e = document.getElementById('filterEnd');
+  const sep = document.getElementById('filterSep');
+
+  if (v === 'custom') {
+    s.style.display = '';
+    e.style.display = '';
+    sep.style.display = '';
+    s.value = '2026-06-01';
+    e.value = '2026-07-31';
+    applyFilter();
+  } else {
+    s.style.display = 'none';
+    e.style.display = 'none';
+    sep.style.display = 'none';
+    applyFilter();
+  }
+}
+
+function applyFilter() {
+  const preset = document.getElementById('filterPreset').value;
+  let start = '', end = '9999-12-31';
+
+  if (preset === 'jun') { start = '2026-06-01'; end = '2026-06-30'; }
+  else if (preset === 'jul') { start = '2026-07-01'; end = '2026-07-31'; }
+  else if (preset === 'custom') {
+    start = document.getElementById('filterStart').value || '2026-06-01';
+    end = document.getElementById('filterEnd').value || '2026-07-31';
+  }
+
+  const txs = filterByDate(transactions, start || '0000-01-01', end);
+  const incs = filterByDate(incomeRecords, start || '0000-01-01', end);
+
+  // Combine and sort
+  const all = [
+    ...txs.map(t => ({...t, type:'expense'})),
+    ...incs.map(r => ({date:r.date, item:r.item, amount:r.amount, category:'收入', type:'income'}))
+  ].sort((a,b) => b.date.localeCompare(a.date) || (a.type === 'income' ? -1 : 1));
+
+  const expTotal = calcExpense(txs);
+  const incTotal = calcIncome(incs.map(r => ({amount:r.amount})));
+
+  let html = `
+    <div class="day-summary">
+      <div class="row"><span class="label">支出合计</span><span class="val exp">¥${fmt(expTotal)}</span></div>
+      <div class="row"><span class="label">收入合计</span><span class="val inc">¥${fmt(incTotal)}</span></div>
+      <div class="row"><span class="label">共 ${all.length} 笔</span><span class="val" style="color:var(--t3);font-size:13px">${start||'起始'} ~ ${end==='9999-12-31'?'至今':end}</span></div>
+    </div>
+    <div class="card"><div class="tx-list">`;
+
+  all.forEach(t => {
+    if (t.type === 'income') {
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">💰</div>
+          <div class="tx-left">
+            <div class="tx-name">${t.item}</div>
+            <div class="tx-meta">${formatDate(t.date)} · 收入</div>
+          </div>
+          <div class="tx-amount income">+¥${fmt(t.amount)}</div>
+        </div>`;
+    } else {
+      const cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
+      html += `
+        <div class="tx-item">
+          <div class="tx-emoji">${cfg.emoji}</div>
+          <div class="tx-left">
+            <div class="tx-name">${t.item}</div>
+            <div class="tx-meta">${formatDate(t.date)} · ${t.category}</div>
+          </div>
+          <div class="tx-amount expense">-¥${fmt(t.amount)}</div>
+        </div>`;
+    }
+  });
+
+  html += `</div></div>`;
+  document.getElementById('detailList').innerHTML = html;
+}
+
+// ========== RENDER: 待购入 ==========
+function renderDaigou() {
+  const wishlist = [
+    {
+      icon: '👓',
+      name: '林德伯格 Blok 眼镜框',
+      status: '待购入',
+      priority: '高',
+      price: '2000-3000',
+      notes: [
+        '等减到70kg后去专柜试框',
+        '丹麦设计，5.5g超轻，含镜片整副17-19g',
+        '南京/上海试框记型号 → 香港买框+内地配镜片'
+      ],
+      timing: '2026年双11前后'
+    },
+    {
+      icon: '🔬',
+      name: '蔡司新清锐 1.60 铂金膜',
+      status: '待购入',
+      priority: '高',
+      price: '500-700',
+      notes: [
+        '已验证5年满意度，膜层耐用',
+        '如果智锐有大折扣优先智锐',
+        '主人度数：325/350，无散光'
+      ],
+      timing: '与镜框同步，双11蹲好价'
+    },
+    {
+      icon: '🔬',
+      name: '蔡司智锐 1.60 铂金膜（备选）',
+      status: '备选',
+      priority: '中',
+      price: '1000-1500',
+      notes: [
+        '比新清锐多瞳孔优化技术，夜视/边缘更清晰',
+        '仅在有大折扣时升级，否则选新清锐',
+        '门店砍后实际到手约1000-1500'
+      ],
+      timing: '与镜框同步'
+    },
+    {
+      icon: '🌿',
+      name: 'Coral Aria 大地调扩香精油 200ml',
+      status: '待购入',
+      priority: '高',
+      price: '~400',
+      notes: [
+        '阿联酋品牌，专做扩香精油，香调表仿大地原版',
+        '观夏昆仑煮雪与大地区别大，这个是目前最接近的替代方案',
+        '需配扩香机使用，建议先试小样'
+      ],
+      timing: '观夏用完或不想用了再买'
+    }
+  ];
+
+  let html = `
+    <div class="card">
+      <div class="card-title">🎯 愿望清单</div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:14px">想买的、计划买的，想好了再下手</div>`;
+
+  wishlist.forEach((item, idx) => {
+    const borderColor = item.priority === '高' ? 'var(--red)' : item.priority === '中' ? 'var(--orange)' : 'var(--t3)';
+    html += `
+      <div style="background:var(--inset);border-radius:var(--rs);padding:16px;margin-bottom:12px;border-left:4px solid ${borderColor}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:24px">${item.icon}</span>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:600;color:var(--t1)">${item.name}</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:2px">预算 ¥${item.price}</div>
+          </div>
+          <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:${item.priority === '高' ? 'rgba(255,59,48,0.15)' : 'rgba(255,149,0,0.15)'};color:${borderColor};font-weight:600">${item.status}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">`;
+    item.notes.forEach(note => {
+      html += `<div style="font-size:12px;color:var(--t2);padding:4px 8px;background:rgba(0,0,0,0.04);border-radius:6px">• ${note}</div>`;
+    });
+    html += `
+        </div>
+        <div style="font-size:11px;color:var(--orange)">⏰ 时机：${item.timing}</div>
+      </div>`;
+  });
+
+  html += `
+    </div>
+    <div class="card">
+      <div class="card-title">📝 配镜总预算参考</div>
+      <div class="day-summary">
+        <div class="row"><span class="label">镜框（林德伯格Blok）</span><span class="val" style="color:var(--t1);font-size:14px">¥2,000-3,000</span></div>
+        <div class="row"><span class="label">镜片（新清锐/智锐）</span><span class="val" style="color:var(--t1);font-size:14px">¥500-1,500</span></div>
+        <div class="row"><span class="label">整副预算</span><span class="val" style="color:var(--orange);font-size:16px">¥3,000-5,000</span></div>
+        <div class="row"><span class="label">蹲好价渠道</span><span class="val" style="color:var(--green);font-size:13px">什么值得买</span></div>
+      </div>
+    </div>`;
+
+  document.getElementById('panel-daigou').innerHTML = html;
+}
+
+// ========== TAB SWITCHING ==========
+function switchMain(name) {
+  document.querySelectorAll('.main-tab').forEach(el => el.classList.toggle('active', el.dataset.main === name));
+  document.querySelectorAll('.main-panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + name));
+}
+
+function switchSub(name) {
+  document.querySelectorAll('.sub-tab').forEach(el => el.classList.toggle('active', el.dataset.sub === name));
+  document.querySelectorAll('.sub-panel').forEach(el => el.classList.toggle('active', el.id === 'sub-' + name));
+}
+
+// ========== 排盘 DATA ==========
+const pzWeek = '第12周（8/3-8/9）';
+const pzAccounts = [
+  {name:'李大笔', school:'霸刀', rg:'丁', sq:true, icon:'🔥'},
+  {name:'凌波', school:'凌雪阁', rg:'壬', sq:false, icon:'🌊'},
+  {name:'龙醒', school:'丐帮', rg:'丙', sq:true, icon:'🐉'}
+];
+const pzDays = [
+  {dt:'8/3',wd:'一',gz:'己酉',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
+  {dt:'8/4',wd:'二',gz:'庚戌',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:''},
+  {dt:'8/5',wd:'三',gz:'辛亥',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
+  {dt:'8/6',wd:'四',gz:'壬子',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
+  {dt:'8/7',wd:'五',gz:'癸丑',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:''},
+  {dt:'8/8',wd:'六',gz:'甲寅',jq:'立秋上元',ju:8,kw:'子丑',kwG:'坎1+坤2+艮8',note:'周末全天'},
+  {dt:'8/9',wd:'日',gz:'乙卯',jq:'立秋上元',ju:8,kw:'子丑',kwG:'坎1+坤2+艮8',note:'周末全天'}
+];
+const pzRecommend = {
+  '李大笔': [
+    {dt:'8/6(四)',t:'戌时(19-21)',gong:'乾6',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/6(四)',t:'子时(23-24)',gong:'离9',men:'休门',tag:'三奇得使★⚡+人遁★',pri:'A'},
+    {dt:'8/8(六)',t:'巳时(09-11)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/8(六)',t:'申时(15-17)',gong:'乾6',men:'开门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'丑时(01-03)',gong:'兑7',men:'生门',tag:'三奇得使★⚡+地遁★',pri:'A'},
+    {dt:'8/9(日)',t:'寅时(03-05)',gong:'乾6',men:'开门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'未时(13-15)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'酉时(17-19)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'}
+  ],
+  '凌波': [
+    {dt:'8/3(一)',t:'戌时(19-21)',gong:'乾6',men:'开门',tag:'',pri:'B'},
+    {dt:'8/4(二)',t:'亥时(21-23)',gong:'艮8',men:'休门',tag:'',pri:'B'},
+    {dt:'8/6(四)',t:'戌时(19-21)',gong:'坤2',men:'开门',tag:'',pri:'B'},
+    {dt:'8/7(五)',t:'戌时(19-21)',gong:'乾6',men:'开门',tag:'玉女守门★',pri:'A'},
+    {dt:'8/7(五)',t:'亥时(21-23)',gong:'坎1',men:'生门',tag:'玉女守门★',pri:'A'},
+    {dt:'8/8(六)',t:'寅时(03-05)',gong:'兑7',men:'休门',tag:'',pri:'B'},
+    {dt:'8/8(六)',t:'巳时(09-11)',gong:'巽4',men:'休门',tag:'',pri:'B'},
+    {dt:'8/8(六)',t:'亥时(21-23)',gong:'兑7',men:'开门',tag:'玉女守门★',pri:'A'}
+  ],
+  '龙醒': [
+    {dt:'8/3(一)',t:'戌时(19-21)',gong:'艮8',men:'生门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/4(二)',t:'戌时(19-21)',gong:'艮8',men:'开门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
+    {dt:'8/5(三)',t:'子时(23-24)',gong:'艮8',men:'开门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/7(五)',t:'戌时(19-21)',gong:'艮8',men:'生门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
+    {dt:'8/7(五)',t:'亥时(21-23)',gong:'兑7',men:'开门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
+    {dt:'8/8(六)',t:'酉时(17-19)',gong:'乾6',men:'休门',tag:'三奇得使★⚡',pri:'A'},
+    {dt:'8/9(日)',t:'卯时(05-07)',gong:'乾6',men:'休门',tag:'三奇得使★⚡',pri:'A'}
+  ]
+};
+const pzFiltered = {
+  '李大笔': [
+    {dt:'8/8(六)',t:'辰时(07-09)',gong:'坤2',men:'生门',reason:'空亡'},
+    {dt:'8/8(六)',t:'酉时(17-19)',gong:'坎1',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'卯时(05-07)',gong:'坎1',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'午时(11-13)',gong:'坤2',men:'生门',reason:'空亡'}
+  ],
+  '凌波': [
+    {dt:'8/5(三)',t:'戌时(19-21)',gong:'巽4',men:'开门',reason:'空亡'},
+    {dt:'8/7(五)',t:'子时(23-24)',gong:'坎1',men:'休门',reason:'空亡'},
+    {dt:'8/8(六)',t:'子时(00-01)',gong:'坎1',men:'休门',reason:'空亡'},
+    {dt:'8/8(六)',t:'午时(11-13)',gong:'艮8',men:'开门',reason:'空亡'},
+    {dt:'8/9(日)',t:'丑时(01-03)',gong:'坤2',men:'休门',reason:'空亡'},
+    {dt:'8/9(日)',t:'未时(13-15)',gong:'巽4',men:'休门',reason:'击刑'},
+    {dt:'8/9(日)',t:'申时(15-17)',gong:'坤2',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'酉时(17-19)',gong:'巽4',men:'休门',reason:'击刑'},
+    {dt:'8/9(日)',t:'戌时(19-21)',gong:'艮8',men:'开门',reason:'空亡'}
+  ],
+  '龙醒': [
+    {dt:'8/8(六)',t:'未时(13-15)',gong:'艮8',men:'休门',reason:'空亡'},
+    {dt:'8/8(六)',t:'亥时(21-23)',gong:'坎1',men:'生门',reason:'空亡'},
+    {dt:'8/9(日)',t:'辰时(07-09)',gong:'坤2',men:'开门',reason:'空亡'},
+    {dt:'8/9(日)',t:'亥时(21-23)',gong:'坎1',men:'开门',reason:'空亡'}
+  ]
+};
+
+// ========== RENDER: 排盘 ==========
+function renderPZRecommend() {
+  let html = `<div class="card">
+    <div class="card-title">🔮 ${pzWeek} 试炼排盘</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:12px">奇门遁甲·转盘·增强版v9 | 已过滤凶格（门迫+空亡+击刑）</div>
+    <div class="day-summary">
+      <div class="row"><span class="label">8/3-8/7</span><span class="val" style="color:var(--orange);font-size:14px">大暑下元 · 阴遁4局</span></div>
+      <div class="row"><span class="label">8/8-8/9</span><span class="val" style="color:var(--purple);font-size:14px">立秋上元 · 阴遁8局</span></div>
+    </div>
+  </div>`;
+
+  pzAccounts.forEach(acc => {
+    const recs = pzRecommend[acc.name] || [];
+    const best = recs.find(r => r.pri === 'A') || recs[0];
+    const sqTag = acc.sq ? '<span style="color:var(--yellow);font-size:11px;margin-left:6px">⚡三奇</span>' : '';
+    html += `<div class="card">
+      <div class="card-title">${acc.icon} ${acc.name}（${acc.school}·日干${acc.rg}）${sqTag}</div>`;
+    if (best) {
+      const isTop = best.tag.includes('三奇得使');
+      html += `<div style="background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px;border-left:4px solid ${isTop ? 'var(--yellow)' : 'var(--green)'}">
+        <div style="font-size:11px;color:var(--t3);margin-bottom:4px">🎯 首选</div>
+        <div style="font-size:16px;font-weight:700;color:var(--t1)">${best.dt} ${best.t}</div>
+        <div style="font-size:13px;color:${isTop ? 'var(--yellow)' : 'var(--green)'};margin-top:4px">${best.gong} ${best.men} ${best.tag || '★吉门'}</div>
+      </div>`;
+    }
+    if (recs.length > 1) {
+      html += `<div style="font-size:12px;color:var(--t2);margin-bottom:6px">全部可用 ${recs.length} 个时段：</div>`;
+      recs.slice(0, 4).forEach(r => {
+        const c = r.pri === 'A' ? 'var(--yellow)' : 'var(--t2)';
+        html += `<div style="font-size:12px;color:var(--t3);padding:4px 0;border-bottom:1px solid var(--bdr)">
+          <span style="color:${c};font-weight:600">${r.dt}</span> ${r.t} · ${r.gong}${r.men} ${r.tag || '★'}</div>`;
+      });
+      if (recs.length > 4) {
+        html += `<div style="font-size:11px;color:var(--t3);margin-top:4px">等 ${recs.length - 4} 个更多时段...</div>`;
+      }
+    } else if (recs.length === 0) {
+      html += `<div style="font-size:13px;color:var(--red);padding:10px 0">⚠️ 本周无可用吉时</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // 凶格过滤汇总
+  const totalFiltered = Object.values(pzFiltered).reduce((s, a) => s + a.length, 0);
+  html += `<div class="card">
+    <div class="card-title" style="color:var(--red)">⚠️ 凶格过滤</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:8px">共排除 ${totalFiltered} 个吉门时段（门迫/空亡/击刑）</div>`;
+  pzAccounts.forEach(acc => {
+    const items = pzFiltered[acc.name] || [];
+    if (items.length > 0) {
+      html += `<div style="font-size:12px;color:var(--t2);margin-bottom:4px;margin-top:8px">${acc.name} 被排除 ${items.length} 个：</div>`;
+      items.slice(0, 3).forEach(f => {
+        html += `<div style="font-size:11px;color:var(--t3);padding:2px 0">· ${f.dt} ${f.t} ${f.gong}${f.men} ← ${f.reason}</div>`;
+      });
+      if (items.length > 3) html += `<div style="font-size:11px;color:var(--t3)">...等共 ${items.length} 个</div>`;
+    }
+  });
+  html += `</div>`;
+
+  document.getElementById('sub-pz-recommend').innerHTML = html;
+}
+
+function renderPZDetail() {
+  let html = '';
+  pzAccounts.forEach(acc => {
+    const recs = pzRecommend[acc.name] || [];
+    html += `<div class="card">
+      <div class="card-title">${acc.icon} ${acc.name} · 吉时表</div>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+          <th style="text-align:left;padding:6px 4px">日期</th>
+          <th style="text-align:left;padding:6px 4px">时段</th>
+          <th style="text-align:left;padding:6px 4px">宫·门</th>
+          <th style="text-align:left;padding:6px 4px">吉格</th>
+        </tr>`;
+    recs.forEach(r => {
+      const isA = r.pri === 'A';
+      html += `<tr style="border-bottom:1px solid var(--bdr)">
+          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--t2)'};font-weight:${isA ? 600 : 400}">${r.dt}</td>
+          <td style="padding:8px 4px;color:var(--t1)">${r.t}</td>
+          <td style="padding:8px 4px;color:var(--t1)">${r.gong} ${r.men}</td>
+          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--green)'}">${r.tag || '★吉门'}</td>
+        </tr>`;
+    });
+    html += `</table></div></div>`;
+  });
+  document.getElementById('sub-pz-detail').innerHTML = html;
+}
+
+function renderPZInfo() {
+  let html = `<div class="card">
+    <div class="card-title">📅 每日干支与局数</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+        <th style="text-align:left;padding:6px 4px">日期</th>
+        <th style="text-align:left;padding:6px 4px">干支</th>
+        <th style="text-align:left;padding:6px 4px">节气·元</th>
+        <th style="text-align:left;padding:6px 4px">局数</th>
+        <th style="text-align:left;padding:6px 4px">空亡</th>
+      </tr>`;
+  pzDays.forEach(d => {
+    const juColor = d.ju === 4 ? 'var(--orange)' : 'var(--purple)';
+    html += `<tr style="border-bottom:1px solid var(--bdr)">
+        <td style="padding:8px 4px;color:var(--t1)">${d.dt}(${d.wd})</td>
+        <td style="padding:8px 4px;color:var(--t1)">${d.gz}</td>
+        <td style="padding:8px 4px;color:var(--t2)">${d.jq}</td>
+        <td style="padding:8px 4px;color:${juColor};font-weight:600">阴${d.ju}局</td>
+        <td style="padding:8px 4px;color:var(--t3)">${d.kw}(${d.kwG})</td>
+      </tr>`;
+  });
+  html += `</table></div></div>`;
+
+  html += `<div class="card">
+    <div class="card-title">📖 排盘说明</div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.8">
+      <div>• 工作日仅排19:00后（戌时19-21起）</div>
+      <div>• 周末/节假日全天可排</div>
+      <div>• 英语课日(周一/三/四)亥时(21-23)已避开</div>
+      <div>• 子时(23-01)采用23:00换日约定</div>
+      <div style="margin-top:8px;color:var(--t3)">凶格过滤：门迫+空亡+击刑，满足任一即剔除</div>
+      <div style="color:var(--t3)">吉格标注：青龙返首/飞鸟跌穴/玉女守门/天遁/地遁/人遁</div>
+      <div style="margin-top:8px;color:var(--t3);font-style:italic">仅供游戏娱乐参考</div>
+    </div>
+  </div>`;
+  document.getElementById('sub-pz-info').innerHTML = html;
+}
+
+// ========== TRAINING: V7 训练计划 ==========
+// 0=休息 1=推日 2=拉日 3=下肢 4=肩臂
+const V7_WEEK = [
+  {day:'周一',type:1,label:'推力量+代谢收尾+短HIIT',dur:77,energy:'中等',color:'#ff6b6b',
+    activation:'弹力带肩外旋 1×15/侧 + 面拉 1×15',
+    main:[
+      {n:'哑铃卧推',s:'4×10-12',w:'7.5-10kg/手',note:'肩胛后缩贴凳，肘45-75°不90°外展',warn:'肩痛即停→换哑铃卧推'},
+      {n:'哑铃肩推',s:'4×10-12',w:'7.5kg/手',note:'背贴靠背不后仰'},
+      {n:'标准俯卧撑',s:'4×力竭',w:'自重',note:'末组可改跪姿'},
+      {n:'仰卧臂屈伸',s:'4×12',w:'5kg',note:'大臂固定不动'}
+    ],
+    finisher:'代谢收尾(10min): 哑铃深蹲推举45s→哑铃摇摆45s→侧向箭步蹲60s→休60s ×3轮',
+    hiit:'短HIIT(15min,5轮): 登山者40s→高抬腿40s→开合跳40s→休60s',
+    cool:'冷身拉伸(10min): 胸肌门框拉伸30s×2 + 肩前束30s/侧 + 三头30s/侧 + 踝画圈'},
+  {day:'周二',type:2,label:'拉力量+代谢收尾+短HIIT+肩胛协议',dur:97,energy:'高',color:'#1e90ff',
+    activation:'弹力带外旋+内旋 各1×15/侧',
+    main:[
+      {n:'离心引体向上',s:'4组',w:'自重',note:'窄握/对握，离心5秒，禁宽握'},
+      {n:'单臂哑铃划船',s:'4×12-15',w:'12.5kg/手',note:'离心5-6秒'},
+      {n:'面拉',s:'4×15',w:'弹力带10磅',note:'对准面部，顶峰挤压1-2秒'},
+      {n:'哑铃弯举',s:'4×12',w:'5-7.5kg/手',note:'坐姿靠凳'}
+    ],
+    finisher:'代谢收尾(10min): 哑铃深蹲推举45s→哑铃摇摆45s→侧向箭步蹲60s→休60s ×3轮',
+    hiit:'短HIIT(15min,5轮): 登山者40s→高抬腿40s→开合跳40s→休60s',
+    extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
+    cool:'冷身拉伸(10min): 背阔肌+二头+后束 各30s/侧 + 踝画圈'},
+  {day:'周三',type:0,label:'休息',dur:0,energy:'最低',color:'#aeaeb2'},
+  {day:'周四',type:2,label:'拉力量+短HIIT',dur:67,energy:'低',color:'#1e90ff',
+    activation:'弹力带外旋+内旋 各1×15/侧',
+    main:[
+      {n:'离心引体向上',s:'4组',w:'自重',note:'窄握/对握，离心5秒，禁宽握'},
+      {n:'海豹划船',s:'4×12-15',w:'12.5kg/手',note:'俯卧在凳上，拉向胸部两侧，肩胛骨后缩挤压，离心5-6秒'},
+      {n:'面拉',s:'4×15',w:'弹力带10磅',note:'顶峰挤压1-2秒'},
+      {n:'哑铃弯举',s:'4×12',w:'5-7.5kg/手',note:'坐姿靠凳'}
+    ],
+    hiit:'短HIIT(15min,5轮): 登山者40s→高抬腿40s→开合跳40s→休60s',
+    cool:'冷身拉伸(10min): 背阔肌30s/侧 + 二头30s/侧 + 后束30s/侧 + 踝画圈'},
+  {day:'周五',type:1,label:'推力量+代谢收尾+短HIIT+肩胛协议',dur:97,energy:'高',color:'#ff6b6b',
+    activation:'弹力带肩外旋 1×15/侧 + 面拉 1×15',
+    main:[
+      {n:'哑铃卧推',s:'4×10-12',w:'7.5-10kg/手',note:'肩胛后缩贴凳，肘45-75°不90°外展',warn:'肩痛即停→换哑铃卧推'},
+      {n:'哑铃肩推',s:'4×10-12',w:'7.5kg/手',note:'背贴靠背不后仰'},
+      {n:'标准俯卧撑',s:'4×力竭',w:'自重',note:'末组可改跪姿'},
+      {n:'仰卧臂屈伸',s:'4×12',w:'5kg',note:'大臂固定不动'}
+    ],
+    finisher:'代谢收尾(10min): 哑铃深蹲推举45s→哑铃摇摆45s→侧向箭步蹲60s→休60s ×3轮',
+    hiit:'短HIIT(15min,5轮): 登山者40s→高抬腿40s→开合跳40s→休60s',
+    extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
+    cool:'冷身拉伸(10min): 胸肌门框拉伸30s×2 + 肩前束30s/侧 + 三头30s/侧 + 踝画圈'},
+  {day:'周六',type:3,label:'下肢+核心+肩胛协议+长HIIT',dur:108,energy:'最高',color:'#34c759',
+    activation:'无额外激活',
+    legMain:[
+      {n:'高脚杯深蹲',s:'4×12',w:'10kg哑铃',note:'膝盖追脚尖，不加重量维持即可'},
+      {n:'保加利亚分腿蹲',s:'4×10/侧',w:'5kg/手',note:'先做右腿(弱侧)'},
+      {n:'单腿臀桥',s:'4×12/侧',w:'自重',note:'顶峰挤压1秒'}
+    ],
+    core:[
+      {n:'Pallof Press',s:'3×10/侧',w:'弹力带10磅',note:'推出保持3秒再收回，抗旋转核心训练',new:true},
+      {n:'死虫式 Dead Bug',s:'3×10/侧',w:'自重',note:'对侧手脚伸出后保持3秒，慢速控制'},
+      {n:'鸟狗式',s:'3×8/侧',w:'自重',note:'顶端停2秒，身体不旋转'},
+      {n:'空心体保持',s:'2×30-45秒',w:'自重',note:'下背压实，身体呈香蕉形'}
+    ],
+    extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
+    hiit:'长HIIT(30min,7轮): 登山者45s→高抬腿45s→开合跳45s→波比退阶10次→弓步蹲12/侧→休60-90s',
+    cool:'冷身拉伸(10min): 股四头肌45s/侧 + 腘绳肌45s/侧 + 髋屈肌60s/侧 + 踝画圈'},
+  {day:'周日',type:0,label:'休息',dur:0,energy:'-',color:'#aeaeb2'}
+];
+
+const V7_LIB = [
+  {name:'弹力带肩外旋',cat:'肩袖激活',desc:'手肘夹毛巾贴体侧，弹力带从腹部方向向外旋转至手臂外旋位，3秒离心回放。10磅窄带。'},
+  {name:'面拉 Face Pull',cat:'肩袖激活',desc:'弹力带固定面部高度，双手拉向面部两侧，外旋至Y字，顶峰挤压后束1-2秒。'},
+  {name:'Pallof Press',cat:'核心·抗旋转',desc:'弹力带固定在身体一侧(胸口高度)，双手从胸口推出，对抗弹力带的旋转力矩，保持3秒后收回。每侧10次。'},
+  {name:'死虫式 Dead Bug',cat:'核心·抗伸展',desc:'仰卧双臂伸直指天花板，双腿屈膝90度抬起。对侧手脚交替下放但不触地，腰部全程紧贴地面。升级版：伸出后保持3秒再收回。'},
+  {name:'鸟狗式',cat:'核心·抗旋转',desc:'四点跪姿，对侧手脚同时伸直至水平，身体不旋转，顶端停2秒。'},
+  {name:'空心体保持',cat:'核心·抗伸展',desc:'仰卧双臂伸过头顶，双腿伸直，同时抬起手脚离地5-10cm，下背压实地面，保持香蕉形。'},
+  {name:'哑铃卧推',cat:'推·胸',desc:'仰卧凳上，肩胛骨后缩下沉贴凳，肘部保持45-75°角(不90°外展)，下放至胸侧离心3-4秒，推起不锁死。肩痛即停。'},
+  {name:'哑铃肩推',cat:'推·肩',desc:'坐姿背靠椅，背部贴紧不后仰，哑铃从肩部向上推举至手臂伸直，离心3-4秒。'},
+  {name:'离心引体向上',cat:'拉·背',desc:'跳起或踩凳至下巴过杠，慢速下放5秒，手臂完全伸直后重复。仅窄握/对握，严禁宽握。'},
+  {name:'单臂哑铃划船',cat:'拉·背',desc:'一手一膝撑凳，另一手持哑铃，拉向髋部，顶峰挤压肩胛骨，离心5-6秒。'},
+  {name:'高脚杯深蹲',cat:'下肢',desc:'双手持哑铃一端贴胸，双脚与肩同宽，蹲至大腿平行地面，膝盖追脚尖。维持现有重量不加重。'},
+  {name:'保加利亚分腿蹲',cat:'下肢',desc:'后脚脚背搭凳上，前脚下蹲至大腿平行，重心在前腿。先做右腿(弱侧)。'},
+  {name:'登山者',cat:'HIIT',desc:'俯卧撑位，交替快速提膝至胸前，保持臀部不翘高。'},
+  {name:'波比退阶',cat:'HIIT',desc:'站立→蹲下→双脚后跳成俯卧撑位→收腿→站起。不加跳跃版本。'}
+];
+
+function renderTrToday() {
+  const now = new Date();
+  const jsDay = now.getDay(); // 0=Sun
+  const idx = jsDay === 0 ? 6 : jsDay - 1; // convert to 0=Mon
+  const d = V7_WEEK[idx];
+  let h = '';
+  if (d.type === 0) {
+    h = `<div class="card" style="text-align:center;padding:60px 20px">
+      <div style="font-size:48px;opacity:0.3">🛋️</div>
+      <div style="font-size:18px;color:var(--t1);font-weight:600;margin-top:12px">${d.day} · 休息日</div>
+      <div style="font-size:13px;color:var(--t3);margin-top:6px">完全休息。如需补课用休息日补力量模块。</div>
+    </div>`;
+    document.getElementById('sub-tr-today').innerHTML = h;
+    return;
+  }
+  // Header card
+  h += `<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:11px;color:var(--t3)">今日训练 · ${d.day}</div>
+        <div style="font-size:16px;font-weight:700;color:${d.color};margin-top:2px">${d.label}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:22px;font-weight:800;color:var(--t1)">${d.dur}<span style="font-size:11px;color:var(--t3)">min</span></div>
+        <div style="font-size:11px;color:var(--t3)">精力${d.energy}</div>
+      </div>
+    </div>
+  </div>`;
+  // Activation
+  if (d.activation && d.activation !== '无额外激活') {
+    h += `<div class="card" style="border-left:3px solid var(--orange)">
+      <div class="card-title" style="color:var(--orange)">⚡ 推前激活（必做，在主项之前）</div>
+      <div style="font-size:13px;color:var(--t1)">${d.activation}</div>
+    </div>`;
+  }
+  // Main lifts
+  if (d.main) {
+    h += `<div class="card"><div class="card-title">🏋️ 主项（组间休息60-75秒，离心3-4秒）</div>`;
+    d.main.forEach((ex,i) => {
+      h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <div><div style="font-size:13px;color:var(--t1);font-weight:500">${i+1}. ${ex.n}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">${ex.note||''}</div></div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          <div style="font-size:13px;font-weight:600;color:var(--t1)">${ex.s}</div>
+          <div style="font-size:11px;color:var(--t2)">${ex.w}</div>
+        </div></div>`;
+    });
+    h += `</div>`;
+  }
+  // Leg main
+  if (d.legMain) {
+    h += `<div class="card"><div class="card-title">🦵 下肢主项（组间休息75-90秒）</div>`;
+    d.legMain.forEach((ex,i) => {
+      h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <div><div style="font-size:13px;color:var(--t1);font-weight:500">${i+1}. ${ex.n}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">${ex.note||''}</div></div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          <div style="font-size:13px;font-weight:600;color:var(--t1)">${ex.s}</div>
+          <div style="font-size:11px;color:var(--t2)">${ex.w}</div>
+        </div></div>`;
+    });
+    h += `</div>`;
+  }
+  // Core
+  if (d.core) {
+    h += `<div class="card"><div class="card-title">🎯 核心训练（组间休息45秒）</div>`;
+    d.core.forEach((ex,i) => {
+      const badge = ex.new ? '<span style="background:var(--green);color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px">NEW</span>' : '';
+      h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <div><div style="font-size:13px;color:var(--t1);font-weight:500">${i+1}. ${ex.n}${badge}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">${ex.note||''}</div></div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          <div style="font-size:13px;font-weight:600;color:var(--t1)">${ex.s}</div>
+          <div style="font-size:11px;color:var(--t2)">${ex.w}</div>
+        </div></div>`;
+    });
+    h += `</div>`;
+  }
+  // Finisher
+  if (d.finisher) {
+    h += `<div class="card"><div class="card-title">🔥 ${d.finisher.split('(')[0]}</div>
+      <div style="font-size:12px;color:var(--t2)">${d.finisher}</div></div>`;
+  }
+  // HIIT
+  if (d.hiit) {
+    h += `<div class="card"><div class="card-title">💨 ${d.hiit.split('(')[0]}</div>
+      <div style="font-size:12px;color:var(--t2)">${d.hiit}</div></div>`;
+  }
+  // Extra (scapular)
+  if (d.extra) {
+    h += `<div class="card"><div class="card-title">🛡️ ${d.extra.split('(')[0]}</div>
+      <div style="font-size:12px;color:var(--t2)">${d.extra}</div></div>`;
+  }
+  // Cooldown
+  if (d.cool) {
+    h += `<div class="card"><div class="card-title">🧊 ${d.cool.split('(')[0]}</div>
+      <div style="font-size:12px;color:var(--t2)">${d.cool}</div></div>`;
+  }
+  document.getElementById('sub-tr-today').innerHTML = h;
+}
+
+function renderTrWeek() {
+  let h = `<div class="card"><div class="card-title">📅 V7 周训练计划</div>`;
+  h += `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+    <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+      <th style="text-align:left;padding:8px 6px">日</th>
+      <th style="text-align:left;padding:8px 6px">内容</th>
+      <th style="text-align:right;padding:8px 6px">时长</th>
+      <th style="text-align:center;padding:8px 6px">精力</th>
+    </tr>`;
+  const now = new Date();
+  const todayIdx = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  V7_WEEK.forEach((d,i) => {
+    const isToday = i === todayIdx;
+    const isRest = d.type === 0;
+    const bg = isToday ? 'background:rgba(0,122,255,0.06);' : '';
+    const rowStyle = isRest ? 'color:var(--t3)' : 'color:var(--t1)';
+    h += `<tr style="border-bottom:1px solid var(--bdr);${bg}">
+      <td style="padding:10px 6px;font-weight:${isToday?700:500};${rowStyle}">${d.day}${isToday?' ←':''}</td>
+      <td style="padding:10px 6px;${rowStyle}">${d.label}</td>
+      <td style="padding:10px 6px;text-align:right;${rowStyle}">${d.dur||'-'}min</td>
+      <td style="padding:10px 6px;text-align:center;font-size:11px;${rowStyle}">${d.energy}</td>
+    </tr>`;
+  });
+  h += `</table></div></div>`;
+  // Weekly targets
+  h += `<div class="card"><div class="card-title">📊 周总量目标</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--blue)">5次</div>
+        <div style="font-size:11px;color:var(--t3)">力量(A×2+B×1+C×2)</div>
+      </div>
+      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--orange)">90min</div>
+        <div style="font-size:11px;color:var(--t3)">HIIT总量</div>
+      </div>
+      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--green)">3次</div>
+        <div style="font-size:11px;color:var(--t3)">肩胛协议</div>
+      </div>
+      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--purple)">~450min</div>
+        <div style="font-size:11px;color:var(--t3)">周训练总时长</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--t3);line-height:1.8">
+      <div>⚡ 推日前必做：弹力带肩外旋+面拉（保护肩袖）</div>
+      <div>🎯 核心新增：Pallof Press（抗旋转）</div>
+      <div>🦵 下肢策略：维持现有重量，不追PR</div>
+      <div>⏱️ 所有动作离心3-4秒控制</div>
+    </div>
+  </div>`;
+  document.getElementById('sub-tr-week').innerHTML = h;
+}
+
+function renderTrLib() {
+  const cats = {};
+  V7_LIB.forEach(ex => {
+    if (!cats[ex.cat]) cats[ex.cat] = [];
+    cats[ex.cat].push(ex);
+  });
+  let h = '';
+  Object.entries(cats).forEach(([cat, exs]) => {
+    h += `<div class="card"><div class="card-title">${cat}</div>`;
+    exs.forEach(ex => {
+      h += `<div style="padding:10px 0;border-bottom:1px solid var(--bdr)">
+        <div style="font-size:13px;color:var(--t1);font-weight:500">${ex.name}</div>
+        <div style="font-size:12px;color:var(--t2);margin-top:4px;line-height:1.6">${ex.desc}</div>
+      </div>`;
+    });
+    h += `</div>`;
+  });
+  document.getElementById('sub-tr-lib').innerHTML = h;
+}
+
+// ========== INIT ==========
+function init() {
+  // Set header date
+  const now = new Date();
+  document.getElementById('headerDate').textContent = now.toISOString().slice(0,10);
+
+  renderOverview();
+  renderPeriod('sub-today', now.toISOString().slice(0,10), now.toISOString().slice(0,10), '今日');
+  const [wStart, wEnd] = getWeekRange();
+  renderPeriod('sub-week', wStart, wEnd, '本周');
+  renderMonth();
+  renderDetail();
+  renderDaigou();
+  renderTrToday();
+  renderTrWeek();
+  renderTrLib();
+  renderPZRecommend();
+  renderPZDetail();
+  renderPZInfo();
+}
+
+init();</script>
+</body>
+</htmlfunction previewTransaction() {
+  const date = document.getElementById('add-date').value;
+  const amount = parseFloat(document.getElementById('add-amount').value);
+  const category = document.getElementById('add-category').value;
+  const item = document.getElementById('add-item').value;
+  
+  if (!date || !amount || amount <= 0 || !item) {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#ff3b30;color:white;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999';
+    msg.textContent = '请填写完整信息';
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+    return;
+  }
+  if (!category) {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#ff3b30;color:white;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999';
+    msg.textContent = '请选择分类';
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+    return;
+  }
+  
+  document.getElementById('confirm-detail').innerHTML = '📅 日期：' + date + '<br>💰 金额：¥' + amount.toFixed(2) + '<br>📂 分类：' + category + '<br>📝 备注：' + item;
+  document.getElementById('add-form').style.display = 'none';
+  document.getElementById('add-confirm').style.display = 'block';
+}
+
+function confirmTransaction() {
+  const date = document.getElementById('add-date').value;
+  const amount = parseFloat(document.getElementById('add-amount').value);
+  const category = document.getElementById('add-category').value;
+  const item = document.getElementById('add-item').value;
+  
+  transactions.push({date: date, category: category, item: item, amount: amount});
+  
+  document.getElementById('add-amount').value = '';
+  document.getElementById('add-item').value = '';
+  document.getElementById('add-category').value = '';
+  
+  document.getElementById('add-confirm').style.display = 'none';
+  document.getElementById('add-form').style.display = 'flex';
+  
+  switchSub('overview');
+  renderAll();
+  
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#34c759;color:white;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15)';
+  msg.textContent = '✓ 已记录: ' + item + ' ¥' + amount.toFixed(2);
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 3000);
+}
+
+function cancelPreview() {
+  document.getElementById('add-confirm').style.display = 'none';
+  document.getElementById('add-form').style.display = 'flex';
+}
+
+
 function fmt(n) { return n.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function fmtWan(n) { if(Math.abs(n)>=10000) return (n/10000).toFixed(2)+'万'; return fmt(n); }
 
