@@ -647,6 +647,7 @@ function saveMealItem(key,label){
   ['Cal','P','Sf','Fr','C','Desc'].forEach(s=>{const el=$(key+s);if(el)el.value='';});
   renderMealList(actualKey);
   updateDietSummary();
+  if(typeof filterDiet==='function')filterDiet();
 }
 function deleteMealItem(key,idx){
   const meals=getMeals();
@@ -656,6 +657,7 @@ function deleteMealItem(key,idx){
     setMeals(meals);
     renderMealList(key);
     updateDietSummary();
+    if(typeof filterDiet==='function')filterDiet();
   }
 }
 function renderMealList(key){
@@ -1108,17 +1110,60 @@ function filterTraining(){
 function filterDiet(){
   const s=$('dietStart').value,e=$('dietEnd').value;
   const filtered=DD.filter(d=>d.date>=s&&d.date<=e);
-  const totalCal=filtered.reduce((s,d)=>s+d.t.cal,0);
-  const totalP=filtered.reduce((s,d)=>s+d.t.p,0);
+  
+  // Merge localStorage meal data
+  const meals=getMeals();
+  const mealDates=Object.keys(meals).filter(dt=>dt>=s&&dt<=e);
+  
+  // Build combined list: DD entries + localStorage entries
+  const combined=[];
+  filtered.forEach(d=>{
+    // Check if this date has localStorage meal data
+    if(meals[d.date]){
+      const m=meals[d.date];
+      let cal=0,p=0,sf=0,fr=0,c=0;
+      ['b','l','d','s'].forEach(k=>{(m[k]||[]).forEach(item=>{cal+=item.cal;p+=item.p;sf+=item.sf;fr+=item.fr;c+=item.c;});});
+      combined.push({date:d.date,t:{cal,p,sf,fr,c},_meals:m,_fromLS:true});
+    }else{
+      combined.push(d);
+    }
+  });
+  // Add localStorage dates not in DD
+  const ddDates=new Set(filtered.map(d=>d.date));
+  mealDates.forEach(dt=>{
+    if(!ddDates.has(dt)){
+      const m=meals[dt];
+      let cal=0,p=0,sf=0,fr=0,c=0;
+      ['b','l','d','s'].forEach(k=>{(m[k]||[]).forEach(item=>{cal+=item.cal;p+=item.p;sf+=item.sf;fr+=item.fr;c+=item.c;});});
+      combined.push({date:dt,t:{cal,p,sf,fr,c},_meals:m,_fromLS:true});
+    }
+  });
+  
+  const totalCal=combined.reduce((s,d)=>s+d.t.cal,0);
+  const totalP=combined.reduce((s,d)=>s+d.t.p,0);
   $('totalCalIn').innerHTML=totalCal.toLocaleString()+'<span class="unit"> kcal</span>';
-  $('totalProteinIn').innerHTML='蛋白 '+totalP.toLocaleString()+'g | 日均 '+fmt(totalCal/(filtered.length||1),0)+'kcal';
+  $('totalProteinIn').innerHTML='蛋白 '+totalP.toLocaleString()+'g | 日均 '+fmt(totalCal/(combined.length||1),0)+'kcal';
   
   let html='';
-  filtered.slice().reverse().forEach(d=>{
+  combined.slice().reverse().forEach(d=>{
     if(d.t.cal===0)return;
     html+='<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bdr)">';
     html+='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:13px;font-weight:600;color:var(--t1)">'+d.date.slice(5)+'</span><span style="font-size:12px;color:var(--blue)">'+d.t.cal+'kcal / '+d.t.p+'g蛋白</span></div>';
-    if(d.m){
+    
+    if(d._fromLS && d._meals){
+      // Render localStorage meal items
+      const mealLabels={b:'🌅早餐',l:'☀️午餐',d:'🌙晚餐',s:'🍎加餐'};
+      ['b','l','d','s'].forEach(k=>{
+        const items=d._meals[k]||[];
+        if(items.length===0)return;
+        items.forEach(item=>{
+          html+='<div class="meal-block"><div class="meal-label">'+mealLabels[k]+'</div>';
+          html+='<div class="meal-items">'+(item.desc||'未备注')+'</div>';
+          html+='<div class="meal-macros">'+item.cal+'kcal | P'+item.p+'g | 饱和脂'+item.sf+'g | 果糖'+item.fr+'g | 碳水'+item.c+'g</div>';
+          html+='</div>';
+        });
+      });
+    }else if(d.m){
       const meals=[['b','🌅早餐'],['l','☀️午餐'],['d','🌙晚餐'],['pre','练前'],['s','加餐'],['s2','加餐2'],['note','']];
       meals.forEach(([k,label])=>{
         if(d.m[k]){
@@ -1126,6 +1171,7 @@ function filterDiet(){
         }
       });
     }
+    
     html+='<div style="font-size:10px;color:var(--t3);margin-top:4px">饱和脂肪:'+d.t.sf+'g | 果糖:'+d.t.fr+'g | 碳水:'+d.t.c+'g</div>';
     html+='</div>';
   });
@@ -1431,6 +1477,8 @@ function initMemo(){
 }
 
 // ===== INIT =====
+const _today=getTodayStr();
+['trainEnd','dietEnd','bodyEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
 initNav();
 initOverview();
 filterTraining();
