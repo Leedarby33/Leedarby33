@@ -230,53 +230,6 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 
 
-<!-- 今日围度记录 -->
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0">📏 今日围度记录</div>
-</div>
-<div id="dimFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
-<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
-</div>
-</div>
-</div>
-
-<!-- 今日花费记录 -->
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0">💰 今日花费记录</div>
-</div>
-<div id="expFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px">
-<input type="text" id="expItem" placeholder="项目名称" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;width:100%;outline:none">
-<input type="number" id="expAmt" placeholder="金额(¥)" step="0.01" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<select id="expCat" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;outline:none">
-<option value="补剂">补剂</option>
-<option value="器材">器材</option>
-<option value="饮食">饮食</option>
-<option value="其他">其他</option>
-</select>
-</div>
-<div style="margin-top:6px;text-align:right">
-<button onclick="saveExpenseRecord()" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">保存</button>
-</div>
-</div>
-</div>
-
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
 <div class="card" style="background:linear-gradient(135deg,#0d1a14,#0A0A0A)">
@@ -407,6 +360,30 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">📐 维度记录</div>
 <div style="overflow-x:auto"><table id="dimTable"><thead><tr><th>日期</th><th>腰围</th><th>臀围</th><th>胸围</th><th>大腿</th><th>上臂绷紧</th><th>上臂放松</th><th>备注</th></tr></thead><tbody></tbody></table></div>
 </div>
+<!-- 今日围度记录 -->
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+<div class="card-title" style="margin-bottom:0">📏 今日围度记录</div>
+</div>
+<div id="dimFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
+</div>
+</div>
+</div>
+
 </div>
 
 <!-- TAB 备忘 -->
@@ -427,6 +404,29 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">🔥 减脂部位与体脂率对应区间</div>
 <div id="fatLossZones"></div>
 </div>
+<!-- 今日花费记录 -->
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+<div class="card-title" style="margin-bottom:0">💰 今日花费记录</div>
+</div>
+<div id="expFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px">
+<input type="text" id="expItem" placeholder="项目名称" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;width:100%;outline:none">
+<input type="number" id="expAmt" placeholder="金额(¥)" step="0.01" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<select id="expCat" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;outline:none">
+<option value="补剂">补剂</option>
+<option value="器材">器材</option>
+<option value="饮食">饮食</option>
+<option value="其他">其他</option>
+</select>
+</div>
+<div style="margin-top:6px;text-align:right">
+<button onclick="saveExpenseRecord()" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">保存</button>
+</div>
+</div>
+</div>
+
 </div>
 
 <!-- TAB 6: 花费 -->
