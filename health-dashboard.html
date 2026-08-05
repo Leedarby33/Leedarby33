@@ -729,6 +729,7 @@ function saveExpenseRecord(){
   document.getElementById('expItem').value='';
   document.getElementById('expAmt').value='';
   if(typeof filterExpense==='function')filterExpense();
+  if(typeof initMemo==='function')initMemo();
 }
 function deleteExpRecord(idx){
   // Find the actual index in merged ED array
@@ -742,6 +743,7 @@ function deleteExpRecord(idx){
   var ls=getExpLS().filter(function(d){return !(d.date===target.date&&d.item===target.item);});
   setExpLS(ls);
   if(typeof filterExpense==='function')filterExpense();
+  if(typeof initMemo==='function')initMemo();
 }
 
 function saveDailyWeight(){
