@@ -440,7 +440,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="date-range">
 <input type="date" id="expStart" value="2026-05-31" onchange="filterExpense()">
 <span>至</span>
-<input type="date" id="expEnd" value="2026-08-04" onchange="filterExpense()">
+<input type="date" id="expEnd" onchange="filterExpense()">
 </div>
 </div>
 <div class="card">
@@ -728,6 +728,9 @@ function saveExpenseRecord(){
   document.getElementById('expFeedback').innerHTML='<span style="color:var(--green)">✓ 已记录 '+item+' ¥'+amt+'</span>';
   document.getElementById('expItem').value='';
   document.getElementById('expAmt').value='';
+  // 自动扩展日期范围以包含今天
+  var endInput=document.getElementById("expEnd");
+  if(todayStr>endInput.value){endInput.value=todayStr;}
   if(typeof filterExpense==='function')filterExpense();
   if(typeof initMemo==='function')initMemo();
 }
@@ -742,6 +745,9 @@ function deleteExpRecord(idx){
   // Also remove from localStorage
   var ls=getExpLS().filter(function(d){return !(d.date===target.date&&d.item===target.item);});
   setExpLS(ls);
+  // 自动扩展日期范围以包含今天
+  var endInput=document.getElementById("expEnd");
+  if(todayStr>endInput.value){endInput.value=todayStr;}
   if(typeof filterExpense==='function')filterExpense();
   if(typeof initMemo==='function')initMemo();
 }
@@ -1782,6 +1788,8 @@ initOverview();
 filterTraining();
 filterDiet();
 filterBody();
+// 动态设置结束日期为今天
+if(!document.getElementById("expEnd").value){document.getElementById("expEnd").value=getTodayStr();}
 filterExpense();
 initMemo();
 </script>
