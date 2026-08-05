@@ -229,6 +229,54 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 </div>
 
+
+<!-- 今日围度记录 -->
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+<div class="card-title" style="margin-bottom:0">📏 今日围度记录</div>
+</div>
+<div id="dimFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
+</div>
+</div>
+</div>
+
+<!-- 今日花费记录 -->
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+<div class="card-title" style="margin-bottom:0">💰 今日花费记录</div>
+</div>
+<div id="expFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px">
+<input type="text" id="expItem" placeholder="项目名称" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;width:100%;outline:none">
+<input type="number" id="expAmt" placeholder="金额(¥)" step="0.01" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<select id="expCat" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;outline:none">
+<option value="补剂">补剂</option>
+<option value="器材">器材</option>
+<option value="饮食">饮食</option>
+<option value="其他">其他</option>
+</select>
+</div>
+<div style="margin-top:6px;text-align:right">
+<button onclick="saveExpenseRecord()" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">保存</button>
+</div>
+</div>
+</div>
+
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
 <div class="card" style="background:linear-gradient(135deg,#0d1a14,#0A0A0A)">
@@ -397,7 +445,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 <div class="card">
 <div class="card-title">📋 明细</div>
-<div style="overflow-x:auto"><table id="expTable"><thead><tr><th>日期</th><th>项目</th><th>金额</th><th>分类</th></tr></thead><tbody></tbody></table></div>
+<div style="overflow-x:auto"><table id="expTable"><thead><tr><th>日期</th><th>项目</th><th>金额</th><th>分类</th><th></th></tr></thead><tbody></tbody></table></div>
 </div>
 </div>
 
@@ -609,6 +657,85 @@ function mergeWeightLS(){
   WD.sort(function(a,b){return a.date.localeCompare(b.date);});
 }
 mergeWeightLS();
+// ===== DIM localStorage =====
+function getDimLS(){try{return JSON.parse(localStorage.getItem('health_dim')||'[]');}catch(e){return[];}}
+function setDimLS(data){localStorage.setItem('health_dim',JSON.stringify(data));}
+function mergeDimLS(){
+  var ls=getDimLS();
+  ls.forEach(function(d){
+    var idx=DIM.findIndex(function(x){return x.date===d.date;});
+    if(idx>=0){DIM[idx]=d;}else{DIM.push(d);}
+  });
+  DIM.sort(function(a,b){return a.date.localeCompare(b.date);});
+}
+mergeDimLS();
+function saveDimRecord(){
+  var w=parseFloat(document.getElementById('dimWaist').value);
+  var hp=parseFloat(document.getElementById('dimHip').value);
+  var ch=parseFloat(document.getElementById('dimChest').value);
+  var th=parseFloat(document.getElementById('dimThigh').value);
+  var af=parseFloat(document.getElementById('dimArmFlex').value);
+  var ar=parseFloat(document.getElementById('dimArmRelax').value);
+  var note=document.getElementById('dimNote').value||'';
+  if(!w&&!hp&&!ch){document.getElementById('dimFeedback').innerHTML='<span style="color:var(--red)">至少填一项围度</span>';return;}
+  var todayStr=getTodayStr();
+  var entry={date:todayStr,waist:w||0,hip:hp||0,chest:ch||0,thigh:th||0,armFlex:af||0,armRelax:ar||0,note:note};
+  var idx=DIM.findIndex(function(d){return d.date===todayStr;});
+  if(idx>=0){DIM[idx]=entry;}else{DIM.push(entry);}
+  DIM.sort(function(a,b){return a.date.localeCompare(b.date);});
+  // Persist
+  var ls=getDimLS();
+  var li=ls.findIndex(function(d){return d.date===todayStr;});
+  if(li>=0){ls[li]=entry;}else{ls.push(entry);}
+  setDimLS(ls);
+  document.getElementById('dimFeedback').innerHTML='<span style="color:var(--green)">✓ 围度已记录 '+todayStr+'</span>';
+  ['dimWaist','dimHip','dimChest','dimThigh','dimArmFlex','dimArmRelax','dimNote'].forEach(function(id){document.getElementById(id).value='';});
+  if(typeof filterBody==='function')filterBody();
+  if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
+}
+
+// ===== ED localStorage =====
+function getExpLS(){try{return JSON.parse(localStorage.getItem('health_expense')||'[]');}catch(e){return[];}}
+function setExpLS(data){localStorage.setItem('health_expense',JSON.stringify(data));}
+function mergeExpLS(){
+  var ls=getExpLS();
+  ls.forEach(function(d){
+    var idx=ED.findIndex(function(x){return x.date===d.date&&x.item===d.item;});
+    if(idx<0){ED.push(d);}
+  });
+  ED.sort(function(a,b){return a.date.localeCompare(b.date);});
+}
+mergeExpLS();
+function saveExpenseRecord(){
+  var item=document.getElementById('expItem').value.trim();
+  var amt=parseFloat(document.getElementById('expAmt').value);
+  var cat=document.getElementById('expCat').value||'补剂';
+  if(!item||!amt){document.getElementById('expFeedback').innerHTML='<span style="color:var(--red)">请填写项目和金额</span>';return;}
+  var todayStr=getTodayStr();
+  var entry={date:todayStr,item:item,amt:amt,cat:cat};
+  ED.push(entry);
+  ED.sort(function(a,b){return a.date.localeCompare(b.date);});
+  // Persist
+  var ls=getExpLS();ls.push(entry);setExpLS(ls);
+  document.getElementById('expFeedback').innerHTML='<span style="color:var(--green)">✓ 已记录 '+item+' ¥'+amt+'</span>';
+  document.getElementById('expItem').value='';
+  document.getElementById('expAmt').value='';
+  if(typeof filterExpense==='function')filterExpense();
+}
+function deleteExpRecord(idx){
+  // Find the actual index in merged ED array
+  var s=document.getElementById('expStart').value,e=document.getElementById('expEnd').value;
+  var filtered=ED.filter(function(d){return d.date>=s&&d.date<=e;});
+  var target=filtered[idx];
+  if(!target)return;
+  var realIdx=ED.indexOf(target);
+  if(realIdx>=0)ED.splice(realIdx,1);
+  // Also remove from localStorage
+  var ls=getExpLS().filter(function(d){return !(d.date===target.date&&d.item===target.item);});
+  setExpLS(ls);
+  if(typeof filterExpense==='function')filterExpense();
+}
+
 function saveDailyWeight(){
   const input=document.getElementById('dailyWeightInput');
   const feedback=document.getElementById('weightFeedback');
@@ -1488,7 +1615,7 @@ function filterExpense(){
   
   // Table
   const tbody=document.querySelector('#expTable tbody');
-  tbody.innerHTML=filtered.map(d=>'<tr><td>'+d.date.slice(5)+'</td><td>'+d.item+'</td><td style="color:var(--orange)">¥'+d.amt.toFixed(0)+'</td><td><span class="badge badge-blue">'+d.cat+'</span></td></tr>').join('');
+  tbody.innerHTML=filtered.map((d,i)=>'<tr><td>'+d.date.slice(5)+'</td><td>'+d.item+'</td><td style="color:var(--orange)">¥'+d.amt.toFixed(0)+'</td><td><span class="badge badge-blue">'+d.cat+'</span></td><td><span onclick="deleteExpRecord('+i+')" style="color:var(--red);cursor:pointer;font-size:11px">✕</span></td></tr>').join('');
 }
 
 // ===== TAB 7: WEEKLY =====
