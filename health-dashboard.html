@@ -203,6 +203,30 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">💪 今日训练计划</div>
 <div id="todayPlan"></div>
 </div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+<div class="card-title" style="margin-bottom:0">🏋️ 今日训练记录</div>
+<div style="display:flex;gap:6px;align-items:center">
+<span id="trainDailySummary" style="font-size:11px;color:var(--blue)"></span>
+<div onclick="toggleTrainingSection()" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px" id="trainToggle">+</div>
+</div>
+</div>
+<div id="trainRecordInfo" style="font-size:12px;color:var(--t3);margin:8px 0 0"></div>
+<div id="trainRecordContent" style="display:none;margin-top:12px">
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trDyn" placeholder="动态消耗" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trTotal" placeholder="总消耗(可选)" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="trHr" placeholder="心率(可选 如122 (88-169))" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveTrainingItem()" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
+</div>
+</div>
+<div id="trainRecordList" style="margin-top:6px"></div>
+</div>
+</div>
 </div>
 
 <!-- TAB 2: 总览 -->
@@ -573,6 +597,18 @@ document.querySelectorAll('.tab-item').forEach(t=>{
 
 // ===== TAB 1: NAV =====
 function getTodayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function getWeightLS(){try{return JSON.parse(localStorage.getItem('health_weight')||'{}');}catch(e){return{};}}
+function setWeightLS(data){localStorage.setItem('health_weight',JSON.stringify(data));}
+function mergeWeightLS(){
+  var ls=getWeightLS();
+  Object.keys(ls).forEach(function(dt){
+    var idx=WD.findIndex(function(d){return d.date===dt;});
+    if(idx>=0){WD[idx].weight=ls[dt];}
+    else{WD.push({date:dt,weight:ls[dt]});}
+  });
+  WD.sort(function(a,b){return a.date.localeCompare(b.date);});
+}
+mergeWeightLS();
 function saveDailyWeight(){
   const input=document.getElementById('dailyWeightInput');
   const feedback=document.getElementById('weightFeedback');
@@ -588,6 +624,8 @@ function saveDailyWeight(){
     WD.sort((a,b)=>a.date.localeCompare(b.date));
     feedback.innerHTML='<span style="color:var(--green)">✓ 已记录今日体重 '+val+'kg</span>';
   }
+  // Persist to localStorage
+  var wls=getWeightLS();wls[todayStr]=val;setWeightLS(wls);
   input.value='';
   if(typeof renderOverview==='function')renderOverview();
   if(typeof renderBody==='function')renderBody();
@@ -708,6 +746,96 @@ function updateDietSummary(){
     $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
     $('remainProtein').innerHTML=Math.max(0,Math.round(remainP))+'<span class="unit"> g</span>';
   }
+}
+
+// ===== 训练记录模块 =====
+function getTrainingRecords(){
+  try{return JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){return{};}
+}
+function setTrainingRecords(data){localStorage.setItem('health_training',JSON.stringify(data));}
+function toggleTrainingSection(){
+  const c=$('trainRecordContent'),t=$('trainToggle');
+  if(c.style.display==='none'){c.style.display='block';t.textContent='−';renderTrainingList();}
+  else{c.style.display='none';t.textContent='+';}
+}
+function saveTrainingItem(){
+  const dur=parseInt($('trDur').value)||0;
+  const dyn=parseInt($('trDyn').value)||0;
+  if(dur===0&&dyn===0){alert('至少填一项数值');return;}
+  const total=parseInt($('trTotal').value)||dyn;
+  const hr=$('trHr').value||'';
+  const days=['周日','周一','周二','周三','周四','周五','周六'];
+  const today=new Date();
+  const dayName=days[today.getDay()];
+  const plan=ACTIONS[dayName];
+  const type=plan?plan.name:'训练';
+  const todayStr=getTodayStr();
+  const records=getTrainingRecords();
+  if(!records[todayStr])records[todayStr]=[];
+  records[todayStr].push({type:type,dur:dur,dyn:dyn,total:total,hr:hr,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  setTrainingRecords(records);
+  ['trDur','trDyn','trTotal','trHr'].forEach(id=>$(id).value='');
+  renderTrainingList();
+  updateTrainDailySummary();
+  if(typeof filterTraining==='function')filterTraining();
+}
+function deleteTrainingRecord(idx){
+  const records=getTrainingRecords();
+  const todayStr=getTodayStr();
+  if(records[todayStr]){
+    records[todayStr].splice(idx,1);
+    if(records[todayStr].length===0)delete records[todayStr];
+    setTrainingRecords(records);
+    renderTrainingList();
+    updateTrainDailySummary();
+    if(typeof filterTraining==='function')filterTraining();
+  }
+}
+function renderTrainingList(){
+  const records=getTrainingRecords();
+  const todayStr=getTodayStr();
+  const el=$('trainRecordList');
+  if(!el)return;
+  const items=records[todayStr]||[];
+  if(items.length===0){el.innerHTML='';return;}
+  let h='';
+  items.forEach(function(item,i){
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)">';
+    h+='<div style="flex:1;font-size:12px;color:var(--t2)">';
+    h+='<span style="color:var(--t3)">'+(item.time||'')+'</span>';
+    h+='<span style="color:var(--blue);margin-left:6px;font-weight:600">'+item.type+'</span>';
+    h+='<span style="margin-left:6px">'+item.dur+'min</span>';
+    h+='<span style="color:var(--orange);margin-left:6px">'+item.dyn+'kcal</span>';
+    if(item.total&&item.total!==item.dyn)h+='<span style="margin-left:4px;color:var(--warm2)">总'+item.total+'</span>';
+    if(item.hr)h+='<span style="margin-left:4px;color:var(--purple)">HR '+item.hr+'</span>';
+    h+='</div>';
+    h+='<span onclick="deleteTrainingRecord('+i+')" style="color:var(--red);font-size:16px;cursor:pointer;padding:0 4px">×</span>';
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+function updateTrainDailySummary(){
+  const records=getTrainingRecords();
+  const todayStr=getTodayStr();
+  const items=records[todayStr]||[];
+  if(items.length===0){$('trainDailySummary').textContent='';return;}
+  const totalDur=items.reduce(function(s,t){return s+t.dur;},0);
+  const totalDyn=items.reduce(function(s,t){return s+t.dyn;},0);
+  $('trainDailySummary').textContent='今日'+items.length+'条 '+totalDur+'min '+totalDyn+'kcal';
+}
+function initTrainingRecordInfo(){
+  var days=['周日','周一','周二','周三','周四','周五','周六'];
+  var today=new Date();
+  var dayName=days[today.getDay()];
+  var plan=ACTIONS[dayName];
+  var todayStr=getTodayStr();
+  if(plan&&plan.w&&plan.w.length>0){
+    $('trainRecordInfo').innerHTML='<span style="color:var(--blue)">'+todayStr+' '+dayName+'</span> · <span style="color:var(--orange)">'+plan.name+'</span> · 计划'+plan.dur;
+  }else{
+    $('trainRecordInfo').innerHTML='<span style="color:var(--blue)">'+todayStr+' '+dayName+'</span> · <span style="color:var(--t3)">休息日</span>';
+  }
+  updateTrainDailySummary();
+  renderTrainingList();
 }
 
 function initNav(){
@@ -831,6 +959,8 @@ function initNav(){
   // Render diet meals and summary
   renderAllMeals();
   updateDietSummary();
+  // Init training record info
+  initTrainingRecordInfo();
 }
 function initWeightCompare(todayStr){
   const todayEntry=WD.find(d=>d.date===todayStr);
@@ -1078,18 +1208,33 @@ function initOverview(){
 // ===== TAB 3: TRAINING =====
 function filterTraining(){
   const s=$('trainStart').value,e=$('trainEnd').value;
-  const filtered=TD.filter(t=>t.date>=s&&t.date<=e);
-  const totalDays=filtered.length;
-  const totalMin=filtered.reduce((s,t)=>s+t.dur,0);
-  const totalDyn=filtered.reduce((s,t)=>s+t.dyn,0);
-  const totalAll=filtered.reduce((s,t)=>s+t.total,0);
-  // Full-caliber total = BMR + NEAT + Training
-  const dietDays=DD.filter(d=>d.t.cal>0).length;
+  // Merge localStorage training data with TD
+  const lsRecords=getTrainingRecords();
+  const lsEntries=[];
+  Object.keys(lsRecords).forEach(function(dt){
+    if(dt>=s&&dt<=e){
+      (lsRecords[dt]||[]).forEach(function(r){
+        lsEntries.push({date:dt,type:r.type,dur:r.dur,dyn:r.dyn,total:r.total||r.dyn,hr:r.hr||''});
+      });
+    }
+  });
+  var tdFiltered=TD.filter(function(t){return t.date>=s&&t.date<=e;});
+  var combined=tdFiltered.concat(lsEntries);
+  combined.sort(function(a,b){return a.date.localeCompare(b.date);});
+  const totalDays=combined.length;
+  const totalMin=combined.reduce(function(s,t){return s+t.dur;},0);
+  const totalDyn=combined.reduce(function(s,t){return s+t.dyn;},0);
+  const totalAll=combined.reduce(function(s,t){return s+t.total;},0);
+  // Full-caliber total = BMR + NEAT + all training (TD + all LS)
+  const dietDays=DD.filter(function(d){return d.t.cal>0;}).length;
   const bmrTotal=1672*dietDays;
   const neeTotal=300*dietDays;
-  const fullTotal=bmrTotal+neeTotal+TD.reduce((s,t)=>s+t.total,0);
+  var lsAllTotal=0;
+  Object.values(lsRecords).forEach(function(arr){(arr||[]).forEach(function(r){lsAllTotal+=(r.total||r.dyn);});});
+  const tdAllTotal=TD.reduce(function(s,t){return s+t.total;},0);
+  const fullTotal=bmrTotal+neeTotal+tdAllTotal+lsAllTotal;
   $('totalExpBig').innerHTML=fullTotal.toLocaleString()+'<span class="unit"> kcal</span>';
-  $('totalExpSub').textContent='BMR '+bmrTotal.toLocaleString()+' + NEAT '+neeTotal.toLocaleString()+' + 训练 '+TD.reduce((s,t)=>s+t.total,0).toLocaleString();
+  $('totalExpSub').textContent='BMR '+bmrTotal.toLocaleString()+' + NEAT '+neeTotal.toLocaleString()+' + 训练 '+(tdAllTotal+lsAllTotal).toLocaleString();
   $('totalTrainDays').innerHTML=totalDays;
   $('totalTrainHours').innerHTML=fmt(totalMin/60,1)+'<span class="unit">h</span>';
   $('totalDynCal').innerHTML=totalDyn.toLocaleString()+'<span class="unit"> kcal</span>';
@@ -1103,7 +1248,7 @@ function filterTraining(){
   
   // Table
   const tbody=document.querySelector('#trainTable tbody');
-  tbody.innerHTML=filtered.map(t=>'<tr><td>'+t.date.slice(5)+'</td><td>'+t.type+'</td><td>'+t.dur+'min</td><td>'+t.dyn+'kcal</td><td>'+t.total+'kcal</td></tr>').join('');
+  tbody.innerHTML=combined.map(function(t){return '<tr><td>'+t.date.slice(5)+'</td><td>'+t.type+'</td><td>'+t.dur+'min</td><td>'+t.dyn+'kcal</td><td>'+t.total+'kcal</td></tr>';}).join('');
 }
 
 // ===== TAB 4: DIET =====
