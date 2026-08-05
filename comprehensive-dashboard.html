@@ -733,6 +733,12 @@ function switchMain(name) {
 }
 
 function switchSub(name) {
+  // 切换时重新渲染对应面板
+  if(name==='overview'){recalcTotals();renderOverview();}
+  else if(name==='today'){var n=new Date();renderPeriod('sub-today',n.toISOString().slice(0,10),n.toISOString().slice(0,10),'今日');}
+  else if(name==='week'){var r=getWeekRange();renderPeriod('sub-week',r[0],r[1],'本周');}
+  else if(name==='month'){renderMonth();}
+  else if(name==='detail'){renderDetail();}
   document.querySelectorAll('.sub-tab').forEach(el => el.classList.toggle('active', el.dataset.sub === name));
   document.querySelectorAll('.sub-panel').forEach(el => el.classList.toggle('active', el.id === 'sub-' + name));
 }
@@ -1275,6 +1281,7 @@ function cancelPreview() {
 }
 
 function init() {
+  recalcTotals();
   // Set header date
   const now = new Date();
   document.getElementById('headerDate').textContent = now.toISOString().slice(0,10);
