@@ -128,6 +128,70 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="weightCompare"></div>
 </div>
 <div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+<div class="card-title" style="margin-bottom:0">🍽️ 今日饮食记录</div>
+<div style="display:flex;gap:6px;align-items:center">
+<span id="dietDailySummary" style="font-size:11px;color:var(--orange)"></span>
+<div onclick="toggleDietSection()" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px" id="dietToggle">+</div>
+</div>
+</div>
+<div id="dietContent" style="display:none">
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:8px">🌅 早餐</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
+<input type="number" id="bCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bSf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bFr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bC" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="bDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveMealItem('b','早餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
+</div>
+<div id="mealListB" style="margin-top:6px"></div>
+</div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px">☀️ 午餐</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
+<input type="number" id="lCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lSf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lFr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lC" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="lDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveMealItem('l','午餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
+</div>
+<div id="mealListL" style="margin-top:6px"></div>
+</div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:8px">🌙 晚餐</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
+<input type="number" id="dCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dSf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dFr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dC" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="dDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveMealItem('d','晚餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
+</div>
+<div id="mealListD" style="margin-top:6px"></div>
+</div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-size:12px;font-weight:600;color:var(--warm)">🍎 加餐</div>
+<button onclick="addSnackSlot()" style="background:rgba(255,179,0,0.15);color:var(--warm);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">+ 加一条</button>
+</div>
+<div id="snackSlots"></div>
+<div id="mealListS" style="margin-top:6px"></div>
+</div>
+</div>
+</div>
+<div class="card">
 <div class="card-title">🏋️ 凯格尔打卡</div>
 <div class="check-group" id="kegelChecks">
 <div class="check-item"><div class="check-box" onclick="toggleCheck(this)" data-k="am">✓</div><span>上午</span></div>
@@ -260,7 +324,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="date-range">
 <input type="date" id="bodyStart" value="2026-05-26" onchange="filterBody()">
 <span>至</span>
-<input type="date" id="bodyEnd" value="2026-08-05" onchange="filterBody()">
+<input type="date" id="bodyEnd" value="2026-08-04" onchange="filterBody()">
 </div>
 </div>
 <div class="card">
@@ -525,10 +589,125 @@ function saveDailyWeight(){
     feedback.innerHTML='<span style="color:var(--green)">✓ 已记录今日体重 '+val+'kg</span>';
   }
   input.value='';
-  if(typeof initOverview==="function")initOverview();
-  if(typeof initNav==="function")initNav();
-  if(typeof filterBody==="function")filterBody();
+  if(typeof renderOverview==='function')renderOverview();
+  if(typeof renderBody==='function')renderBody();
+  initNav();
 }
+
+// ===== 饮食记录模块 =====
+function getMeals(){
+  try{return JSON.parse(localStorage.getItem('health_meals')||'{}');}catch(e){return{};}
+}
+function setMeals(data){localStorage.setItem('health_meals',JSON.stringify(data));}
+function toggleDietSection(){
+  const c=$('dietContent'),t=$('dietToggle');
+  if(c.style.display==='none'){c.style.display='block';t.textContent='−';renderAllMeals();}
+  else{c.style.display='none';t.textContent='+';}
+}
+let snackSlotCount=0;
+function addSnackSlot(){
+  snackSlotCount++;
+  const id=snackSlotCount;
+  const div=document.createElement('div');
+  div.id='snackSlot'+id;
+  div.style.cssText='margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--bdr)';
+  div.innerHTML=`
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+<span style="font-size:11px;color:var(--t2)">加餐 #${id}</span>
+<span onclick="this.closest('[id^=snackSlot]').remove()" style="color:var(--red);font-size:16px;cursor:pointer">×</span>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
+<input type="number" id="s${id}Cal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}P" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}Sf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}Fr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}C" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="s${id}Desc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveMealItem('s${id}','加餐#${id}')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
+</div>`;
+  $('snackSlots').appendChild(div);
+}
+function saveMealItem(key,label){
+  const meals=getMeals();
+  const today=getTodayStr();
+  if(!meals[today])meals[today]={b:[],l:[],d:[],s:[]};
+  const actualKey=key.startsWith('s')?'s':key;
+  const cal=parseFloat($(key+'Cal').value)||0;
+  const p=parseFloat($(key+'P').value)||0;
+  const sf=parseFloat($(key+'Sf').value)||0;
+  const fr=parseFloat($(key+'Fr').value)||0;
+  const c=parseFloat($(key+'C').value)||0;
+  if(cal===0&&p===0){alert('至少填一项数值');return;}
+  const desc=$(key+'Desc')?$(key+'Desc').value:'';
+  meals[today][actualKey].push({cal,p,sf,fr,c,desc:desc||label,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+  setMeals(meals);
+  // Clear inputs
+  ['Cal','P','Sf','Fr','C','Desc'].forEach(s=>{const el=$(key+s);if(el)el.value='';});
+  renderMealList(actualKey);
+  updateDietSummary();
+}
+function deleteMealItem(key,idx){
+  const meals=getMeals();
+  const today=getTodayStr();
+  if(meals[today]&&meals[today][key]){
+    meals[today][key].splice(idx,1);
+    setMeals(meals);
+    renderMealList(key);
+    updateDietSummary();
+  }
+}
+function renderMealList(key){
+  const meals=getMeals();
+  const today=getTodayStr();
+  const listId='mealList'+key.toUpperCase();
+  const el=$(listId);
+  if(!el)return;
+  const items=(meals[today]&&meals[today][key])||[];
+  if(items.length===0){el.innerHTML='';return;}
+  let h='';
+  items.forEach((item,i)=>{
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr)">
+<div style="flex:1;font-size:11px;color:var(--t2)">
+<span style="color:var(--t3)">${item.time||''}</span>
+${item.desc?'<span style="color:var(--t1);margin-left:4px">'+item.desc+'</span>':''}
+<span style="margin-left:4px;color:var(--orange)">${item.cal}kcal</span>
+<span style="color:var(--green);margin-left:3px">P${item.p}g</span>
+<span style="margin-left:3px">脂${item.sf} 果${item.fr} 碳${item.c}</span>
+</div>
+<span onclick="deleteMealItem('${key}',${i})" style="color:var(--red);font-size:16px;cursor:pointer;padding:0 4px">×</span>
+</div>`;
+  });
+  el.innerHTML=h;
+}
+function renderAllMeals(){
+  ['b','l','d','s'].forEach(k=>renderMealList(k));
+}
+function updateDietSummary(){
+  const meals=getMeals();
+  const today=getTodayStr();
+  const todayMeals=meals[today];
+  let totalCal=0,totalP=0,totalSf=0,totalFr=0,totalC=0;
+  if(todayMeals){
+    ['b','l','d','s'].forEach(k=>{
+      (todayMeals[k]||[]).forEach(item=>{
+        totalCal+=item.cal;totalP+=item.p;totalSf+=item.sf;totalFr+=item.fr;totalC+=item.c;
+      });
+    });
+  }
+  $('dietDailySummary').textContent=totalCal>0?`今日合计 ${totalCal}kcal | P${totalP}g`:'点击+展开录入';
+  // Update remaining quota if on nav tab
+  if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
+    const isTrainDay=today>='2026-05-31';
+    const targetCal=isTrainDay?1900:1300;
+    const remain=targetCal-totalCal;
+    const remainP=130-totalP;
+    $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
+    $('remainProtein').innerHTML=Math.max(0,Math.round(remainP))+'<span class="unit"> g</span>';
+  }
+}
+
 function initNav(){
   const todayStr=getTodayStr();
   const todayDiet=DD.find(d=>d.date===todayStr);
@@ -646,6 +825,10 @@ function initNav(){
 
   // Update header date
   $('headerDate').textContent=todayStr;
+
+  // Render diet meals and summary
+  renderAllMeals();
+  updateDietSummary();
 }
 function initWeightCompare(todayStr){
   const todayEntry=WD.find(d=>d.date===todayStr);
@@ -1248,12 +1431,6 @@ function initMemo(){
 }
 
 // ===== INIT =====
-// 动态设置日期选择器的结束日期为今天
-const today=new Date();
-const todayISO=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
-if($("trainEnd"))$("trainEnd").value=todayISO;
-if($("dietEnd"))$("dietEnd").value=todayISO;
-if($("bodyEnd"))$("bodyEnd").value=todayISO;
 initNav();
 initOverview();
 filterTraining();
