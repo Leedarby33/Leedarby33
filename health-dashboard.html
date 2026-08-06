@@ -3,24 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f1115">
+<meta name="theme-color" content="#f5f5f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>健康管理工作台 | 大笔哥</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBmMTExNSIsInRoZW1lX2NvbG9yIjoiIzBmMTExNSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nIzBmMTExNScvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzRBOUVGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
 body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--text:#e5e7eb;--text-2:#8b8f9a;--text-3:#4b5563;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:var(--radius);--rs:var(--radius-sm)}
+:root{--bg:#f5f5f7;--card:#ffffff;--inset:#eeeef0;--text:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;--blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.14);--r:var(--radius);--rs:var(--radius-sm)}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
-.header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.header{position:sticky;top:0;z-index:100;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--red));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
 .header-title{font-size:15px;font-weight:600;color:var(--text)}
 .header-sub{font-size:11px;color:var(--text-2);margin-top:1px}
 .header-date{font-size:11px;color:var(--text-3);text-align:right}
-.tab-bar{position:sticky;top:60px;z-index:99;background:rgba(15,17,21,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tab-bar{position:sticky;top:60px;z-index:99;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .tab-bar::-webkit-scrollbar{display:none}
 .tab-item{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
 .tab-item.active{color:var(--text);background:var(--card);border-color:var(--bdr2)}
@@ -116,7 +119,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 1: 今日导航 -->
 <div class="tab-content active" id="tab-nav">
-<div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
+<div class="card" style="background:linear-gradient(135deg,#e8f5e9,#f5f5f7)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:8px">📊 今日剩余额度</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center">
 <div>
@@ -238,7 +241,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
-<div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
+<div class="card" style="background:linear-gradient(135deg,#e8f5e9,#f5f5f7)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">🔥 累计热量缺口</div>
 <div class="big-num" id="heatDeficit" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="heatDeficitSub" style="color:var(--text-2)">—</div>
@@ -271,7 +274,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 3: 训练 -->
 <div class="tab-content" id="tab-training">
-<div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
+<div class="card" style="background:linear-gradient(135deg,#e8f5e9,#f5f5f7)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">⚡ 全口径总消耗</div>
 <div class="big-num" id="totalExpBig" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="totalExpSub" style="color:var(--text-2)">BMR + NEAT + 训练</div>
@@ -302,7 +305,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 4: 饮食 -->
 <div class="tab-content" id="tab-diet">
-<div class="card" style="background:linear-gradient(135deg,#1a1400,#12151c)">
+<div class="card" style="background:linear-gradient(135deg,#fff3e0,#f5f5f7)">
 <div style="font-size:12px;color:var(--red);margin-bottom:4px">📊 预估总摄入</div>
 <div class="big-num" id="totalCalIn" style="color:var(--red)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="totalProteinIn" style="color:var(--text-2)">—</div>
@@ -324,7 +327,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <!-- TAB 5: 体测 -->
 <div class="tab-content" id="tab-body">
 <!-- 卡片1: 达成率 -->
-<div class="card" style="background:linear-gradient(135deg,#001a12,#12151c)">
+<div class="card" style="background:linear-gradient(135deg,#e0f2f1,#f5f5f7)">
 <div class="card-title">🎯 减脂达成率</div>
 <div id="achievementArea"></div>
 </div>
@@ -1753,19 +1756,30 @@ if('serviceWorker' in navigator){
   }).catch(()=>{});
   // 注册新的网络优先SW
   const swCode = `
-    const CACHE='health-v2';
+    const CACHE='health-v3';
     self.addEventListener('install',e=>{self.skipWaiting();});
     self.addEventListener('activate',e=>{e.waitUntil(
       self.clients.claim().then(()=>{
         return Promise.all([
           caches.delete('health-dashboard-v1'),
           caches.delete('health-v1'),
-          caches.delete('health-v2')
+          caches.delete('health-v2'),
+          caches.delete('health-v3')
         ]);
       })
     );});
     self.addEventListener('fetch',e=>{
       if(e.request.method!=='GET')return;
+      // HTML请求：始终网络优先，绝不缓存
+      if(e.request.mode==='navigate'||e.request.headers.get('accept')&&e.request.headers.get('accept').includes('text/html')){
+        e.respondWith(
+          fetch(e.request,{cache:'no-store'}).then(resp=>{
+            return resp;
+          }).catch(()=>caches.match(e.request).then(r=>r||new Response('offline',{status:503})))
+        );
+        return;
+      }
+      // 其他资源：网络优先，失败回退缓存
       e.respondWith(
         fetch(e.request).then(resp=>{
           if(resp.ok){

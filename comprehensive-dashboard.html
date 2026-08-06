@@ -5,21 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#f5f5f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>综合工作台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
 body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--text:#e5e7eb;--text-2:#8b8f9a;--text-3:#4b5563;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--purple:#a78bfa;--yellow:#fbbf24;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:var(--radius);--rs:var(--radius-sm)}
+:root{--bg:#f5f5f7;--card:#ffffff;--inset:#eeeef0;--text:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;--blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;--purple:#AF52DE;--yellow:#FFCC00;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.14);--r:var(--radius);--rs:var(--radius-sm)}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
-.header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.header{position:sticky;top:0;z-index:100;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--red));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
 .header-title{font-size:15px;font-weight:600;color:var(--text)}
 .header-sub{font-size:11px;color:var(--text-2);margin-top:1px}
 .header-date{font-size:11px;color:var(--text-3);text-align:right}
-.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:6px;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:6px;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .main-tabs::-webkit-scrollbar{display:none}
 .main-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
 .main-tab.active{color:var(--text);background:var(--card);border-color:var(--bdr2)}
@@ -67,11 +70,11 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 /* 吉格标签 */
 .jige-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .jige-chip{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap;line-height:1.5}
-.jige-chip.sanqi{background:rgba(251,191,36,0.18);color:var(--yellow);border:1px solid rgba(251,191,36,0.35)}
-.jige-chip.dun{background:rgba(74,158,255,0.15);color:var(--blue);border:1px solid rgba(74,158,255,0.3)}
-.jige-chip.yunu{background:rgba(167,139,250,0.15);color:var(--purple);border:1px solid rgba(167,139,250,0.3)}
-.jige-chip.normal{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.25)}
-.jige-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(251,191,36,0.2);color:var(--yellow);margin-left:4px}
+.jige-chip.sanqi{background:rgba(255,204,0,0.25);color:#B8860B;border:1px solid rgba(255,204,0,0.4)}
+.jige-chip.dun{background:rgba(0,122,255,0.12);color:var(--blue);border:1px solid rgba(0,122,255,0.3)}
+.jige-chip.yunu{background:rgba(175,82,222,0.12);color:var(--purple);border:1px solid rgba(175,82,222,0.3)}
+.jige-chip.normal{background:rgba(52,199,89,0.12);color:var(--green);border:1px solid rgba(52,199,89,0.25)}
+.jige-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(255,204,0,0.25);color:#B8860B;margin-left:4px}
 .date-filter{display:flex;gap:8px;align-items:center;margin-bottom:14px}
 .date-filter input{background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;flex:1}
 .date-filter span{color:var(--text-3);font-size:12px;flex-shrink:0}
