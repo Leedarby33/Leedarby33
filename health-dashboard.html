@@ -1674,7 +1674,7 @@ function renderReviewSection(){
   // Build 3 recent months
   var months=[];
   var now=new Date();
-  for(var mi=0;mi<3;mi--){
+  for(var mi=0;mi<3;mi++){
     var mDate=new Date(now.getFullYear(),now.getMonth()-mi,1);
     var mStart=new Date(mDate.getFullYear(),mDate.getMonth(),1);
     var mEnd=new Date(mDate.getFullYear(),mDate.getMonth()+1,0);
