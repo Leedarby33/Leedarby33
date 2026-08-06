@@ -57,12 +57,12 @@ select{width:100%}
 .date-range span{color:var(--t3);font-size:12px}
 .meal-block{background:var(--inset);border-radius:var(--rs);padding:12px;margin-bottom:8px}
 .meal-label{font-size:10px;font-weight:600;color:var(--blue);margin-bottom:6px;text-transform:uppercase}
-.meal-items{font-size:12px;color:var(--t2);line-height:1.6}
+.meal-items{font-size:13px;color:var(--t2);line-height:1.6}
 .meal-macros{font-size:10px;color:var(--t3);margin-top:4px}
 .action-card{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px}
 .action-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px}
 .action-meta{font-size:10px;color:var(--blue);margin-bottom:8px}
-.action-detail{font-size:12px;color:var(--t2)}
+.action-detail{font-size:13px;color:var(--t2)}
 .action-tip{font-size:10px;color:var(--orange);margin-top:4px}
 .hiit-box{background:rgba(74,158,255,0.1);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--blue)}
 .warmup-box{background:rgba(52,211,153,0.08);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--green)}
@@ -75,7 +75,7 @@ select{width:100%}
 .badge-red{background:rgba(239,68,68,0.15);color:var(--red)}
 .review-section{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px}
 .review-title{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px}
-.summary-text{font-size:12px;color:var(--t2);line-height:1.7}
+.summary-text{font-size:13px;color:var(--t2);line-height:1.7}
 svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 /* Metric risk cards */
 .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -112,9 +112,6 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="tab-item" data-tab="diet">饮食</div>
 <div class="tab-item" data-tab="body">体测</div>
 <div class="tab-item" data-tab="memo">备忘</div>
-<div class="tab-item" data-tab="expense">花费</div>
-<div class="tab-item" data-tab="weekly">周复盘</div>
-<div class="tab-item" data-tab="monthly">月复盘</div>
 </div>
 
 <!-- TAB 1: 今日导航 -->
@@ -269,6 +266,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">⚖️ 体重趋势</div>
 <div id="weightChart"></div>
 </div>
+<div id="reviewSection"></div>
 </div>
 
 <!-- TAB 3: 训练 -->
@@ -325,50 +323,22 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 5: 体测 -->
 <div class="tab-content" id="tab-body">
+<!-- 卡片1: 达成率 -->
 <div class="card" style="background:linear-gradient(135deg,#001a12,#12151c)">
 <div class="card-title">🎯 减脂达成率</div>
 <div id="achievementArea"></div>
 </div>
+<!-- 卡片2: 体重趋势+体脂趋势合并 -->
 <div class="card">
-<div class="card-title">📊 成分分解对比</div>
-<div id="compositionArea"></div>
-</div>
-<div class="card">
-<div class="card-title">⚖️ 体重趋势</div>
+<div class="card-title">⚖️ 体重 & 体脂趋势</div>
 <div id="bodyWeightChart"></div>
+<div style="margin-top:12px"><div id="bfChart"></div></div>
 </div>
+<!-- 卡片3: 围度录入+围度目标 -->
 <div class="card">
-<div class="card-title">📉 体脂率趋势</div>
-<div id="bfChart"></div>
-</div>
-<div class="card">
-<div class="card-title">🎯 体检指标追踪</div>
-<div id="refCompareArea"></div>
-</div>
-<div class="card">
-<div class="card-title">📏 各围度距目标差距</div>
-<div id="bodyPartDistance"></div>
-</div>
-<div class="card">
-<div class="card-title">📅 日期范围</div>
-<div class="date-range">
-<input type="date" id="bodyStart" value="2026-05-26" onchange="filterBody()">
-<span>至</span>
-<input type="date" id="bodyEnd" value="2026-08-04" onchange="filterBody()">
-</div>
-</div>
-<div class="card">
-<div class="card-title">📋 完整体测数据</div>
-<div style="overflow-x:auto"><table id="bodyTable"><thead><tr><th>日期</th><th>体重</th><th>体脂</th><th>BMI</th><th>BMR</th><th>肌肉</th><th>去脂</th><th>内脏</th></tr></thead><tbody></tbody></table></div>
-</div>
-<div class="card">
-<div class="card-title">📐 维度记录</div>
-<div style="overflow-x:auto"><table id="dimTable"><thead><tr><th>日期</th><th>腰围</th><th>臀围</th><th>胸围</th><th>大腿</th><th>上臂绷紧</th><th>上臂放松</th><th>备注</th></tr></thead><tbody></tbody></table></div>
-</div>
-<!-- 今日围度记录 -->
-<div class="card">
+<div class="card-title">📏 围度记录</div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0">📏 今日围度记录</div>
+<div class="card-title" style="margin-bottom:0;font-size:14px">📝 今日围度录入</div>
 </div>
 <div id="dimFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
@@ -387,8 +357,32 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
 </div>
 </div>
+<div class="card-title" style="font-size:14px;margin-top:16px;margin-bottom:8px">🎯 各围度距目标差距</div>
+<div id="bodyPartDistance"></div>
 </div>
-
+<!-- 日期范围 -->
+<div class="card">
+<div class="card-title">📅 日期范围</div>
+<div class="date-range">
+<input type="date" id="bodyStart" value="2026-05-26" onchange="filterBody()">
+<span>至</span>
+<input type="date" id="bodyEnd" value="2026-08-04" onchange="filterBody()">
+</div>
+</div>
+<!-- 卡片4: 体检风险 -->
+<div class="card">
+<div class="card-title">🎯 体检指标追踪</div>
+<div id="refCompareArea"></div>
+</div>
+<!-- 卡片5: 体测历史 -->
+<div class="card">
+<div class="card-title">📋 体测数据历史</div>
+<div id="bodyHistoryCards" style="display:flex;overflow-x:auto;gap:12px;padding-bottom:4px"></div>
+</div>
+<div class="card">
+<div class="card-title">📐 围度记录历史</div>
+<div id="dimHistoryCards" style="display:flex;overflow-x:auto;gap:12px;padding-bottom:4px"></div>
+</div>
 </div>
 
 <!-- TAB 备忘 -->
@@ -408,76 +402,6 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card">
 <div class="card-title">🔥 减脂部位与体脂率对应区间</div>
 <div id="fatLossZones"></div>
-</div>
-<!-- 今日花费记录 -->
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0">💰 今日花费记录</div>
-</div>
-<div id="expFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px">
-<input type="text" id="expItem" placeholder="项目名称" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;width:100%;outline:none">
-<input type="number" id="expAmt" placeholder="金额(¥)" step="0.01" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<select id="expCat" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;outline:none">
-<option value="补剂">补剂</option>
-<option value="器材">器材</option>
-<option value="饮食">饮食</option>
-<option value="其他">其他</option>
-</select>
-</div>
-<div style="margin-top:6px;text-align:right">
-<button onclick="saveExpenseRecord()" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer">保存</button>
-</div>
-</div>
-</div>
-
-</div>
-
-<!-- TAB 6: 花费 -->
-<div class="tab-content" id="tab-expense">
-<div class="card">
-<div class="card-title">💰 分类占比</div>
-<div id="expPieChart"></div>
-</div>
-<div class="card">
-<div class="card-title">📅 日期范围</div>
-<div class="date-range">
-<input type="date" id="expStart" value="2026-05-31" onchange="filterExpense()">
-<span>至</span>
-<input type="date" id="expEnd" onchange="filterExpense()">
-</div>
-</div>
-<div class="card">
-<div class="card-title">📋 明细</div>
-<div style="overflow-x:auto"><table id="expTable"><thead><tr><th>日期</th><th>项目</th><th>金额</th><th>分类</th><th></th></tr></thead><tbody></tbody></table></div>
-</div>
-</div>
-
-<!-- TAB 7: 周复盘 -->
-<div class="tab-content" id="tab-weekly">
-<div class="card">
-<div class="card-title">📅 选择周</div>
-<select id="weekSelect" onchange="showWeekly()">
-<option value="">请选择...</option>
-<option value="W29">W29 (7/20-7/26)</option>
-<option value="W31">W31 (7/27-8/2)</option>
-</select>
-</div>
-<div id="weeklyContent"></div>
-</div>
-
-<!-- TAB 8: 月复盘 -->
-<div class="tab-content" id="tab-monthly">
-<div class="card">
-<div class="card-title">📅 选择月</div>
-<select id="monthSelect" onchange="showMonthly()">
-<option value="">请选择...</option>
-<option value="6月">6月</option>
-<option value="7月">7月</option>
-</select>
-</div>
-<div id="monthlyContent"></div>
 </div>
 
 </div>
@@ -514,23 +438,8 @@ const SCAP_PROTOCOL=[
 const WD=[{"date": "2026-05-26", "weight": 89.85}, {"date": "2026-05-31", "weight": 87.4}, {"date": "2026-06-03", "weight": 87.9}, {"date": "2026-06-06", "weight": 88.45}, {"date": "2026-06-07", "weight": 87.8, "bf": 31.1, "bmi": 28.9, "bmr": 1737, "muscle": 57.4, "ffm": 60.5, "vf": 13, "sf": 20.7, "protein": 12.3, "sm": 38.6, "water": 49.1, "bone": 3.1}, {"date": "2026-06-09", "weight": 87.65}, {"date": "2026-06-14", "weight": 87.2, "bf": 31.1, "bmi": 28.8, "bmr": 1729, "muscle": 57.0, "ffm": 60.1, "vf": 13, "sf": 20.7, "protein": 12.3, "sm": 38.6, "water": 49.1, "bone": 3.1}, {"date": "2026-06-15", "weight": 88.6}, {"date": "2026-06-19", "weight": 87.65}, {"date": "2026-06-21", "weight": 87.5, "bf": 31.0, "bmi": 28.9, "bmr": 1733, "muscle": 57.3, "ffm": 60.4, "vf": 13, "sf": 20.7, "protein": 12.3, "sm": 38.6, "water": 49.2, "bone": 3.1}, {"date": "2026-06-25", "weight": 87.1}, {"date": "2026-06-26", "weight": 86.75}, {"date": "2026-06-28", "weight": 86.5, "bf": 30.6, "bmi": 28.5, "bmr": 1718, "muscle": 57.0, "ffm": 60.0, "vf": 13, "sf": 20.4, "protein": 12.4, "sm": 38.9, "water": 49.4, "bone": 3.1}, {"date": "2026-06-29", "weight": 86.65}, {"date": "2026-06-30", "weight": 86.85}, {"date": "2026-07-01", "weight": 86.9}, {"date": "2026-07-02", "weight": 86.65}, {"date": "2026-07-03", "weight": 86.6}, {"date": "2026-07-04", "weight": 86.25}, {"date": "2026-07-05", "weight": 86.05, "bf": 30.4, "bmi": 28.4, "bmr": 1711, "muscle": 56.8, "ffm": 59.9, "vf": 13, "sf": 20.3, "protein": 12.4, "sm": 39.0, "water": 49.6, "bone": 3.1}, {"date": "2026-07-12", "weight": 83.9, "bf": 29.4, "bmi": 27.7, "bmr": 1679, "muscle": 56.3, "ffm": 59.2, "vf": 12}, {"date": "2026-07-13", "weight": 84.1}, {"date": "2026-07-14", "weight": 84.15}, {"date": "2026-07-15", "weight": 84.15}, {"date": "2026-07-16", "weight": 84.6}, {"date": "2026-07-17", "weight": 84.55}, {"date": "2026-07-18", "weight": 84.05}, {"date": "2026-07-19", "weight": 84.7, "bf": 29.6, "bmi": 27.9, "bmr": 1691, "muscle": 56.7, "ffm": 59.6, "vf": 12, "sf": 19.7, "protein": 12.7, "sm": 39.4, "water": 50.1, "bone": 3.0}, {"date": "2026-07-20", "weight": 86.55}, {"date": "2026-07-21", "weight": 85.8}, {"date": "2026-07-22", "weight": 85.05}, {"date": "2026-07-23", "weight": 84.85}, {"date": "2026-07-24", "weight": 84.5}, {"date": "2026-07-25", "weight": 84.65}, {"date": "2026-07-26", "weight": 84.45, "bf": 29.6, "bmi": 27.8, "bmr": 1687, "muscle": 56.5, "ffm": 59.5, "vf": 12, "sf": 19.7, "protein": 12.7, "sm": 39.4, "water": 50.1, "bone": 3.0}, {"date": "2026-07-27", "weight": 85.35}, {"date": "2026-07-28", "weight": 84.7}, {"date": "2026-07-29", "weight": 84.05}, {"date": "2026-07-30", "weight": 84.75}, {"date": "2026-07-31", "weight": 84.6}, {"date": "2026-08-01", "weight": 84.1}, {"date": "2026-08-02", "weight": 83.4, "bf": 29.2, "bmi": 27.5, "bmr": 1672, "muscle": 56.1, "ffm": 59.0, "vf": 12, "sf": 19.5, "protein": 12.7, "sm": 39.6, "water": 50.4, "bone": 3.0}, {"date": "2026-08-03", "weight": 84.15}, {"date": "2026-08-04", "weight": 83.7}];
 const DD=[{"date": "2026-06-01", "m": {"b": "4蛋+酱牛肉+燕麦+酸奶+美式", "l": "外卖", "d": "彩椒牛腱+毛豆+菠菜+木耳+燕麦饭"}, "t": {"cal": 1800, "p": 148, "sf": 16, "fr": 5, "c": 35}}, {"date": "2026-06-02", "m": {"b": "4蛋+拿铁+美式", "l": "沙县去皮鸡腿饭", "d": "牛腱200g+菠菜+彩椒+木耳+毛豆+海参"}, "t": {"cal": 1321, "p": 139, "sf": 8, "fr": 4, "c": 30}}, {"date": "2026-06-03", "m": {"b": "牛腱200g+4蛋+拿铁", "l": "麻辣烫(肥牛+鸭血+菠菜+木耳+香菇)", "d": "虾120g+牛排100g+毛豆+彩椒+香蕉"}, "t": {"cal": 1570, "p": 179, "sf": 22, "fr": 6, "c": 40}}, {"date": "2026-06-04", "m": {"b": "4蛋+150g牛肉+拿铁", "l": "Subway鸡肉三明治6寸", "d": "西兰花+牛肉+番茄排骨+菌菇+咖喱土豆+彩椒"}, "t": {"cal": 1602, "p": 136, "sf": 19, "fr": 5, "c": 80}}, {"date": "2026-06-05", "m": {"b": "Subway牛肉三明治", "l": "麻辣烫(牛鸡鹌鹑蛋+菠菜+木耳+海带+鸭血+豆腐)", "d": "彩椒洋葱炒鸡+卤牛肉+毛豆+半碗米饭"}, "t": {"cal": 1380, "p": 120, "sf": 10, "fr": 3, "c": 70}}, {"date": "2026-06-06", "m": {"b": "2香蕉+150g牛肉+4蛋+拿铁", "d": "窑鸡300g+酱牛肉150g+四季豆80g"}, "t": {"cal": 1690, "p": 193, "sf": 22, "fr": 12, "c": 30}}, {"date": "2026-06-07", "m": {"b": "牛排150g+4蛋+拿铁", "d": "钵钵鸡大份+酸菜土豆+米饭+菠菜250g"}, "t": {"cal": 1550, "p": 125, "sf": 20, "fr": 5, "c": 80}}, {"date": "2026-06-08", "m": {"b": "4蛋+150g牛肉+拿铁", "l": "金枪鱼滑蛋轻蔬碗", "d": "虾+毛豆+酸奶+香蕉"}, "t": {"cal": 1450, "p": 130, "sf": 18, "fr": 8, "c": 60}}, {"date": "2026-06-09", "m": {"b": "4蛋+拿铁+150g牛肉", "l": "刘家牛肉饭+鸡蛋炒番茄", "d": "卤牛肉+蔬菜+蛋白粉"}, "t": {"cal": 1500, "p": 155, "sf": 15, "fr": 5, "c": 55}}, {"date": "2026-06-10", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "龙虾应酬"}, "t": {"cal": 1600, "p": 130, "sf": 15, "fr": 5, "c": 60}}, {"date": "2026-06-11", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "正常晚餐"}, "t": {"cal": 1500, "p": 140, "sf": 14, "fr": 5, "c": 60}}, {"date": "2026-06-12", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "烧烤"}, "t": {"cal": 1600, "p": 135, "sf": 18, "fr": 5, "c": 60}}, {"date": "2026-06-13", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "蛋白奶昔"}, "t": {"cal": 1300, "p": 110, "sf": 12, "fr": 5, "c": 50}}, {"date": "2026-06-14", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "正常晚餐"}, "t": {"cal": 1500, "p": 140, "sf": 14, "fr": 5, "c": 60}}, {"date": "2026-06-15", "m": {"b": "4蛋+拿铁+牛肉", "l": "西芹炒牛肉+莴笋+菜心+糙米", "d": "蛋白粉+卤牛肉"}, "t": {"cal": 1290, "p": 124, "sf": 15, "fr": 3, "c": 50}}, {"date": "2026-06-16", "m": {"b": "4蛋+拿铁+牛肉", "l": "小炒黄牛肉+西红柿炒蛋+米饭", "d": "蛋白粉+三文鱼"}, "t": {"cal": 1380, "p": 161, "sf": 16, "fr": 3, "c": 45}}, {"date": "2026-06-17", "m": {"b": "4蛋+拿铁+牛肉", "l": "口水鸡+虾仁滑蛋+糙米", "d": "蛋白粉+牛肉+蔬菜"}, "t": {"cal": 1410, "p": 147, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-06-18", "m": {"b": "袁记云饺18个", "l": "牛肉拌面碗", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1532, "p": 126, "sf": 12, "fr": 3, "c": 80}}, {"date": "2026-06-19", "m": {"l": "白酒应酬", "d": "白酒4壶+菜"}, "t": {"cal": 4892, "p": 116, "sf": 20, "fr": 10, "c": 80}}, {"date": "2026-06-20", "m": {"b": "皮蛋瘦肉粥", "l": "虾饺", "d": "简单晚餐"}, "t": {"cal": 1359, "p": 143, "sf": 11, "fr": 3, "c": 50}}, {"date": "2026-06-21", "m": {"note": "称重日"}, "t": {"cal": 0, "p": 0, "sf": 0, "fr": 0, "c": 0}}, {"date": "2026-06-22", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-23", "m": {"l": "蒜蓉粉丝虾套餐"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-24", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-25", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-26", "m": {"l": "广东菜心牛肉+苦瓜牛肉+番茄炒蛋+牛骨清汤"}, "t": {"cal": 1450, "p": 140, "sf": 14, "fr": 4, "c": 60}}, {"date": "2026-06-27", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-28", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 135, "sf": 13, "fr": 4, "c": 55}}, {"date": "2026-06-29", "m": {"l": "菲力鸡胸牛排沙拉"}, "t": {"cal": 1400, "p": 135, "sf": 13, "fr": 4, "c": 55}}, {"date": "2026-06-30", "m": {"l": "眼肉牛排+太阳蛋+土豆泥+时蔬"}, "t": {"cal": 1400, "p": 135, "sf": 13, "fr": 4, "c": 55}}, {"date": "2026-07-01", "m": {"l": "鸡胸能量碗+卤牛肉120g", "d": "卤牛肉150g+西红柿炒蛋+香菇+海参+杂粮饭+菠菜"}, "t": {"cal": 1453, "p": 142, "sf": 10, "fr": 3, "c": 55}}, {"date": "2026-07-02", "m": {"b": "卤牛肉120g", "l": "熏牛肉120g+沙拉碗", "d": "米饭+菠菜+牛腱180g+虾150g+菌菇+芹菜+彩椒"}, "t": {"cal": 1450, "p": 160, "sf": 8, "fr": 3, "c": 55}}, {"date": "2026-07-03", "m": {"l": "外卖", "d": "卤牛肉+蔬菜+蛋白粉"}, "t": {"cal": 1400, "p": 145, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-04", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-05", "m": {"l": "双倍鸡胸鲜蔬杂粮饭", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 145, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-06", "m": {"l": "双倍鸡胸鲜蔬杂粮饭"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-07", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-08", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-09", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-10", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-11", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-12", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-13", "m": {"b": "拿铁+蛋白粉3勺", "pre": "蛋白粉1勺+精氨酸瓜氨酸", "d": "蛋白粉1勺+卤牛肉200g+西兰花60g"}, "t": {"cal": 871, "p": 168, "sf": 7, "fr": 14, "c": 15}}, {"date": "2026-07-14", "m": {"b": "美式咖啡", "l": "烤牛肉拌饭+牛肉粒", "d": "蛋白粉1勺+三文鱼200g", "s": "蛋白粉半勺"}, "t": {"cal": 1552, "p": 121, "sf": 15, "fr": 8, "c": 60}}, {"date": "2026-07-15", "m": {"b": "美式咖啡", "l": "延边辣牛肉汤+米饭一半", "d": "三文鱼240g+蛋白粉2勺", "s": "精氨酸瓜氨酸"}, "t": {"cal": 1603, "p": 114, "sf": 10, "fr": 5, "c": 55}}, {"date": "2026-07-16", "m": {"b": "美式咖啡", "l": "CrazyCat能量碗", "d": "卤牛腱子220g+西兰花", "s": "蛋白粉3勺"}, "t": {"cal": 1468, "p": 145, "sf": 10, "fr": 5, "c": 50}}, {"date": "2026-07-17", "m": {"b": "美式2杯+蛋白粉2勺+精氨酸瓜氨酸", "l": "蛋白粉2勺", "d": "日料刺身+沙拉+芝士卷×2"}, "t": {"cal": 1065, "p": 132, "sf": 13, "fr": 8, "c": 30}}, {"date": "2026-07-18", "m": {"l": "牛肉面+辣椒油+煎蛋+羊肉串×5", "s": "蛋白粉1勺", "d": "牛排200g", "s2": "蛋白粉1勺"}, "t": {"cal": 1467, "p": 148, "sf": 12, "fr": 3, "c": 50}}, {"date": "2026-07-19", "m": {"l": "炸鸡腿+琵琶腿×2+鸡柳(欺骗餐)", "s": "蛋白粉2勺", "d": "馄饨20个+披萨1/4"}, "t": {"cal": 2956, "p": 174, "sf": 25, "fr": 5, "c": 135}}, {"date": "2026-07-20", "m": {"l": "蛋羹鸡胸鲜蔬杂粮饭+西兰花", "d": "菠菜+黄瓜+三文鱼100g+蛋白粉+精氨酸瓜氨酸"}, "t": {"cal": 1456, "p": 106, "sf": 13, "fr": 2, "c": 55}}, {"date": "2026-07-21", "m": {"l": "鸡胸肉100g+烤时蔬+低GI饭", "d": "卤牛肉200g+西红柿+海参+西兰花+海带"}, "t": {"cal": 1270, "p": 135, "sf": 7, "fr": 8, "c": 45}}, {"date": "2026-07-22", "m": {"l": "香煎鱼柳杂蔬饭", "d": "卤牛肉200g+毛豆100g", "s": "蛋白粉2勺"}, "t": {"cal": 1311, "p": 132, "sf": 14, "fr": 7, "c": 50}}, {"date": "2026-07-23", "m": {"l": "黑椒鸡胸糙米饭+金枪鱼", "d": "卤牛腱167g+毛豆100g+蛋白粉2勺"}, "t": {"cal": 1436, "p": 151, "sf": 7, "fr": 5, "c": 50}}, {"date": "2026-07-24", "m": {"l": "双倍鸡胸鲜蔬杂粮饭", "d": "卤鸭舌35根+西兰花+黄瓜+豆腐+香菇"}, "t": {"cal": 1240, "p": 109, "sf": 10, "fr": 3, "c": 45}}, {"date": "2026-07-25", "m": {"l": "猪肉150g+青椒洋葱+米饭+蛋花汤", "s": "蛋白粉2勺+精氨酸瓜氨酸", "d": "三文鱼107g+卤牛腱89g", "s2": "卤鸭舌40根"}, "t": {"cal": 1358, "p": 154, "sf": 9, "fr": 6, "c": 45}}, {"date": "2026-07-26", "m": {"d": "牛蛙米线+里脊串+咖啡", "s": "蛋白粉3勺+A2牛奶150ml"}, "t": {"cal": 1139, "p": 122, "sf": 12, "fr": 0, "c": 25}}, {"date": "2026-07-27", "m": {"l": "蛋羹鸡胸杂粮饭+西兰花×1.2", "d": "卤鸭舌30根+炒青菜", "s": "蛋白粉3勺"}, "t": {"cal": 1316, "p": 135, "sf": 12, "fr": 0, "c": 40}}, {"date": "2026-07-28", "m": {"l": "鸡胸180g+圣女果+黄瓜+玉米+酸奶", "s": "抹茶拿铁+蛋白粉1勺", "d": "青菜+黄瓜+虾仁+卤牛肉87g"}, "t": {"cal": 1164, "p": 155, "sf": 10, "fr": 3, "c": 45}}, {"date": "2026-07-29", "m": {"b": "卤牛肉140g", "l": "杭椒牛肉套餐×1.5", "d": "西兰花鸡胸+豆腐虾仁汤+杂粮饭", "s": "蛋白粉1勺"}, "t": {"cal": 1802, "p": 148, "sf": 11, "fr": 0, "c": 80}}, {"date": "2026-07-30", "m": {"l": "杏鲍菇鸡胸+青菜+豆芽韭菜+糙米", "d": "油麦菜+菠菜+番茄炒蛋", "s": "蛋白粉3勺"}, "t": {"cal": 1262, "p": 115, "sf": 6, "fr": 0, "c": 71}}, {"date": "2026-07-31", "m": {"l": "寿司10枚", "d": "青菜+菌菇豆腐+卤牛肉185g", "s": "蛋白粉2勺"}, "t": {"cal": 1138, "p": 130, "sf": 8, "fr": 0, "c": 56}}, {"date": "2026-08-01", "m": {"l": "毛豆+牛肉50g+鸡胸100g+番茄炒蛋+米饭红薯+三文鱼100g", "d": "洋葱鸡胸+番茄炒蛋+毛豆+红薯+米饭", "s": "蛋白粉2勺"}, "t": {"cal": 1146, "p": 126, "sf": 6, "fr": 0, "c": 79}}, {"date": "2026-08-02", "m": {"d": "小龙虾20个+花蛤20个+面条130g", "s": "蛋白粉3勺"}, "t": {"cal": 1295, "p": 119, "sf": 9, "fr": 0, "c": 100}}, {"date": "2026-08-03", "m": {"b": "美式咖啡", "l": "谨食三拼能量碗（鸡胸+牛肉+虾饼+蛋+杂粮饭+蔬菜）", "s": "奈雪老盐黄皮小黄瓶(微甜)", "d": "卤牛肉80g+咖喱牛肉+毛豆+米饭167g", "s2": "蛋白粉1勺+精氨酸瓜氨酸"}, "t": {"cal": 1594, "p": 145.5, "sf": 13.7, "fr": 1, "c": 122}}, {"date": "2026-08-04", "m": {"l": "泰式打抛饭", "d": "西红柿蛋汤+西芹彩椒+盐水牛肉150g+海带丝", "s": "蛋白粉2.5勺"}, "t": {"cal": 1458, "p": 138.5, "sf": 17, "fr": 6, "c": 102}}];;
 const TD=[{"date": "2026-05-27", "type": "力量+柔韧", "dur": 29, "dyn": 154, "total": 200}, {"date": "2026-05-29", "type": "力量+有氧", "dur": 55, "dyn": 371, "total": 500}, {"date": "2026-06-02", "type": "有氧日", "dur": 24, "dyn": 60, "total": 78}, {"date": "2026-06-04", "type": "力量日", "dur": 45, "dyn": 280, "total": 400}, {"date": "2026-06-09", "type": "拉力+有氧", "dur": 50, "dyn": 300, "total": 420}, {"date": "2026-06-10", "type": "下肢日", "dur": 45, "dyn": 280, "total": 400}, {"date": "2026-06-11", "type": "上肢推日", "dur": 40, "dyn": 250, "total": 350}, {"date": "2026-06-15", "type": "推力日", "dur": 50, "dyn": 326, "total": 450}, {"date": "2026-06-16", "type": "拉力+有氧", "dur": 45, "dyn": 288, "total": 400}, {"date": "2026-06-17", "type": "下肢+核心", "dur": 55, "dyn": 461, "total": 600}, {"date": "2026-06-20", "type": "有氧+柔韧", "dur": 30, "dyn": 407, "total": 500}, {"date": "2026-07-01", "type": "下肢+核心", "dur": 74, "dyn": 538, "total": 676}, {"date": "2026-07-02", "type": "肩臂专项", "dur": 60, "dyn": 350, "total": 480}, {"date": "2026-07-03", "type": "推力日", "dur": 55, "dyn": 320, "total": 440}, {"date": "2026-07-04", "type": "拉力日", "dur": 60, "dyn": 380, "total": 510}, {"date": "2026-07-05", "type": "下肢+核心", "dur": 55, "dyn": 350, "total": 470}, {"date": "2026-07-06", "type": "推力日", "dur": 55, "dyn": 330, "total": 450}, {"date": "2026-07-07", "type": "拉力日", "dur": 60, "dyn": 380, "total": 510}, {"date": "2026-07-09", "type": "下肢", "dur": 60, "dyn": 400, "total": 540}, {"date": "2026-07-13", "type": "推力日", "dur": 114, "dyn": 815, "total": 1022}, {"date": "2026-07-14", "type": "拉力日", "dur": 99, "dyn": 723, "total": 904}, {"date": "2026-07-15", "type": "下肢+核心", "dur": 76, "dyn": 473, "total": 611}, {"date": "2026-07-16", "type": "肩臂专项", "dur": 83, "dyn": 538, "total": 689}, {"date": "2026-07-17", "type": "全身整合", "dur": 95, "dyn": 722, "total": 903}, {"date": "2026-07-20", "type": "推力日", "dur": 57, "dyn": 358, "total": 462}, {"date": "2026-07-21", "type": "拉力日", "dur": 90, "dyn": 683, "total": 867}, {"date": "2026-07-22", "type": "下肢+肩胛", "dur": 78, "dyn": 527, "total": 669}, {"date": "2026-07-23", "type": "肩臂+核心", "dur": 80, "dyn": 447, "total": 594}, {"date": "2026-07-25", "type": "有氧整合+核心", "dur": 82, "dyn": 662, "total": 811}, {"date": "2026-07-27", "type": "推力日", "dur": 94, "dyn": 649, "total": 820}, {"date": "2026-07-28", "type": "拉力日", "dur": 98, "dyn": 880, "total": 1059}, {"date": "2026-07-30", "type": "拉力日", "dur": 87, "dyn": 561, "total": 719}, {"date": "2026-08-01", "type": "下肢+肩胛+HIIT", "dur": 128, "dyn": 1051, "total": 1285}, {"date": "2026-08-02", "type": "Zone2有氧", "dur": 80, "dyn": 455, "total": 634}, {"date": "2026-08-03", "type": "推日+HIIT×3", "dur": 68, "dyn": 462, "total": 584, "hr": "125 (92-162)"}, {"date": "2026-08-04", "type": "拉力日", "dur": 101, "dyn": 653, "total": 835, "hr": "122 (88-169)"}];
-const ED=[{"date": "2026-06-14", "item": "MyProtein分离乳清蛋白粉1kg", "amt": 379.03, "cat": "补剂"}, {"date": "2026-06-17", "item": "ADAM男士多维90粒×2", "amt": 456.8, "cat": "补剂"}, {"date": "2026-06-17", "item": "多德士TK605哑铃凳", "amt": 179.55, "cat": "器材"}, {"date": "2026-06-17", "item": "BlenderBottle摇摇杯", "amt": 114.69, "cat": "器材"}, {"date": "2026-06-17", "item": "海力生EPA鱼油690粒", "amt": 912.65, "cat": "补剂"}, {"date": "2026-06-30", "item": "普通乳清蛋白粉5kg", "amt": 1088, "cat": "补剂"}, {"date": "2026-07-09", "item": "哈他橡胶瑜伽垫", "amt": 209, "cat": "器材"}, {"date": "2026-07-13", "item": "他达拉非5mg×3盒", "amt": 251, "cat": "补剂"}, {"date": "2026-07-13", "item": "KSM-66 600mg×2盒", "amt": 286.94, "cat": "补剂"}, {"date": "2026-08-05", "item": "健安喜1000mg柠檬酸钙180片", "amt": 55.05, "cat": "补剂"}, {"date": "2026-08-05", "item": "NatureWise Vitamin D3+K2 90粒", "amt": 358.15, "cat": "补剂"}, {"date": "2026-08-05", "item": "NOW Foods UC-II 120粒", "amt": 262.09, "cat": "补剂"}, {"date": "2026-08-05", "item": "Vital Proteins胶原蛋白肽567g", "amt": 307.05, "cat": "补剂"}];
 const DIM=[{"date": "2026-06-07", "waist": 101.5, "hip": 101.5, "chest": 108.5, "thigh": 62.5, "armFlex": 37.5, "armRelax": 31.5, "note": "晚饭后,腰围虚高"}, {"date": "2026-06-21", "waist": 98.5, "hip": 101.5, "chest": 108.5, "thigh": 48.5, "armFlex": 34.5, "armRelax": 29.5, "note": "空腹晨测"}, {"date": "2026-07-26", "waist": 94.5, "hip": 102.5, "chest": 104.5, "thigh": 50.5, "armFlex": 35.5, "armRelax": 31.5, "note": "空腹晨测"}];
 const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "鱼油(海力生2+BM2) 4粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽 10-15g/天"];
-
-const WEEKLY={
-"W29":{period:"7/20-7/26",ws:84.70,we:84.45,wc:-0.25,bfs:29.6,bfe:29.6,td:5,th:6.6,ac:1365,ap:139,
-s:"正常减脂方案重启第一周。欺骗餐后水钠潴留从86.55回落至84.45，7天降2.10kg。日均摄入1365kcal精准贴合目标。训练执行5/6天，总动态消耗2677kcal。体脂率持平29.6%。"},
-"W31":{period:"7/27-8/2",ws:85.35,we:83.4,wc:-1.95,bfs:29.6,bfe:29.2,td:4,th:6.8,ac:1305,ap:135,
-s:"V7首周执行。体脂率开始下降0.4%。周减重1.95kg。训练执行率80%(4/5)。总动态消耗3141kcal。7/31因疲惫暂停1天。"}
-};
-
-const MONTHLY={
-"6月":{td:12,th:10.5,ws:87.4,we:87.5,ac:1550,dc:0.7,
-s:"第一个月试验期。重在建立习惯和校准基线。体重从87.4→87.5基本持平。训练频率43%(12/28天)。6/19白酒事件(4892kcal)抵消一周缺口。TDEE校准至1900-2050kcal。"},
-"7月":{td:22,th:28.5,ws:86.9,we:83.4,ac:1380,dc:0.85,
-s:"正式执行期。猛冲期(7/13-7/20,871kcal/d)+降档恢复期+正常减脂。体重从86.9→83.4降3.5kg。训练频率71%(22/31天)。体脂从30.4%→29.2%↓1.2%。7/19欺骗餐(2956kcal)为计划内代谢重置。"}
-};
 
 const ACTIONS={
 "周一":{name:"推力量 + 持续输出 + 核心 + 功能性HIIT",dur:"~75min",w:[
@@ -726,64 +635,6 @@ function saveDimRecord(){
   ['dimWaist','dimHip','dimChest','dimThigh','dimArmFlex','dimArmRelax','dimNote'].forEach(function(id){document.getElementById(id).value='';});
   if(typeof filterBody==='function')filterBody();
   if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
-}
-
-// ===== ED localStorage =====
-function getExpLS(){try{return JSON.parse(localStorage.getItem('health_expense')||'[]');}catch(e){return[];}}
-function setExpLS(data){localStorage.setItem('health_expense',JSON.stringify(data));}
-function mergeExpLS(){
-  var ls=getExpLS();
-  ls.forEach(function(d){
-    var idx=ED.findIndex(function(x){return x.date===d.date&&x.item===d.item;});
-    if(idx<0){ED.push(d);}
-  });
-  ED.sort(function(a,b){return a.date.localeCompare(b.date);});
-}
-mergeExpLS();
-function saveExpenseRecord(){
-  var item=document.getElementById('expItem').value.trim();
-  var amt=parseFloat(document.getElementById('expAmt').value);
-  var cat=document.getElementById('expCat').value||'补剂';
-  if(!item||!amt){document.getElementById('expFeedback').innerHTML='<span style="color:var(--red)">请填写项目和金额</span>';return;}
-  var todayStr=getTodayStr();
-  var entry={date:todayStr,item:item,amt:amt,cat:cat};
-  ED.push(entry);
-  ED.sort(function(a,b){return a.date.localeCompare(b.date);});
-  // Persist
-  var ls=getExpLS();ls.push(entry);setExpLS(ls);
-  // 联动：补剂分类自动同步价格到补剂清单
-  if(cat==='补剂'){
-    try{
-      var sp=JSON.parse(localStorage.getItem('health_supp_prices')||'{}');
-      sp[item]=amt;
-      localStorage.setItem('health_supp_prices',JSON.stringify(sp));
-    }catch(e){}
-  }
-  document.getElementById('expFeedback').innerHTML='<span style="color:var(--green)">✓ 已记录 '+item+' ¥'+amt+'</span>';
-  document.getElementById('expItem').value='';
-  document.getElementById('expAmt').value='';
-  // 自动扩展日期范围以包含今天
-  var endInput=document.getElementById("expEnd");
-  if(todayStr>endInput.value){endInput.value=todayStr;}
-  if(typeof filterExpense==='function')filterExpense();
-  if(typeof initMemo==='function')initMemo();
-}
-function deleteExpRecord(idx){
-  // Find the actual index in merged ED array
-  var s=document.getElementById('expStart').value,e=document.getElementById('expEnd').value;
-  var filtered=ED.filter(function(d){return d.date>=s&&d.date<=e;});
-  var target=filtered[idx];
-  if(!target)return;
-  var realIdx=ED.indexOf(target);
-  if(realIdx>=0)ED.splice(realIdx,1);
-  // Also remove from localStorage
-  var ls=getExpLS().filter(function(d){return !(d.date===target.date&&d.item===target.item);});
-  setExpLS(ls);
-  // 自动扩展日期范围以包含今天
-  var endInput=document.getElementById("expEnd");
-  if(todayStr>endInput.value){endInput.value=todayStr;}
-  if(typeof filterExpense==='function')filterExpense();
-  if(typeof initMemo==='function')initMemo();
 }
 
 function saveDailyWeight(){
@@ -1544,7 +1395,7 @@ function filterBody(){
   rc+='</div>';
   $('refCompareArea').innerHTML=rc;
   
-  // Achievement rate (latest already defined above in ref compare)
+  // Achievement rate
   const startW=89.85,targetW=70,targetBF=14;
   const curW=latest.weight,curBF=latest.bf;
   const lostW=startW-curW,needLoseW=startW-targetW;
@@ -1552,24 +1403,47 @@ function filterBody(){
   const wPct=Math.min(100,lostW/needLoseW*100);
   const bfPct=Math.min(100,lostBF/needLoseBF*100);
   const overallPct=(wPct+bfPct)/2;
-  let ach='<div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;font-weight:800;color:var(--orange)">'+overallPct.toFixed(1)+'%</div><div style="font-size:12px;color:var(--t2)">综合达成率</div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--t2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:12px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--t2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:12px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
+  let ach='<div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;font-weight:800;color:var(--orange)">'+overallPct.toFixed(1)+'%</div><div style="font-size:13px;color:var(--t2)">综合达成率</div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--t2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:13px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--t2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:13px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
   $('achievementArea').innerHTML=ach;
   
-  // Composition analysis (baseline already defined above)
-  const comp='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;font-size:11px;text-align:center"><div style="padding:8px;background:var(--inset);border-radius:8px"><div style="color:var(--t3);margin-bottom:4px">指标</div><div style="color:var(--t2)">体重<br>体脂率<br>肌肉量<br>去脂体重<br>内脏脂肪</div></div><div style="padding:8px;background:var(--inset);border-radius:8px"><div style="color:var(--t3);margin-bottom:4px">起点</div><div style="color:var(--t1)">'+baseline.weight+'kg<br>'+baseline.bf+'%<br>'+baseline.muscle+'kg<br>'+baseline.ffm+'kg<br>'+baseline.vf+'</div></div><div style="padding:8px;background:var(--inset);border-radius:8px"><div style="color:var(--t3);margin-bottom:4px">当前</div><div style="color:var(--orange);font-weight:600">'+latest.weight+'kg<br>'+latest.bf+'%<br>'+latest.muscle+'kg<br>'+latest.ffm+'kg<br>'+latest.vf+'</div></div><div style="padding:8px;background:var(--inset);border-radius:8px"><div style="color:var(--t3);margin-bottom:4px">变化</div><div style="color:'+(latest.weight<baseline.weight?'var(--green)':'var(--red)')+'">'+(latest.weight-baseline.weight).toFixed(1)+'kg<br>'+(latest.bf-baseline.bf).toFixed(1)+'%<br>'+(latest.muscle-baseline.muscle).toFixed(1)+'kg<br>'+(latest.ffm-baseline.ffm).toFixed(1)+'kg<br>'+(latest.vf-baseline.vf)+'</div></div></div>';
-  $('compositionArea').innerHTML=comp;
+  // Body history cards (横向滑动)
+  const bd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null).slice().reverse();
+  const cardStyle='flex-shrink:0;width:160px;background:var(--inset);border-radius:var(--rs);padding:14px';
+  $('bodyHistoryCards').innerHTML=bd.map(d=>{
+    var h='<div style="'+cardStyle+'">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px">'+d.date.slice(5)+'</div>';
+    h+='<div style="font-size:12px;color:var(--t2);line-height:1.8">';
+    h+='<div><span style="color:var(--t3)">体重</span> <span style="color:var(--orange);font-weight:600">'+d.weight+'kg</span></div>';
+    h+='<div><span style="color:var(--t3)">体脂</span> <span style="color:var(--green);font-weight:600">'+d.bf+'%</span></div>';
+    h+='<div><span style="color:var(--t3)">BMI</span> '+(d.bmi||'—')+'</div>';
+    h+='<div><span style="color:var(--t3)">BMR</span> '+(d.bmr||'—')+'</div>';
+    h+='<div><span style="color:var(--t3)">肌肉</span> '+(d.muscle||'—')+'kg</div>';
+    h+='<div><span style="color:var(--t3)">去脂</span> '+(d.ffm||'—')+'kg</div>';
+    h+='<div><span style="color:var(--t3)">内脏</span> '+(d.vf||'—')+'</div>';
+    h+='</div>';
+    h+='</div>';
+    return h;
+  }).join('');
   
-  // Body table
-  const tbody=document.querySelector('#bodyTable tbody');
-  const bd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null);
-  tbody.innerHTML=bd.map(d=>'<tr><td>'+d.date.slice(5)+'</td><td>'+d.weight+'kg</td><td>'+d.bf+'%</td><td>'+(d.bmi||'—')+'</td><td>'+(d.bmr||'—')+'</td><td>'+(d.muscle||'—')+'</td><td>'+(d.ffm||'—')+'</td><td>'+(d.vf||'—')+'</td></tr>').join('');
-  
-  // Dimension table
-  const dtbody=document.querySelector('#dimTable tbody');
-  const dims=DIM.filter(d=>d.date>=s&&d.date<=e);
-  dtbody.innerHTML=dims.map(d=>'<tr><td>'+d.date.slice(5)+'</td><td>'+d.waist+'</td><td>'+d.hip+'</td><td>'+d.chest+'</td><td>'+d.thigh+'</td><td>'+d.armFlex+'</td><td>'+d.armRelax+'</td><td style="font-size:10px">'+d.note+'</td></tr>').join('');
+  // Dimension history cards (横向滑动)
+  const dims=DIM.filter(d=>d.date>=s&&d.date<=e).slice().reverse();
+  $('dimHistoryCards').innerHTML=dims.map(d=>{
+    var h='<div style="'+cardStyle+'">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px">'+d.date.slice(5)+'</div>';
+    h+='<div style="font-size:12px;color:var(--t2);line-height:1.8">';
+    h+='<div><span style="color:var(--t3)">腰围</span> '+d.waist+'cm</div>';
+    h+='<div><span style="color:var(--t3)">臀围</span> '+d.hip+'cm</div>';
+    h+='<div><span style="color:var(--t3)">胸围</span> '+d.chest+'cm</div>';
+    h+='<div><span style="color:var(--t3)">大腿</span> '+d.thigh+'cm</div>';
+    h+='<div><span style="color:var(--t3)">上臂绷紧</span> '+d.armFlex+'cm</div>';
+    h+='<div><span style="color:var(--t3)">上臂放松</span> '+d.armRelax+'cm</div>';
+    h+='<div style="font-size:10px;color:var(--t3);margin-top:4px">'+(d.note||'')+'</div>';
+    h+='</div>';
+    h+='</div>';
+    return h;
+  }).join('');
 }
 
 // ===== 各围度距目标差距 =====
@@ -1625,60 +1499,6 @@ function renderBodyPartDistance(){
   h+='⚠️ 腰/臀围肌肉层也在降——整体围度缩小不止减脂，核心也在缩减';
   h+='</div>';
   $('bodyPartDistance').innerHTML=h;
-}
-
-// ===== TAB 6: EXPENSE =====
-function filterExpense(){
-  const s=$('expStart').value,e=$('expEnd').value;
-  const filtered=ED.filter(d=>d.date>=s&&d.date<=e);
-  const total=filtered.reduce((s,d)=>s+d.amt,0);
-  
-  // Pie by category
-  const cats={};
-  filtered.forEach(d=>{cats[d.cat]=(cats[d.cat]||0)+d.amt});
-  const slices=Object.entries(cats).map(([k,v])=>({label:k,value:v}));
-  $('expPieChart').innerHTML='<div style="text-align:center;font-size:24px;font-weight:700;color:var(--t1);margin-bottom:8px">¥'+total.toFixed(0)+'</div>'+makePieChart(slices,300,220);
-  
-  // Table
-  const tbody=document.querySelector('#expTable tbody');
-  tbody.innerHTML=filtered.map((d,i)=>'<tr><td>'+d.date.slice(5)+'</td><td>'+d.item+'</td><td style="color:var(--orange)">¥'+d.amt.toFixed(0)+'</td><td><span class="badge badge-blue">'+d.cat+'</span></td><td><span onclick="deleteExpRecord('+i+')" style="color:var(--red);cursor:pointer;font-size:11px">✕</span></td></tr>').join('');
-}
-
-// ===== TAB 7: WEEKLY =====
-function showWeekly(){
-  const v=$('weekSelect').value;
-  if(!v){$('weeklyContent').innerHTML='';return;}
-  const w=WEEKLY[v];
-  let html='<div class="card"><div class="card-title">📊 '+v+' · '+w.period+'</div>';
-  html+='<div class="kpi-grid">';
-  html+='<div class="kpi-item"><div class="kpi-value" style="color:var(--blue)">'+w.wc.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">体重变化</div><div style="font-size:10px;color:var(--t3)">'+w.ws+'→'+w.we+'</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value" style="color:var(--green)">'+(w.bfe-w.bfs).toFixed(1)+'<span class="unit"> %</span></div><div class="kpi-label">体脂变化</div><div style="font-size:10px;color:var(--t3)">'+w.bfs+'%→'+w.bfe+'%</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+w.td+'<span class="unit"> 天</span></div><div class="kpi-label">训练天数</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+w.th+'<span class="unit"> h</span></div><div class="kpi-label">训练时长</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+w.ac+'<span class="unit"> kcal</span></div><div class="kpi-label">日均摄入</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+w.ap+'<span class="unit"> g</span></div><div class="kpi-label">日均蛋白</div></div>';
-  html+='</div>';
-  html+='<div class="review-section" style="margin-top:12px"><div class="review-title">📝 总结</div><div class="summary-text">'+w.s+'</div></div>';
-  html+='</div>';
-  $('weeklyContent').innerHTML=html;
-}
-
-// ===== TAB 8: MONTHLY =====
-function showMonthly(){
-  const v=$('monthSelect').value;
-  if(!v){$('monthlyContent').innerHTML='';return;}
-  const m=MONTHLY[v];
-  let html='<div class="card"><div class="card-title">📊 '+v+' 月度复盘</div>';
-  html+='<div class="kpi-grid">';
-  html+='<div class="kpi-item"><div class="kpi-value" style="color:var(--blue)">'+(m.we-m.ws).toFixed(1)+'<span class="unit"> kg</span></div><div class="kpi-label">体重变化</div><div style="font-size:10px;color:var(--t3)">'+m.ws+'→'+m.we+'</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+m.td+'<span class="unit"> 天</span></div><div class="kpi-label">训练天数</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+m.th+'<span class="unit"> h</span></div><div class="kpi-label">训练总时长</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+m.ac+'<span class="unit"> kcal</span></div><div class="kpi-label">日均摄入</div></div>';
-  html+='<div class="kpi-item"><div class="kpi-value">'+(m.dc*100).toFixed(0)+'<span class="unit"> %</span></div><div class="kpi-label">饮食达标率</div></div>';
-  html+='</div>';
-  html+='<div class="review-section" style="margin-top:12px"><div class="review-title">📝 总结</div><div class="summary-text">'+m.s+'</div></div>';
-  html+='</div>';
-  $('monthlyContent').innerHTML=html;
 }
 
 // ===== TAB MEMO: 备忘 =====
@@ -1746,15 +1566,6 @@ function initMemo(){
     {name:'胶原蛋白肽(VP)',dose:'10-15g',note:'睡前空腹',time:'22:30',stock:'567g/120天',price:307.05},
     {name:'他达拉非',dose:'5mg',note:'任意时间',time:'任意',stock:'3盒',price:251}
   ];
-  // 从 localStorage 读取已录入的补剂价格（联动花费模块）
-  try{
-    var suppPrices=JSON.parse(localStorage.getItem('health_supp_prices')||'{}');
-    supps.forEach(function(s){
-      // 精确匹配或模糊匹配
-      if(suppPrices[s.name]){s.price=suppPrices[s.name];}
-      else{for(var k in suppPrices){if(s.name.indexOf(k)>=0||k.indexOf(s.name)>=0){s.price=suppPrices[k];break;}}}
-    });
-  }catch(e){}
   // 按时间分组渲染补剂清单
   let sp='',totalPrice=0,lastTime='';
   const timeLabels={'19:00':'🏠 19:00 空腹','19:15':'🍽 19:15 晚餐随餐','22:30':'🌙 22:30 睡前空腹','任意':'⏰ 任意时间'};
@@ -1790,6 +1601,117 @@ function initMemo(){
   $('fatLossZones').innerHTML=z;
 }
 
+// ===== REVIEW SECTION (动态周/月复盘) =====
+function renderReviewSection(){
+  function parseDate(s){return new Date(s+'T00:00:00');}
+  function fmtDate(d){return (d.getMonth()+1)+'/'+d.getDate();}
+  function weekRange(weekStart){
+    var s=new Date(weekStart);
+    var e=new Date(s);e.setDate(s.getDate()+6);
+    return fmtDate(s)+'-'+fmtDate(e);
+  }
+  function mondayOf(d){var r=new Date(d);var dow=r.getDay()||7;r.setDate(r.getDate()-(dow-1));r.setHours(0,0,0,0);return r;}
+
+  // Get latest week's Monday
+  var latestMonday=mondayOf(new Date());
+
+  // Build 4 recent weeks (latest first)
+  var weeks=[];
+  for(var i=0;i<4;i++){
+    var ws=new Date(latestMonday);ws.setDate(ws.getDate()-i*7);
+    var we=new Date(ws);we.setDate(ws.getDate()+6);
+    var wsStr=ws.getFullYear()+'-'+String(ws.getMonth()+1).padStart(2,'0')+'-'+String(ws.getDate()).padStart(2,'0');
+    var weStr=we.getFullYear()+'-'+String(we.getMonth()+1).padStart(2,'0')+'-'+String(we.getDate()).padStart(2,'0');
+    // Weight change: first and last entry in range
+    var wdInRange=WD.filter(function(d){return d.date>=wsStr&&d.date<=weStr;});
+    var wChange='—',wRange='';
+    if(wdInRange.length>=2){
+      var wStart=wdInRange[0].weight,wEnd=wdInRange[wdInRange.length-1].weight;
+      wChange=(wEnd-wStart).toFixed(1);
+      wRange=wStart.toFixed(1)+'→'+wEnd.toFixed(1);
+    }else if(wdInRange.length===1){
+      wChange='0.0';wRange=wdInRange[0].weight.toFixed(1);
+    }
+    // Training
+    var tdInRange=TD.filter(function(d){return d.date>=wsStr&&d.date<=weStr;});
+    var trainDays=tdInRange.length;
+    var trainHours=tdInRange.reduce(function(s,t){return s+t.dur;},0)/60;
+    // Diet
+    var ddInRange=DD.filter(function(d){return d.date>=wsStr&&d.date<=weStr;});
+    var avgCal=ddInRange.length>0?Math.round(ddInRange.reduce(function(s,d){return s+d.t.cal;},0)/ddInRange.length):0;
+    var avgProtein=ddInRange.length>0?Math.round(ddInRange.reduce(function(s,d){return s+d.t.p;},0)/ddInRange.length):0;
+    weeks.push({label:weekRange(ws),wChange:wChange,wRange:wRange,trainDays:trainDays,trainHours:trainHours.toFixed(1),avgCal:avgCal,avgProtein:avgProtein});
+  }
+
+  // Build 3 recent months
+  var months=[];
+  var now=new Date();
+  for(var mi=0;mi<3;mi--){
+    var mDate=new Date(now.getFullYear(),now.getMonth()-mi,1);
+    var mStart=new Date(mDate.getFullYear(),mDate.getMonth(),1);
+    var mEnd=new Date(mDate.getFullYear(),mDate.getMonth()+1,0);
+    var msStr=mStart.getFullYear()+'-'+String(mStart.getMonth()+1).padStart(2,'0')+'-'+String(mStart.getDate()).padStart(2,'0');
+    var meStr=mEnd.getFullYear()+'-'+String(mEnd.getMonth()+1).padStart(2,'0')+'-'+String(mEnd.getDate()).padStart(2,'0');
+    var monthName=(mDate.getMonth()+1)+'月';
+    // Weight change
+    var wdInMonth=WD.filter(function(d){return d.date>=msStr&&d.date<=meStr;});
+    var mwChange='—',mwRange='';
+    if(wdInMonth.length>=2){
+      var mwStart=wdInMonth[0].weight,mwEnd=wdInMonth[wdInMonth.length-1].weight;
+      mwChange=(mwEnd-mwStart).toFixed(1);
+      mwRange=mwStart.toFixed(1)+'→'+mwEnd.toFixed(1);
+    }else if(wdInMonth.length===1){
+      mwChange='0.0';mwRange=wdInMonth[0].weight.toFixed(1);
+    }
+    // Training
+    var tdInMonth=TD.filter(function(d){return d.date>=msStr&&d.date<=meStr;});
+    var mTrainDays=tdInMonth.length;
+    var mTrainHours=tdInMonth.reduce(function(s,t){return s+t.dur;},0)/60;
+    // Diet
+    var ddInMonth=DD.filter(function(d){return d.date>=msStr&&d.date<=meStr;});
+    var mAvgCal=ddInMonth.length>0?Math.round(ddInMonth.reduce(function(s,d){return s+d.t.cal;},0)/ddInMonth.length):0;
+    // Diet compliance rate: days where cal is within target range (1300-1900)
+    var compliantDays=ddInMonth.filter(function(d){return d.t.cal>=1300&&d.t.cal<=1900;}).length;
+    var complianceRate=ddInMonth.length>0?Math.round(compliantDays/ddInMonth.length*100):0;
+    months.push({label:monthName,wChange:mwChange,wRange:mwRange,trainDays:mTrainDays,trainHours:mTrainHours.toFixed(1),avgCal:mAvgCal,complianceRate:complianceRate});
+  }
+
+  // Render
+  var html='';
+  // Weekly reviews
+  html+='<div class="card"><div class="card-title">📅 最近4周复盘</div>';
+  weeks.forEach(function(w){
+    var wcColor=parseFloat(w.wChange)<0?'var(--green)':(parseFloat(w.wChange)>0?'var(--red)':'var(--t2)');
+    html+='<div class="review-section">';
+    html+='<div class="review-title">'+w.label+'</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px">';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:'+wcColor+'">'+w.wChange+'<span style="font-size:10px;color:var(--t3)"> kg</span></div><div style="font-size:10px;color:var(--t3)">体重变化</div><div style="font-size:9px;color:var(--t3)">'+w.wRange+'</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--blue)">'+w.trainDays+'<span style="font-size:10px;color:var(--t3)"> 天</span></div><div style="font-size:10px;color:var(--t3)">训练'+w.trainHours+'h</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--orange)">'+w.avgCal+'<span style="font-size:10px;color:var(--t3)"> kcal</span></div><div style="font-size:10px;color:var(--t3)">日均摄入</div><div style="font-size:9px;color:var(--t3)">蛋白'+w.avgProtein+'g</div></div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  // Monthly reviews
+  html+='<div class="card"><div class="card-title">📅 最近3月复盘</div>';
+  months.forEach(function(m){
+    var wcColor=parseFloat(m.wChange)<0?'var(--green)':(parseFloat(m.wChange)>0?'var(--red)':'var(--t2)');
+    html+='<div class="review-section">';
+    html+='<div class="review-title">'+m.label+'</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:6px">';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:'+wcColor+'">'+m.wChange+'<span style="font-size:10px;color:var(--t3)"> kg</span></div><div style="font-size:10px;color:var(--t3)">体重变化</div><div style="font-size:9px;color:var(--t3)">'+m.wRange+'</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--blue)">'+m.trainDays+'<span style="font-size:10px;color:var(--t3)"> 天</span></div><div style="font-size:10px;color:var(--t3)">训练'+m.trainHours+'h</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--orange)">'+m.avgCal+'<span style="font-size:10px;color:var(--t3)"> kcal</span></div><div style="font-size:10px;color:var(--t3)">日均摄入</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--green)">'+m.complianceRate+'<span style="font-size:10px;color:var(--t3)"> %</span></div><div style="font-size:10px;color:var(--t3)">饮食达标率</div></div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  $('reviewSection').innerHTML=html;
+}
+
 // ===== INIT =====
 const _today=getTodayStr();
 ['trainEnd','dietEnd','bodyEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
@@ -1798,9 +1720,7 @@ initOverview();
 filterTraining();
 filterDiet();
 filterBody();
-// 动态设置结束日期为今天
-if(!document.getElementById("expEnd").value){document.getElementById("expEnd").value=getTodayStr();}
-filterExpense();
+renderReviewSection();
 initMemo();
 </script>
 </body>

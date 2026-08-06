@@ -15,7 +15,7 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
 .header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
-.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
+.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
 .header-title{font-size:15px;font-weight:600;color:var(--t1)}
 .header-sub{font-size:11px;color:var(--t2);margin-top:1px}
 .header-date{font-size:11px;color:var(--t3);text-align:right}
@@ -32,14 +32,14 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 .sub-panel{display:none}
 .sub-panel.active{display:block;animation:fadeUp 0.3s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;border:1px solid var(--bdr)}
-.card-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px;border:1px solid var(--bdr)}
+.card-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .big-num{font-size:36px;font-weight:800;color:var(--t1);line-height:1.1}
 .big-num .unit{font-size:14px;font-weight:400;color:var(--t2)}
 .big-sub{font-size:12px;color:var(--t2);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .kpi-item{background:var(--inset);border-radius:var(--rs);padding:16px 12px;text-align:center}
-.kpi-value{font-size:22px;font-weight:700}
+.kpi-value{font-size:24px;font-weight:700}
 .kpi-value.income{color:var(--green)}
 .kpi-value.expense{color:var(--red)}
 .kpi-value.balance{color:var(--blue)}
@@ -110,7 +110,7 @@ input::placeholder{color:var(--t3)}
       <div class="avatar">综</div>
       <div>
         <div class="header-title">综合工作台</div>
-        <div class="header-sub">排盘 · 记账 · 装备补给</div>
+        <div class="header-sub">排盘 · 记账 · 愿望清单</div>
       </div>
     </div>
     <div class="header-date" id="headerDate"></div>
@@ -119,7 +119,7 @@ input::placeholder{color:var(--t3)}
   <div class="main-tabs">
     <div class="main-tab" data-main="paipan" onclick="switchMain('paipan')">奇门排盘</div>
     <div class="main-tab active" data-main="jizhang" onclick="switchMain('jizhang')">记账</div>
-    <div class="main-tab" data-main="daigou" onclick="switchMain('daigou')">装备补给</div>
+    <div class="main-tab" data-main="wishlist" onclick="switchMain('wishlist')">愿望清单</div>
   </div>
 
   <!-- 排盘 Panel -->
@@ -136,8 +136,10 @@ input::placeholder{color:var(--t3)}
 
   <!-- 记账 Panel -->
   <div class="main-panel active" id="panel-jizhang">
-    <!-- 快速录入卡片（置顶） -->
-    <div class="card" style="margin-top:12px;padding:18px">
+    <!-- 记账切换按钮 -->
+    <button onclick="toggleAddForm()" style="margin-top:12px;width:100%;padding:12px;background:var(--card);color:var(--t1);border:1px solid var(--bdr2);border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">✏️ 记账</button>
+    <!-- 快速录入卡片（默认收起） -->
+    <div class="card" id="add-card" style="display:none;margin-top:12px;padding:18px">
       <div class="card-title" style="margin-bottom:14px">✏️ 快速记账</div>
       <div id="add-form" style="display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;gap:10px">
@@ -187,30 +189,22 @@ input::placeholder{color:var(--t3)}
 
     <div class="sub-tabs">
       <div class="sub-tab active" data-sub="overview" onclick="switchSub('overview')">总览</div>
-      <div class="sub-tab" data-sub="today" onclick="switchSub('today')">当日</div>
-      <div class="sub-tab" data-sub="week" onclick="switchSub('week')">当周</div>
-      <div class="sub-tab" data-sub="month" onclick="switchSub('month')">当月</div>
+      <div class="sub-tab" data-sub="month" onclick="switchSub('month')">月度</div>
       <div class="sub-tab" data-sub="detail" onclick="switchSub('detail')">明细</div>
     </div>
 
     <!-- 总览 -->
     <div class="sub-panel active" id="sub-overview"></div>
 
-    <!-- 当日 -->
-    <div class="sub-panel" id="sub-today"></div>
-
-    <!-- 当周 -->
-    <div class="sub-panel" id="sub-week"></div>
-
-    <!-- 当月 -->
+    <!-- 月度 -->
     <div class="sub-panel" id="sub-month"></div>
 
     <!-- 明细 -->
     <div class="sub-panel" id="sub-detail"></div>
   </div>
 
-  <!-- 装备补给 Panel -->
-  <div class="main-panel" id="panel-daigou">
+  <!-- 愿望清单 Panel -->
+  <div class="main-panel" id="panel-wishlist">
     <!-- 装备/补剂迁移提示 -->
     <div class="card" style="margin-top:12px;border-left:4px solid var(--orange)">
       <div style="display:flex;align-items:flex-start;gap:10px">
@@ -223,15 +217,6 @@ input::placeholder{color:var(--t3)}
     </div>
     <!-- 眼镜选配（愿望清单） -->
     <div id="daigou-glasses"></div>
-    <!-- 训练计划 -->
-    <div class="sub-tabs" style="margin-top:4px">
-      <div class="sub-tab active" data-sub="tr-today" onclick="switchSub('tr-today')">今日训练</div>
-      <div class="sub-tab" data-sub="tr-week" onclick="switchSub('tr-week')">本周计划</div>
-      <div class="sub-tab" data-sub="tr-lib" onclick="switchSub('tr-lib')">动作库</div>
-    </div>
-    <div class="sub-panel active" id="sub-tr-today"></div>
-    <div class="sub-panel" id="sub-tr-week"></div>
-    <div class="sub-panel" id="sub-tr-lib"></div>
   </div>
 </div>
 
@@ -268,23 +253,6 @@ function fmtWan(n) { if(Math.abs(n)>=10000) return (n/10000).toFixed(2)+'万'; r
 function formatDate(d) {
   const parts = d.split('-');
   return parseInt(parts[1]) + '/' + parseInt(parts[2]);
-}
-
-function isToday(dateStr) {
-  const now = new Date();
-  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
-  return dateStr === `${y}-${m}-${d}`;
-}
-
-function getWeekRange() {
-  const now = new Date();
-  const day = now.getDay() || 7;
-  const mon = new Date(now);
-  mon.setDate(now.getDate() - day + 1);
-  const sun = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
-  const f = d => d.toISOString().slice(0,10);
-  return [f(mon), f(sun)];
 }
 
 function getMonthRange() {
@@ -400,146 +368,109 @@ function renderOverview() {
   document.getElementById('sub-overview').innerHTML = html;
 }
 
-// ========== RENDER: Period (当日/当周/当月) ==========
-function renderPeriod(panelId, start, end, label) {
-  const panel = document.getElementById(panelId);
-  const txs = filterByDate(transactions, start, end);
-  const incs = filterByDate(incomeRecords.map(r => ({date:r.date, category:'收入', item:r.item, amount:r.amount})), start, end);
-
-  if (txs.length === 0 && incs.length === 0) {
-    panel.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">📭</div>
-        <div>${label}暂无记录</div>
-        <div style="margin-top:8px;font-size:12px;color:var(--t3)">记账数据从 2026/6/1 开始</div>
-      </div>`;
-    return;
-  }
-
-  const expTotal = calcExpense(txs);
-  const incTotal = calcIncome(incs);
-  const grouped = groupByCategory(txs);
-  const catOrder = Object.keys(grouped).sort((a,b) => grouped[b] - grouped[a]);
-
-  let html = `
-    <div class="day-summary">
-      <div class="row"><span class="label">${label}支出</span><span class="val exp">¥${fmt(expTotal)}</span></div>
-      <div class="row"><span class="label">${label}收入</span><span class="val inc">¥${fmt(incTotal)}</span></div>
-      <div class="row"><span class="label">${label}笔数</span><span class="val" style="color:var(--t1)">${txs.length} 笔</span></div>
-    </div>`;
-
-  if (catOrder.length > 0) {
-    html += `<div class="card"><div class="card-title">分类汇总</div><div class="cat-grid">`;
-    catOrder.forEach(cat => {
-      const cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
-      const amt = grouped[cat];
-      const pct = expTotal > 0 ? (amt/expTotal*100).toFixed(1) : 0;
-      html += `
-        <div class="cat-item">
-          <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
-          <div class="cat-icon">${cfg.emoji}</div>
-          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
-          <div class="cat-amount">¥${fmt(amt)}</div>
-          <div class="cat-pct">${pct}%</div>
-        </div>`;
-    });
-    html += `</div></div>`;
-  }
-
-  if (txs.length > 0) {
-    html += `<div class="card"><div class="card-title">支出明细</div><div class="tx-list">`;
-    txs.slice().reverse().forEach(t => {
-      const cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
-      html += `
-        <div class="tx-item">
-          <div class="tx-emoji">${cfg.emoji}</div>
-          <div class="tx-left">
-            <div class="tx-name">${t.item}</div>
-            <div class="tx-meta">${formatDate(t.date)} · ${t.category}</div>
-          </div>
-          <div class="tx-amount expense">-¥${fmt(t.amount)}</div>
-        </div>`;
-    });
-    html += `</div></div>`;
-  }
-
-  if (incs.length > 0) {
-    html += `<div class="card"><div class="card-title">💰 收入</div><div class="tx-list">`;
-    incs.slice().reverse().forEach(r => {
-      html += `
-        <div class="tx-item">
-          <div class="tx-emoji">💰</div>
-          <div class="tx-left">
-            <div class="tx-name">${r.item}</div>
-            <div class="tx-meta">${formatDate(r.date)}</div>
-          </div>
-          <div class="tx-amount income">+¥${fmt(r.amount)}</div>
-        </div>`;
-    });
-    html += `</div></div>`;
-  }
-
-  panel.innerHTML = html;
-}
-
-// ========== RENDER: 当月 ==========
+// ========== RENDER: 月度 ==========
 function renderMonth() {
-  const [mStart, mEnd] = getMonthRange();
-  renderPeriod('sub-month', mStart, mEnd, '本月');
-
-  // Add month comparison at top
   const panel = document.getElementById('sub-month');
-  const existing = panel.innerHTML;
 
-  // Calculate June vs July
-  const juneTxs = transactions.filter(t => t.date >= '2026-06-01' && t.date <= '2026-06-30');
-  const julyTxs = transactions.filter(t => t.date >= '2026-07-01' && t.date <= '2026-07-31');
-  const juneExp = calcExpense(juneTxs);
-  const julyExp = calcExpense(julyTxs);
-  const juneInc = calcIncome(incomeRecords.filter(r => r.date >= '2026-06-01' && r.date <= '2026-06-30'));
-  const julyInc = calcIncome(incomeRecords.filter(r => r.date >= '2026-07-01' && r.date <= '2026-07-31'));
+  // Dynamically extract all months from transactions
+  var monthSet = {};
+  transactions.forEach(function(t) {
+    var ym = t.date.slice(0, 7); // YYYY-MM
+    if (!monthSet[ym]) monthSet[ym] = ym;
+  });
+  var months = Object.keys(monthSet).sort().reverse(); // most recent first
 
-  // Check if current month has data
-  const curMonthTxs = filterByDate(transactions, mStart, mEnd);
-  if (curMonthTxs.length === 0) {
-    panel.innerHTML = `
-      <div class="month-compare">
-        <div class="month-card">
-          <div class="month-name">6月</div>
-          <div class="month-exp">¥${fmt(juneExp)}</div>
-          <div class="month-inc">收入 ¥${fmt(juneInc)}</div>
-          <div class="month-bal">结余 ¥${fmt(juneInc - juneExp)}</div>
-        </div>
-        <div class="month-card">
-          <div class="month-name">7月</div>
-          <div class="month-exp">¥${fmt(julyExp)}</div>
-          <div class="month-inc">收入 ¥${fmt(julyInc)}</div>
-          <div class="month-bal">结余 ¥${fmt(julyInc - julyExp)}</div>
-        </div>
-      </div>
-      <div class="empty-state">
-        <div class="icon">📭</div>
-        <div>本月暂无记录</div>
-        <div style="margin-top:8px;font-size:12px;color:var(--t3)">以上为历史月份对比</div>
-      </div>`;
+  // Also include income months
+  incomeRecords.forEach(function(r) {
+    var ym = r.date.slice(0, 7);
+    if (!monthSet[ym]) { monthSet[ym] = ym; months = Object.keys(monthSet).sort().reverse(); }
+  });
+
+  // Take last 2 months (most recent first → already sorted desc)
+  var recentMonths = months.slice(0, 2);
+
+  // Build month comparison cards
+  var compareHtml = '<div class="month-compare">';
+  recentMonths.forEach(function(ym) {
+    var parts = ym.split('-');
+    var monthLabel = parseInt(parts[1]) + '月';
+    var mTxs = transactions.filter(function(t) { return t.date.slice(0,7) === ym; });
+    var mIncs = incomeRecords.filter(function(r) { return r.date.slice(0,7) === ym; });
+    var mExp = calcExpense(mTxs);
+    var mInc = calcIncome(mIncs);
+    compareHtml += '<div class="month-card">' +
+      '<div class="month-name">' + monthLabel + '</div>' +
+      '<div class="month-exp">¥' + fmt(mExp) + '</div>' +
+      '<div class="month-inc">收入 ¥' + fmt(mInc) + '</div>' +
+      '<div class="month-bal">结余 ¥' + fmt(mInc - mExp) + '</div>' +
+    '</div>';
+  });
+  compareHtml += '</div>';
+
+  // Build current month detail (most recent month)
+  var curMonth = months[0]; // most recent month with data
+  var curStart = curMonth + '-01';
+  var curParts = curMonth.split('-');
+  var curYear = parseInt(curParts[0]);
+  var curMo = parseInt(curParts[1]);
+  var lastDay = new Date(curYear, curMo, 0).getDate();
+  var curEnd = curMonth + '-' + String(lastDay).padStart(2,'0');
+  var label = curMonth === getMonthRange()[0].slice(0,7) ? '本月' : (curMo + '月');
+
+  var txs = filterByDate(transactions, curStart, curEnd);
+  var incs = filterByDate(incomeRecords.map(function(r) { return {date:r.date, category:'收入', item:r.item, amount:r.amount}; }), curStart, curEnd);
+
+  var detailHtml = '';
+  if (txs.length === 0 && incs.length === 0) {
+    detailHtml = '<div class="empty-state"><div class="icon">📭</div><div>' + label + '暂无记录</div></div>';
   } else {
-    const header = `
-      <div class="month-compare">
-        <div class="month-card">
-          <div class="month-name">6月</div>
-          <div class="month-exp">¥${fmt(juneExp)}</div>
-          <div class="month-inc">收入 ¥${fmt(juneInc)}</div>
-          <div class="month-bal">结余 ¥${fmt(juneInc - juneExp)}</div>
-        </div>
-        <div class="month-card">
-          <div class="month-name">7月</div>
-          <div class="month-exp">¥${fmt(julyExp)}</div>
-          <div class="month-inc">收入 ¥${fmt(julyInc)}</div>
-          <div class="month-bal">结余 ¥${fmt(julyInc - julyExp)}</div>
-        </div>
-      </div>` + existing;
-    panel.innerHTML = header;
+    var expTotal = calcExpense(txs);
+    var incTotal = calcIncome(incs);
+    var grouped = groupByCategory(txs);
+    var catOrder = Object.keys(grouped).sort(function(a,b) { return grouped[b] - grouped[a]; });
+
+    detailHtml = '<div class="day-summary">' +
+      '<div class="row"><span class="label">' + label + '支出</span><span class="val exp">¥' + fmt(expTotal) + '</span></div>' +
+      '<div class="row"><span class="label">' + label + '收入</span><span class="val inc">¥' + fmt(incTotal) + '</span></div>' +
+      '<div class="row"><span class="label">' + label + '笔数</span><span class="val" style="color:var(--t1)">' + txs.length + ' 笔</span></div>' +
+    '</div>';
+
+    if (catOrder.length > 0) {
+      detailHtml += '<div class="card"><div class="card-title">分类汇总</div><div class="cat-grid">';
+      catOrder.forEach(function(cat) {
+        var cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
+        var amt = grouped[cat];
+        var pct = expTotal > 0 ? (amt/expTotal*100).toFixed(1) : 0;
+        detailHtml += '<div class="cat-item">' +
+          '<div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:' + cfg.color + '"></div>' +
+          '<div class="cat-icon">' + cfg.emoji + '</div>' +
+          '<div class="cat-name">' + cat + (cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">' + cfg.desc + '</div>' : '') + '</div>' +
+          '<div class="cat-amount">¥' + fmt(amt) + '</div>' +
+          '<div class="cat-pct">' + pct + '%</div>' +
+        '</div>';
+      });
+      detailHtml += '</div></div>';
+    }
+
+    if (txs.length > 0) {
+      detailHtml += '<div class="card"><div class="card-title">支出明细</div><div class="tx-list">';
+      txs.slice().reverse().forEach(function(t) {
+        var cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
+        detailHtml += '<div class="tx-item"><div class="tx-emoji">' + cfg.emoji + '</div><div class="tx-left"><div class="tx-name">' + t.item + '</div><div class="tx-meta">' + formatDate(t.date) + ' · ' + t.category + '</div></div><div class="tx-amount expense">-¥' + fmt(t.amount) + '</div></div>';
+      });
+      detailHtml += '</div></div>';
+    }
+
+    if (incs.length > 0) {
+      detailHtml += '<div class="card"><div class="card-title">💰 收入</div><div class="tx-list">';
+      incs.slice().reverse().forEach(function(r) {
+        detailHtml += '<div class="tx-item"><div class="tx-emoji">💰</div><div class="tx-left"><div class="tx-name">' + r.item + '</div><div class="tx-meta">' + formatDate(r.date) + '</div></div><div class="tx-amount income">+¥' + fmt(r.amount) + '</div></div>';
+      });
+      detailHtml += '</div></div>';
+    }
   }
+
+  panel.innerHTML = compareHtml + detailHtml;
 }
 
 // ========== RENDER: 明细 ==========
@@ -742,6 +673,11 @@ function renderDaigou() {
   document.getElementById('daigou-glasses').innerHTML = html;
 }
 
+function toggleAddForm() {
+  var card = document.getElementById('add-card');
+  card.style.display = card.style.display === 'none' ? 'block' : 'none';
+}
+
 // ========== TAB SWITCHING ==========
 function switchMain(name) {
   document.querySelectorAll('.main-tab').forEach(el => el.classList.toggle('active', el.dataset.main === name));
@@ -751,13 +687,8 @@ function switchMain(name) {
 function switchSub(name) {
   // 切换时重新渲染对应面板
   if(name==='overview'){recalcTotals();renderOverview();}
-  else if(name==='today'){var n=new Date();renderPeriod('sub-today',n.toISOString().slice(0,10),n.toISOString().slice(0,10),'今日');}
-  else if(name==='week'){var r=getWeekRange();renderPeriod('sub-week',r[0],r[1],'本周');}
   else if(name==='month'){renderMonth();}
   else if(name==='detail'){renderDetail();}
-  else if(name==='tr-today'){renderTrToday();}
-  else if(name==='tr-week'){renderTrWeek();}
-  else if(name==='tr-lib'){renderTrLib();}
   document.querySelectorAll('.sub-tab').forEach(el => el.classList.toggle('active', el.dataset.sub === name));
   document.querySelectorAll('.sub-panel').forEach(el => el.classList.toggle('active', el.id === 'sub-' + name));
 }
@@ -963,290 +894,6 @@ function renderPZInfo() {
   document.getElementById('sub-pz-info').innerHTML = html;
 }
 
-// ========== TRAINING: V8 训练计划 ==========
-// 0=休息 1=推日 2=拉日 3=下肢 4=主动恢复 5=Zone2
-const V8_WEEK = [
-  {day:'周一',type:1,label:'推力量+持续输出+核心+功能性HIIT',dur:75,energy:'中等',color:'#ff6b6b',
-    activation:'弹力带肩外旋 1×15/侧 + 面拉 1×15',
-    main:[
-      {n:'哑铃卧推',s:'4×10-12',w:'7.5-10kg/手',note:'肩胛后缩贴凳，肘45-75°不90°外展',warn:'肩痛即停→换哑铃卧推'},
-      {n:'哑铃肩推',s:'4×10-12',w:'7.5kg/手',note:'背贴靠背不后仰'},
-      {n:'标准俯卧撑',s:'4×力竭',w:'自重',note:'末组可改跪姿'},
-      {n:'仰卧臂屈伸',s:'4×12',w:'5kg',note:'大臂固定不动'}
-    ],
-    core:[
-      {n:'死虫式',s:'3×6',w:'自重',note:'腰椎全程贴地，腹直肌+深层核心收紧'},
-      {n:'麦吉尔卷腹',s:'3×8/侧',w:'自重',note:'一腿屈膝踩地一腿伸直，双手垫腰下保护腰椎'},
-      {n:'空心体保持',s:'2×15-20秒',w:'自重',note:'仰卧手举过头顶双腿伸直离地，腰贴地'}
-    ],
-    hiit:'功能性HIIT(15min,5轮): 弓步+弯举40s→弓步+转体40s→仰卧蹬车40s→休60s',
-    cool:'冷身拉伸(10min): 胸肌门框拉伸30s×2 + 肩前束30s/侧 + 三头30s/侧 + 踝画圈'},
-  {day:'周二',type:2,label:'拉力量+功能性HIIT+肩胛协议',dur:70,energy:'高',color:'#1e90ff',
-    activation:'弹力带外旋+内旋 各1×15/侧',
-    main:[
-      {n:'弹力带直臂下压',s:'4×12-15',w:'弹力带15磅',note:'手臂伸直从头顶往下压，顶峰挤压1-2秒'},
-      {n:'单臂哑铃划船',s:'4×12-15',w:'12.5kg/手',note:'离心5-6秒，拉向髋部'},
-      {n:'面拉',s:'4×15',w:'弹力带10磅',note:'对准面部，顶峰挤压1-2秒'},
-      {n:'弯举+垂举超级组',s:'各2×12',w:'5-7.5kg/手',note:'弯举12次不休息接锤式弯举12次'}
-    ],
-    hiit:'功能性HIIT(15min,5轮): 快速俯卧撑40s→哑铃摇摆40s→哑铃推举40s→动作间休20s/轮间休60s',
-    extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
-    cool:'冷身拉伸(10min): 背阔肌侧向幼犬式30s/侧 + 直臂二头拉伸20s/侧 + 跨胸后束拉伸20s/侧 + 踝画圈'},
-  {day:'周三',type:4,label:'主动恢复日',dur:25,energy:'低',color:'#af52de',
-    core:[
-      {n:'死虫式',s:'3×6',w:'自重',note:'腰椎全程贴地，腹直肌+深层核心收紧'},
-      {n:'麦吉尔卷腹',s:'3×8/侧',w:'自重',note:'一腿屈膝踩地一腿伸直，双手垫腰下保护腰椎'},
-      {n:'Pallof Press',s:'3×10/侧',w:'弹力带10磅',note:'弹力带固定侧面，双手从胸口推出保持3秒，腹斜肌对抗旋转'}
-    ],
-    extra:'轻量肩胛维护(10min): 地板天使2×8 + 弹力带面拉2×12 + 缩下巴2×15',
-    hiit:'',
-    cool:'',
-    note:'核心训练10min + 肩胛维护10min + 关节康复5min（髋关节画圈+左踝绕圈）。预计消耗~120kcal'},
-  {day:'周四',type:2,label:'拉力量+旋转+功能性HIIT',dur:70,energy:'低',color:'#1e90ff',
-    activation:'弹力带外旋+内旋 各1×15/侧',
-    main:[
-      {n:'弹力带直臂下压',s:'4×12-15',w:'弹力带15磅',note:'手臂伸直从头顶往下压，顶峰挤压1-2秒'},
-      {n:'单臂哑铃划船',s:'4×12-15',w:'12.5kg/手',note:'离心5-6秒，拉向髋部'},
-      {n:'面拉',s:'4×15',w:'弹力带10磅',note:'对准面部，顶峰挤压1-2秒'},
-      {n:'弯举+垂举超级组',s:'各2×12',w:'5-7.5kg/手',note:'弯举+锤式弯举背靠背'},
-      {n:'弹力带伐木',s:'3×10/侧',w:'弹力带10-15磅',note:'V8新增，从右上方斜拉到左下方，腹斜肌+旋转发力',new:true}
-    ],
-    hiit:'功能性HIIT(15min,5轮): 登山者40s→高抬腿40s→开合跳40s→动作间休20s/轮间休60s',
-    cool:'冷身拉伸(10min): 背阔肌30s/侧 + 二头30s/侧 + 后束30s/侧 + 踝画圈'},
-  {day:'周五',type:1,label:'推力量+持续输出+核心+功能性HIIT+肩胛',dur:87,energy:'高',color:'#ff6b6b',
-    activation:'弹力带肩外旋 1×15/侧 + 面拉 1×15',
-    main:[
-      {n:'哑铃卧推',s:'4×10-12',w:'7.5-10kg/手',note:'肩胛后缩贴凳，肘45-75°不90°外展',warn:'肩痛即停→换哑铃卧推'},
-      {n:'哑铃肩推',s:'4×10-12',w:'7.5kg/手',note:'背贴靠背不后仰'},
-      {n:'标准俯卧撑',s:'4×力竭',w:'自重',note:'末组可改跪姿'},
-      {n:'仰卧臂屈伸',s:'4×12',w:'5kg',note:'大臂固定不动'}
-    ],
-    core:[
-      {n:'死虫式',s:'3×6',w:'自重',note:'腰椎全程贴地，腹直肌+深层核心收紧'},
-      {n:'麦吉尔卷腹',s:'3×8/侧',w:'自重',note:'一腿屈膝踩地一腿伸直，双手垫腰下保护腰椎'},
-      {n:'空心体保持',s:'2×15-20秒',w:'自重',note:'仰卧手举过头顶双腿伸直离地，腰贴地'}
-    ],
-    hiit:'功能性HIIT(15min,5轮): 弓步+弯举40s→弓步+转体40s→仰卧蹬车40s→休60s',
-    extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
-    cool:'冷身拉伸(10min): 胸肌门框拉伸30s×2 + 肩前束30s/侧 + 三头30s/侧 + 踝画圈'},
-  {day:'周六',type:3,label:'下肢+核心+功能性长HIIT+肩胛',dur:108,energy:'最高',color:'#34c759',
-    activation:'无额外激活',
-    legMain:[
-      {n:'高脚杯深蹲',s:'4×12',w:'10kg哑铃',note:'膝盖追脚尖，骨盆后倾'},
-      {n:'保加利亚分腿蹲',s:'4×10/侧',w:'5kg/手',note:'后脚搭凳，前脚多迈一步，左踝扶墙保护'},
-      {n:'单腿臀桥',s:'4×12/侧',w:'自重',note:'一腿伸直抬起，支撑脚跟发力顶髋，腰酸降回双脚版'},
-      {n:'单腿RDL扶墙版',s:'3×10/侧',w:'自重或5kg',note:'扶墙保护，单腿站立前倾至躯干平行地面，腰椎中立位',new:true},
-      {n:'坐姿提踵',s:'4×20',w:'12.5kg哑铃放膝上',note:'前脚掌踩台阶，脚跟沉底→踮最高停1秒→慢放4秒',new:true},
-      {n:'站姿提踵',s:'4×20',w:'12.5kg/手',note:'站立肩宽，双手各持哑铃',new:true}
-    ],
-    core:[
-      {n:'死虫式',s:'3×6',w:'自重',note:'腰椎全程贴地，腹直肌+深层核心收紧'},
-      {n:'麦吉尔卷腹',s:'3×8/侧',w:'自重',note:'一腿屈膝踩地一腿伸直，双手垫腰下保护腰椎',new:true},
-      {n:'空心体保持',s:'2×15-20秒',w:'自重',note:'仰卧手举过头顶双腿伸直离地，腰贴地'}
-    ],
-    extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
-    hiit:'功能性长HIIT(21min,7轮): 壶铃摆荡40s(2.5kg)→波比退阶无俯卧撑版40s→登山者40s→休60s',
-    cool:'冷身拉伸(10min): 大腿前侧站姿拉伸30s/侧 + 大腿后侧坐姿体前屈30s + 臀部坐姿4字拉伸30s/侧 + 比目鱼肌弓步拉伸30s/侧 + 核心侧方跪姿侧伸展20s/侧 + 踝关节绕圈左45s右30s'},
-  {day:'周日',type:5,label:'Zone2骑行',dur:105,energy:'中低',color:'#ff9500',
-    main:[
-      {n:'Zone2稳态骑行',s:'90-120min',w:'—',note:'心率110-128bpm，能说话但不能唱歌，呼吸平稳可控'}
-    ],
-    core:[],extra:'',hiit:'',cool:'',
-    note:'心肺底座训练。最大心率183bpm的60-70%。预计消耗~500-700kcal'}
-];
-
-const V8_LIB = [
-  {name:'弹力带肩外旋',cat:'肩袖激活',desc:'手肘夹毛巾贴体侧，弹力带从腹部方向向外旋转至手臂外旋位，3秒离心回放。10磅窄带。'},
-  {name:'面拉 Face Pull',cat:'肩袖激活',desc:'弹力带固定面部高度，双手拉向面部两侧，外旋至Y字，顶峰挤压后束1-2秒。'},
-  {name:'Pallof Press',cat:'核心·抗旋转',desc:'弹力带固定在身体一侧(胸口高度)，双手从胸口推出，对抗弹力带的旋转力矩，保持3秒后收回。每侧10次。'},
-  {name:'死虫式 Dead Bug',cat:'核心·抗伸展',desc:'仰卧双臂伸直指天花板，双腿屈膝90度抬起。对侧手脚交替下放但不触地，腰部全程紧贴地面。升级版：伸出后保持3秒再收回。'},
-  {name:'鸟狗式',cat:'核心·抗旋转',desc:'四点跪姿，对侧手脚同时伸直至水平，身体不旋转，顶端停2秒。'},
-  {name:'空心体保持',cat:'核心·抗伸展',desc:'仰卧双臂伸过头顶，双腿伸直，同时抬起手脚离地5-10cm，下背压实地面，保持香蕉形。'},
-  {name:'哑铃卧推',cat:'推·胸',desc:'仰卧凳上，肩胛骨后缩下沉贴凳，肘部保持45-75°角(不90°外展)，下放至胸侧离心3-4秒，推起不锁死。肩痛即停。'},
-  {name:'哑铃肩推',cat:'推·肩',desc:'坐姿背靠椅，背部贴紧不后仰，哑铃从肩部向上推举至手臂伸直，离心3-4秒。'},
-  {name:'离心引体向上',cat:'拉·背',desc:'跳起或踩凳至下巴过杠，慢速下放5秒，手臂完全伸直后重复。仅窄握/对握，严禁宽握。'},
-  {name:'单臂哑铃划船',cat:'拉·背',desc:'一手一膝撑凳，另一手持哑铃，拉向髋部，顶峰挤压肩胛骨，离心5-6秒。'},
-  {name:'高脚杯深蹲',cat:'下肢',desc:'双手持哑铃一端贴胸，双脚与肩同宽，蹲至大腿平行地面，膝盖追脚尖。维持现有重量不加重。'},
-  {name:'保加利亚分腿蹲',cat:'下肢',desc:'后脚脚背搭凳上，前脚下蹲至大腿平行，重心在前腿。先做右腿(弱侧)。'},
-  {name:'登山者',cat:'HIIT',desc:'俯卧撑位，交替快速提膝至胸前，保持臀部不翘高。'},
-  {name:'波比退阶',cat:'HIIT',desc:'站立→蹲下→双脚后跳成俯卧撑位→收腿→站起。不加跳跃版本。'}
-];
-
-function renderTrToday() {
-  const now = new Date();
-  const jsDay = now.getDay(); // 0=Sun
-  const idx = jsDay === 0 ? 6 : jsDay - 1; // convert to 0=Mon
-  const d = V8_WEEK[idx];
-  let h = '';
-  if (d.type === 0) {
-    h = `<div class="card" style="text-align:center;padding:60px 20px">
-      <div style="font-size:48px;opacity:0.3">🛋️</div>
-      <div style="font-size:18px;color:var(--t1);font-weight:600;margin-top:12px">${d.day} · 休息日</div>
-      <div style="font-size:13px;color:var(--t3);margin-top:6px">完全休息。如需补课用休息日补力量模块。</div>
-    </div>`;
-    document.getElementById('sub-tr-today').innerHTML = h;
-    return;
-  }
-  // Header card
-  h += `<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-size:11px;color:var(--t3)">今日训练 · ${d.day}</div>
-        <div style="font-size:16px;font-weight:700;color:${d.color};margin-top:2px">${d.label}</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:22px;font-weight:800;color:var(--t1)">${d.dur}<span style="font-size:11px;color:var(--t3)">min</span></div>
-        <div style="font-size:11px;color:var(--t3)">精力${d.energy}</div>
-      </div>
-    </div>
-  </div>`;
-  // Activation
-  if (d.activation && d.activation !== '无额外激活') {
-    h += `<div class="card" style="border-left:3px solid var(--orange)">
-      <div class="card-title" style="color:var(--orange)">⚡ 推前激活（必做，在主项之前）</div>
-      <div style="font-size:13px;color:var(--t1)">${d.activation}</div>
-    </div>`;
-  }
-  // Main lifts
-  if (d.main) {
-    h += `<div class="card"><div class="card-title">🏋️ 主项（组间休息60-75秒，离心3-4秒）</div>`;
-    d.main.forEach((ex,i) => {
-      h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)">
-        <div><div style="font-size:13px;color:var(--t1);font-weight:500">${i+1}. ${ex.n}</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:2px">${ex.note||''}</div></div>
-        <div style="text-align:right;flex-shrink:0;margin-left:12px">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">${ex.s}</div>
-          <div style="font-size:11px;color:var(--t2)">${ex.w}</div>
-        </div></div>`;
-    });
-    h += `</div>`;
-  }
-  // Leg main
-  if (d.legMain) {
-    h += `<div class="card"><div class="card-title">🦵 下肢主项（组间休息75-90秒）</div>`;
-    d.legMain.forEach((ex,i) => {
-      h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)">
-        <div><div style="font-size:13px;color:var(--t1);font-weight:500">${i+1}. ${ex.n}</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:2px">${ex.note||''}</div></div>
-        <div style="text-align:right;flex-shrink:0;margin-left:12px">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">${ex.s}</div>
-          <div style="font-size:11px;color:var(--t2)">${ex.w}</div>
-        </div></div>`;
-    });
-    h += `</div>`;
-  }
-  // Core
-  if (d.core) {
-    h += `<div class="card"><div class="card-title">🎯 核心训练（组间休息45秒）</div>`;
-    d.core.forEach((ex,i) => {
-      const badge = ex.new ? '<span style="background:var(--green);color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:6px">NEW</span>' : '';
-      h += `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)">
-        <div><div style="font-size:13px;color:var(--t1);font-weight:500">${i+1}. ${ex.n}${badge}</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:2px">${ex.note||''}</div></div>
-        <div style="text-align:right;flex-shrink:0;margin-left:12px">
-          <div style="font-size:13px;font-weight:600;color:var(--t1)">${ex.s}</div>
-          <div style="font-size:11px;color:var(--t2)">${ex.w}</div>
-        </div></div>`;
-    });
-    h += `</div>`;
-  }
-  // Finisher
-  if (d.finisher) {
-    h += `<div class="card"><div class="card-title">🔥 ${d.finisher.split('(')[0]}</div>
-      <div style="font-size:12px;color:var(--t2)">${d.finisher}</div></div>`;
-  }
-  // HIIT
-  if (d.hiit) {
-    h += `<div class="card"><div class="card-title">💨 ${d.hiit.split('(')[0]}</div>
-      <div style="font-size:12px;color:var(--t2)">${d.hiit}</div></div>`;
-  }
-  // Extra (scapular)
-  if (d.extra) {
-    h += `<div class="card"><div class="card-title">🛡️ ${d.extra.split('(')[0]}</div>
-      <div style="font-size:12px;color:var(--t2)">${d.extra}</div></div>`;
-  }
-  // Cooldown
-  if (d.cool) {
-    h += `<div class="card"><div class="card-title">🧊 ${d.cool.split('(')[0]}</div>
-      <div style="font-size:12px;color:var(--t2)">${d.cool}</div></div>`;
-  }
-  document.getElementById('sub-tr-today').innerHTML = h;
-}
-
-function renderTrWeek() {
-  let h = `<div class="card"><div class="card-title">📅 V8 周训练计划</div>`;
-  h += `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
-    <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
-      <th style="text-align:left;padding:8px 6px">日</th>
-      <th style="text-align:left;padding:8px 6px">内容</th>
-      <th style="text-align:right;padding:8px 6px">时长</th>
-      <th style="text-align:center;padding:8px 6px">精力</th>
-    </tr>`;
-  const now = new Date();
-  const todayIdx = now.getDay() === 0 ? 6 : now.getDay() - 1;
-  V8_WEEK.forEach((d,i) => {
-    const isToday = i === todayIdx;
-    const isRest = d.type === 0;
-    const bg = isToday ? 'background:rgba(0,122,255,0.06);' : '';
-    const rowStyle = isRest ? 'color:var(--t3)' : 'color:var(--t1)';
-    h += `<tr style="border-bottom:1px solid var(--bdr);${bg}">
-      <td style="padding:10px 6px;font-weight:${isToday?700:500};${rowStyle}">${d.day}${isToday?' ←':''}</td>
-      <td style="padding:10px 6px;${rowStyle}">${d.label}</td>
-      <td style="padding:10px 6px;text-align:right;${rowStyle}">${d.dur||'-'}min</td>
-      <td style="padding:10px 6px;text-align:center;font-size:11px;${rowStyle}">${d.energy}</td>
-    </tr>`;
-  });
-  h += `</table></div></div>`;
-  // Weekly targets
-  h += `<div class="card"><div class="card-title">📊 周总量目标</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:var(--blue)">5次</div>
-        <div style="font-size:11px;color:var(--t3)">力量(A×2+B×1+C×2)</div>
-      </div>
-      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:var(--orange)">90min</div>
-        <div style="font-size:11px;color:var(--t3)">HIIT总量</div>
-      </div>
-      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:var(--green)">3次</div>
-        <div style="font-size:11px;color:var(--t3)">肩胛协议</div>
-      </div>
-      <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:var(--purple)">~540min</div>
-        <div style="font-size:11px;color:var(--t3)">周训练总时长(含主动恢复+Zone2)</div>
-      </div>
-    </div>
-    <div style="margin-top:12px;font-size:11px;color:var(--t3);line-height:1.8">
-      <div>⚡ 推日前必做：弹力带肩外旋+面拉（保护肩袖）</div>
-      <div>🎯 核心新增：Pallof Press（抗旋转）</div>
-      <div>🦵 下肢策略：维持现有重量，不追PR</div>
-      <div>⏱️ 所有动作离心3-4秒控制</div>
-    </div>
-  </div>`;
-  document.getElementById('sub-tr-week').innerHTML = h;
-}
-
-function renderTrLib() {
-  const cats = {};
-  V8_LIB.forEach(ex => {
-    if (!cats[ex.cat]) cats[ex.cat] = [];
-    cats[ex.cat].push(ex);
-  });
-  let h = '';
-  Object.entries(cats).forEach(([cat, exs]) => {
-    h += `<div class="card"><div class="card-title">${cat}</div>`;
-    exs.forEach(ex => {
-      h += `<div style="padding:10px 0;border-bottom:1px solid var(--bdr)">
-        <div style="font-size:13px;color:var(--t1);font-weight:500">${ex.name}</div>
-        <div style="font-size:12px;color:var(--t2);margin-top:4px;line-height:1.6">${ex.desc}</div>
-      </div>`;
-    });
-    h += `</div>`;
-  });
-  document.getElementById('sub-tr-lib').innerHTML = h;
-}
-
 // ========== INIT ==========
 
 
@@ -1279,10 +926,6 @@ function refreshAllViews() {
   // 重新计算汇总数据
   recalcTotals();
   renderOverview();
-  const now = new Date();
-  renderPeriod('sub-today', now.toISOString().slice(0,10), now.toISOString().slice(0,10), '今日');
-  const [wStart, wEnd] = getWeekRange();
-  renderPeriod('sub-week', wStart, wEnd, '本周');
   renderMonth();
   renderDetail();
 }
@@ -1334,15 +977,9 @@ function init() {
   document.getElementById('add-date').value = now.toISOString().slice(0,10);
 
   renderOverview();
-  renderPeriod('sub-today', now.toISOString().slice(0,10), now.toISOString().slice(0,10), '今日');
-  const [wStart, wEnd] = getWeekRange();
-  renderPeriod('sub-week', wStart, wEnd, '本周');
   renderMonth();
   renderDetail();
   renderDaigou();
-  renderTrToday();
-  renderTrWeek();
-  renderTrLib();
   renderPZRecommend();
   renderPZDetail();
   renderPZInfo();
