@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>健康管理工作台 | 大笔哥</title>
+<title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1064,7 +1064,7 @@ function makeLineChart(data,xKey,yKey,w,h,color,label,showAll){
   for(let i=0;i<=4;i++){
     const y=pad.t+ch*(1-i/4);
     const v=yMin+(yMax-yMin)*i/4;
-    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>';
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>';
     svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#5a6373" font-size="9" text-anchor="end">'+v.toFixed(1)+'</text>';
   }
   // Line + dots
@@ -1150,7 +1150,7 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   // Y grid
   for(let v=Math.ceil(yMin/5)*5;v<=yMax;v+=5){
     const y=yPx(v);
-    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.06)"/>';
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.06)"/>';
     svg+='<text x="'+(pad.l-5)+'" y="'+(y+4)+'" fill="#5a6373" font-size="10" text-anchor="end">'+v+'</text>';
   }
   
@@ -1189,7 +1189,7 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   // Scatter dots - small, clean
   data.forEach(d=>{
     const x=xPx(d.date), y=yPx(d.weight);
-    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3" fill="#fff"/>';
+    svg+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'' + '" r="3" fill="#FF9500"/>';
   });
   
   // Start marker
@@ -1204,7 +1204,7 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   // Latest weight label
   const last=data[data.length-1];
   const lx=xPx(last.date), ly=yPx(last.weight);
-  svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly-10)+'" fill="#fff" font-size="11" text-anchor="middle" font-weight="600">'+last.weight.toFixed(1)+'</text>';
+  svg+='<text x="'+lx.toFixed(1)+'" y="'+(ly-10)+'" fill="#1d1d1f" font-size="11" text-anchor="middle" font-weight="600">'+last.weight.toFixed(1)+'</text>';
   
   svg+='</svg>';
   $(containerId).innerHTML=svg;
