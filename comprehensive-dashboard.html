@@ -769,6 +769,24 @@ const SHEN=['值符','腾蛇','太阴','六合','白虎','玄武','九地','九�
 const WX_KE={'木':'土','土':'水','水':'火','火':'金','金':'木'};
 const ZHI_GONG={'子':1,'丑':8,'寅':8,'卯':3,'辰':5,'巳':4,'午':9,'未':2,'申':2,'酉':7,'戌':6,'亥':6};
 const XING_MAP={'戊':3,'己':2,'庚':8,'辛':9,'壬':6,'癸':4};
+// 天干五行 & 日干落宫（后天八卦）
+const GAN_WX={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'};
+const GAN_GONG={'甲':3,'乙':3,'丙':9,'丁':9,'戊':2,'己':2,'庚':7,'辛':7,'壬':1,'癸':1};
+// 五行生克关系：宫五行对日干五行 → 生克分值
+function wxScore(gongWx,ganWx){
+  if(gongWx===ganWx)return 1;            // 比和
+  // gong生gan: 木→火,火→土,土→金,金→水,水→木
+  const sheng={'木':'火','火':'土','土':'金','金':'水','水':'木'};
+  if(sheng[gongWx]===ganWx)return 2;      // 宫生日干=大吉
+  if(sheng[ganWx]===gongWx)return -1;     // 日生宫=小耗
+  // 克：gong克gan
+  const ke={'木':'土','土':'水','水':'火','火':'金','金':'木'};
+  if(ke[gongWx]===ganWx)return -2;        // 宫克日干=凶
+  if(ke[ganWx]===gongWx)return 0;         // 日克宫=小吉
+  return 0;
+}
+// 八神落宫→翻牌位置映射（左一/左二/中/右二/右一）
+const GONG_POS={1:0,4:0,3:1,2:2,5:2,8:2,7:3,6:4,9:4};
 const HOUR_LABELS={'子':'子时(23-01)','丑':'丑时(01-03)','寅':'寅时(03-05)','卯':'卯时(05-07)','辰':'辰时(07-09)','巳':'巳时(09-11)','午':'午时(11-13)','未':'未时(13-15)','申':'申时(15-17)','酉':'酉时(17-19)','戌':'戌时(19-21)','亥':'亥时(21-23)'};
 const JQ_JU={'冬至':[1,7,4],'小寒':[2,8,5],'大寒':[3,9,6],'立春':[8,5,2],'雨水':[9,6,3],'惊蛰':[1,7,4],'春分':[3,9,6],'清明':[4,1,7],'谷雨':[5,2,8],'立夏':[4,1,7],'小满':[5,2,8],'芒种':[6,3,9],'夏至':[9,3,6],'小暑':[8,2,5],'大暑':[7,1,4],'立秋':[2,5,8],'处暑':[1,4,7],'白露':[9,3,6],'秋分':[7,1,4],'寒露':[6,9,3],'霜降':[5,8,2],'立冬':[6,9,3],'小雪':[5,8,2],'大雪':[4,7,1]};
 const YANG_DUN=new Set(['冬至','小寒','大寒','立春','雨水','惊蛰','春分','清明','谷雨','立夏','小满','芒种']);
@@ -836,7 +854,7 @@ function checkGeju(dp,tp,mp,sp,hg,hz){
   return{tags:ut,isFiltered:f,filterReason:fr,shiganGong:sg};
 }
 // 主排盘
-function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',tags,isFiltered,filterReason};}
+function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,tags,isFiltered,filterReason};}
 function getAccountRg(cs){return getDayGZ(cs.slice(0,10)).gan;}
 // 周排盘
 function getWeekDates(){const t=new Date();const dow=t.getDay()||7;const m=new Date(t);m.setDate(t.getDate()-dow+1);const dates=[];for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);dates.push(d.toISOString().slice(0,10));}return dates;}
@@ -858,10 +876,17 @@ function generateWeekSchedule(){
     days.push({dt:dateStr.slice(5).replace('-','/'),wd:wdN[wd-1],dateStr,gz:sample.dayGz,jq:sample.jq,yuan:sample.yuan,ju:sample.ju,isYang:sample.isYang,isWeekend,kwStr:kw.join('')});
     const hours=isWeekend?['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']:['戌','亥','子'];
     accounts.forEach(a=>{
+      const ganWx=GAN_WX[a.rg]||'土';
       hours.forEach(hz=>{
         if([1,3,4].includes(wd)&&hz==='亥')return;
         const r=paiPan(dateStr,hz);
         const entry={dateStr,dt:dateStr.slice(5).replace('-','/')+'('+wdN[wd-1]+')',t:HOUR_LABELS[hz],gong:GONG_NM[r.shiganGong]||'?',men:r.menAtGong+'门',tag:r.tags.join('+'),pri:r.tags.length>0?'A':'B',shiganGan:r.tpanGan,shen:r.shenAtGong};
+        // 计算该账号日干与时干落宫的生克分（差异化关键）
+        const sg=r.shiganGong;
+        const gongWx=GONG_WX[sg]||'土';
+        entry.wxScore=wxScore(gongWx,ganWx);
+        entry.gongWx=gongWx;
+        entry.ganWx=ganWx;
         if(r.isFiltered){filtered[a.name].push({...entry,reason:r.filterReason[0]});}
         else{let sqm=false;if(a.isSanqi)r.tags.forEach(t=>{if(t.includes('三奇得使')&&t.includes(a.rg))sqm=true;});entry.sanqiMatch=sqm;recommend[a.name].push(entry);}
       });
@@ -888,7 +913,7 @@ function isFutureEntry(entry){
   // 跨子时条目（23-01），结束小时为25；只要当前小时<结束小时即可
   return curH<he;
 }
-// 翻牌建议——基于当前时辰实时排盘
+// 翻牌建议——基于当前时辰实时排盘，结合账号日干差异化推荐
 function generateFlipAdvice(schedule){
   const advice={};
   const PN=['左一','左二','中','右二','右一'];
@@ -900,21 +925,49 @@ function generateFlipAdvice(schedule){
   const curHz=hzMap[h]||'子';
   const todayStr=now.toISOString().slice(0,10);
   const curLabel=HOUR_LABELS[curHz]||curHz;
+  const r=paiPan(todayStr,curHz); // 排盘只需一次，三个账号共享
   schedule.accounts.forEach(a=>{
-    // 实时排当前时辰的盘
-    const r=paiPan(todayStr,curHz);
     const entry={dateStr:todayStr,dt:todayStr.slice(5).replace('-','/'),t:curLabel,gong:GONG_NM[r.shiganGong]||'?',men:r.menAtGong+'门',tag:r.tags.join('+'),shen:r.shenAtGong};
-    const sr=SR[entry.shen]||0;
-    let pi;if(sr>=4)pi=2;else if(sr>=3)pi=1;else if(sr>=2)pi=3;else if(sr>=1)pi=0;else pi=4;
     // 当前时辰是否被过滤（凶格）
     if(r.isFiltered){
       advice[a.name]={pos:'暂缓',posIdx:undefined,isPast:false,bestTime:'当前 '+curLabel,gong:entry.gong,men:entry.men,tag:entry.tag||'无吉格',shen:entry.shen,reason:'当前时辰'+r.filterReason.join('+')+'，不宜翻牌，建议等下一个吉时'};
-    } else {
-      const sqMatch=a.isSanqi&&r.tags.some(t=>t.includes('三奇得使')&&t.includes(a.rg));
-      advice[a.name]={pos:PN[pi],posIdx:pi,isPast:false,bestTime:'当前 '+curLabel,gong:entry.gong,men:entry.men,tag:entry.tag||'★吉门',shen:entry.shen,reason:entry.shen+'加临'+entry.gong+'，'+entry.men+'当位'+(sqMatch?'，三奇得使⚡':'')+(entry.tag?'，'+entry.tag:'')};
+      return;
     }
+    // ===== 日干差异化翻牌位置 =====
+    // 对每个八神，综合"八神权重 + 八神落宫对日干五行生克"算分
+    const ganWx=GAN_WX[a.rg]||'土';
+    let bestShen=null,bestScore=-99,bestGong=null;
+    for(const[gongNum,shenName] of Object.entries(r.shenMap)){
+      const gn=parseInt(gongNum);
+      if(gn===5)continue; // 中宫无八神
+      const sr=SR[shenName]||0;
+      const gongWx=GONG_WX[gn]||'土';
+      const ws=wxScore(gongWx,ganWx); // 生克分
+      const score=sr+ws; // 综合分
+      if(score>bestScore){bestScore=score;bestShen=shenName;bestGong=gn;}
+    }
+    // 最优八神落宫→翻牌位置
+    const pi=GONG_POS[bestGong]!==undefined?GONG_POS[bestGong]:2;
+    const sqMatch=a.isSanqi&&r.tags.some(t=>t.includes('三奇得使')&&t.includes(a.rg));
+    const bestGongNm=GONG_NM[bestGong]||'?';
+    const wxDesc=bestScore>=6?'大吉':bestScore>=4?'吉':bestScore>=2?'小吉':bestScore>=0?'平':'慎';
+    advice[a.name]={pos:PN[pi],posIdx:pi,isPast:false,bestTime:'当前 '+curLabel,
+      gong:bestGongNm,men:entry.men,tag:entry.tag||'★吉门',shen:bestShen,
+      reason:bestShen+'加临'+bestGongNm+'（'+wxDesc+'，综合分'+bestScore+'），日干'+a.rg+'('+ganWx+')与宫'+GONG_WX[bestGong]+'('+gongWxLabel(ganWx,GONG_WX[bestGong])+')'
+      +(sqMatch?'，三奇得使⚡':'')+(entry.tag?'，'+entry.tag:'')};
   });
   return advice;
+}
+// 生克关系文字
+function gongWxLabel(ganWx,gongWx){
+  if(ganWx===gongWx)return '比和';
+  const sheng={'木':'火','火':'土','土':'金','金':'水','水':'木'};
+  if(sheng[gongWx]===ganWx)return '宫生日干';
+  if(sheng[ganWx]===gongWx)return '日生宫';
+  const ke={'木':'土','土':'水','水':'火','火':'金','金':'木'};
+  if(ke[gongWx]===ganWx)return '宫克日干';
+  if(ke[ganWx]===gongWx)return '日克宫';
+  return '无';
 }
 
 // ========== RENDER: 排盘 ==========
@@ -986,7 +1039,8 @@ function renderPZRecommend() {
         <div style="font-size:11px;color:var(--text-3)">推荐翻牌：</div>
         <div style="font-size:18px;font-weight:700;color:var(--blue)">${adv.pos}</div>
       </div>
-      <div style="font-size:12px;color:var(--text-2)">⏰ ${adv.bestTime} · ${adv.gong} ${adv.men} ${adv.shen}</div>
+      <div style="font-size:12px;color:var(--text-2)">⏰ ${adv.bestTime} · ${adv.shen}加临${adv.gong}</div>
+      <div style="font-size:11px;color:var(--text-3);margin-top:2px">${adv.reason}</div>
       <div class="jige-chips">${renderJigeChips(adv.tag)}</div>`;
     } else {
       html += `<div style="font-size:12px;color:var(--red)">⚠️ ${adv.reason}</div>`;
@@ -999,10 +1053,12 @@ function renderPZRecommend() {
   sch.accounts.forEach(acc => {
     const recs = sch.recommend[acc.name] || [];
     const future = recs.filter(isFutureEntry);
-    // 按吉格数量降序排序，多重buff优先
+    // 排序：吉格数量 > 日干生克分 > 三奇得使
     const sortByJige = (a,b) => {
       const ja = jigeCount(a.tag), jb = jigeCount(b.tag);
       if(jb !== ja) return jb - ja;
+      const wa = a.wxScore||0, wb = b.wxScore||0;
+      if(wb !== wa) return wb - wa;
       if(a.sanqiMatch && !b.sanqiMatch) return -1;
       if(!a.sanqiMatch && b.sanqiMatch) return 1;
       return 0;
@@ -1023,14 +1079,14 @@ function renderPZRecommend() {
       html += `<div style="background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;border-left:4px solid ${borderColor}">
         <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">${label}${isSqMatch?' ⚡三奇得使':''}${buffBadge}${isPast?' <span style="color:var(--red)">(已过期)</span>':''}</div>
         <div style="font-size:16px;font-weight:700;color:var(--text)">${best.dt} ${best.t}</div>
-        <div style="font-size:13px;color:var(--text-2);margin-top:4px">${best.gong} ${best.men} · ${best.shen}</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px">${best.gong} ${best.men} · ${best.shen} · 日干${acc.rg}(${best.ganWx||''})<span style="color:${(best.wxScore||0)>=2?'var(--green)':(best.wxScore||0)<0?'var(--red)':'var(--text-3)'}"> ${gongWxLabel(best.ganWx||'',best.gongWx||'')} ${best.wxScore>=0?'+':''}${best.wxScore||0}</span></div>
         <div class="jige-chips">${renderJigeChips(best.tag)}</div>
       </div>`;
     }
     const displayRecs = sortedFuture.length > 0 ? sortedFuture : sortedAll;
     if (displayRecs.length > 0) {
       const showAll = displayRecs.length <= 8;
-      html += `<div style="font-size:12px;color:var(--text-2);margin-bottom:6px">${sortedFuture.length > 0 ? '未来可用' : '全部可用'} ${displayRecs.length} 个时段（按吉格数量排序）：</div>`;
+      html += `<div style="font-size:12px;color:var(--text-2);margin-bottom:6px">${sortedFuture.length > 0 ? '未来可用' : '全部可用'} ${displayRecs.length} 个时段（按吉格数+日干生克排序）：</div>`;
       displayRecs.forEach((r, idx) => {
         if(!showAll && idx >= 6){
           return;
@@ -1039,8 +1095,10 @@ function renderPZRecommend() {
         const sqIcon = r.sanqiMatch ? '⚡' : '';
         const jc = jigeCount(r.tag);
         const buffBadge = jc >= 2 ? '<span class="jige-count">'+jc+'重</span>' : '';
+        const wxColor=(r.wxScore||0)>=2?'var(--green)':(r.wxScore||0)<0?'var(--red)':'var(--text-3)';
+        const wxStr='<span style="color:'+wxColor+';font-size:10px">'+(r.wxScore>=0?'+':'')+r.wxScore+'</span>';
         html += `<div style="font-size:12px;color:var(--text-3);padding:6px 0;border-bottom:1px solid var(--bdr)">
-          <div style="display:flex;align-items:center;gap:4px"><span style="color:${c};font-weight:600">${sqIcon}${r.dt}</span> ${r.t} · ${r.gong}${r.men} · ${r.shen}${buffBadge}</div>
+          <div style="display:flex;align-items:center;gap:4px"><span style="color:${c};font-weight:600">${sqIcon}${r.dt}</span> ${r.t} · ${r.gong}${r.men} · ${r.shen}${buffBadge} ${wxStr}</div>
           <div class="jige-chips">${renderJigeChips(r.tag)}</div>
         </div>`;
       });
