@@ -904,7 +904,7 @@ function updateDietSummary(){
     const remain=targetCal-totalCal;
     const remainP=130-totalP;
     $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
-    $('remainProtein').innerHTML=Math.max(0,Math.round(remainP))+'<span class="unit"> g</span>';
+    $('remainProtein').innerHTML=Math.round(remainP)+'<span class="unit"> g</span>';
   }
 }
 
@@ -1009,7 +1009,7 @@ function initNav(){
   const remain=targetCal-consumed;
   const remainP=130-consumedP;
   $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
-  $('remainProtein').innerHTML=Math.max(0,remainP)+'<span class="unit"> g</span>';
+  $('remainProtein').innerHTML=Math.round(remainP)+'<span class="unit"> g</span>';
 
   // Weight comparison
   initWeightCompare(todayStr);
