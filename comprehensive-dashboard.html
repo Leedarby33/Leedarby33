@@ -10,97 +10,93 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#0f1115;color:#e5e7eb;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--t1:#e5e7eb;--t2:#9ca3af;--t3:#6b7280;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--purple:#a78bfa;--teal:#5ac8fa;--yellow:#fbbf24;--pink:#ec4899;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:14px;--rs:10px}
+body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--text:#e5e7eb;--text-2:#8b8f9a;--text-3:#4b5563;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--purple:#a78bfa;--yellow:#fbbf24;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:var(--radius);--rs:var(--radius-sm)}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
 .header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
-.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
-.header-title{font-size:15px;font-weight:600;color:var(--t1)}
-.header-sub{font-size:11px;color:var(--t2);margin-top:1px}
-.header-date{font-size:11px;color:var(--t3);text-align:right}
-.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--red));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
+.header-title{font-size:15px;font-weight:600;color:var(--text)}
+.header-sub{font-size:11px;color:var(--text-2);margin-top:1px}
+.header-date{font-size:11px;color:var(--text-3);text-align:right}
+.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:6px;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .main-tabs::-webkit-scrollbar{display:none}
-.main-tab{flex-shrink:0;padding:10px 24px;border-radius:12px 12px 0 0;font-size:14px;font-weight:600;color:var(--t2);background:transparent;border:1px solid transparent;border-bottom:none;cursor:pointer;transition:all 0.2s}
-.main-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+.main-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
+.main-tab.active{color:var(--text);background:var(--card);border-color:var(--bdr2)}
 .main-panel{display:none}
 .main-panel.active{display:block}
 .sub-tabs{display:flex;gap:6px;padding:12px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .sub-tabs::-webkit-scrollbar{display:none}
-.sub-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--t2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
-.sub-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+.sub-tab{flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
+.sub-tab.active{color:var(--text);background:var(--card);border-color:var(--bdr2)}
 .sub-panel{display:none}
 .sub-panel.active{display:block;animation:fadeUp 0.3s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px;border:1px solid var(--bdr)}
-.card-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:14px;display:flex;align-items:center;gap:6px}
-.big-num{font-size:36px;font-weight:800;color:var(--t1);line-height:1.1}
-.big-num .unit{font-size:14px;font-weight:400;color:var(--t2)}
-.big-sub{font-size:12px;color:var(--t2);margin-top:4px}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:16px;border:1px solid var(--bdr)}
+.card-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.big-num{font-size:28px;font-weight:800;color:var(--text);line-height:1.1}
+.big-num .unit{font-size:14px;font-weight:400;color:var(--text-2)}
+.big-sub{font-size:12px;color:var(--text-2);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.kpi-item{background:var(--inset);border-radius:var(--rs);padding:16px 12px;text-align:center}
+.kpi-item{background:var(--inset);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .kpi-value{font-size:24px;font-weight:700}
 .kpi-value.income{color:var(--green)}
 .kpi-value.expense{color:var(--red)}
 .kpi-value.balance{color:var(--blue)}
-.kpi-label{font-size:11px;color:var(--t2);margin-top:4px}
+.kpi-label{font-size:11px;color:var(--text-2);margin-top:4px}
 .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cat-item{background:var(--inset);border-radius:var(--rs);padding:14px;position:relative;overflow:hidden}
+.cat-item{background:var(--inset);border-radius:var(--radius-sm);padding:14px;position:relative;overflow:hidden}
 .cat-item::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
 .cat-icon{font-size:16px;margin-bottom:4px}
-.cat-name{font-size:12px;color:var(--t2);margin-bottom:2px}
-.cat-amount{font-size:18px;font-weight:700;color:var(--t1)}
-.cat-pct{font-size:11px;color:var(--t3);margin-top:2px}
+.cat-name{font-size:12px;color:var(--text-2);margin-bottom:2px}
+.cat-amount{font-size:18px;font-weight:700;color:var(--text)}
+.cat-pct{font-size:11px;color:var(--text-3);margin-top:2px}
 .tx-list{display:flex;flex-direction:column;gap:0}
 .tx-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--bdr)}
 .tx-item:last-child{border-bottom:none}
 .tx-left{flex:1;min-width:0}
-.tx-name{font-size:13px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tx-meta{font-size:11px;color:var(--t3);margin-top:2px}
+.tx-name{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-meta{font-size:11px;color:var(--text-3);margin-top:2px}
 .tx-amount{font-size:15px;font-weight:600;white-space:nowrap;margin-left:12px}
 .tx-amount.income{color:var(--green)}
-.tx-amount.expense{color:var(--t2)}
+.tx-amount.expense{color:var(--text-2)}
 .tx-emoji{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--inset);margin-right:10px;flex-shrink:0}
 .section-title{font-size:13px;font-weight:600;color:var(--blue);margin:16px 0 10px;padding-left:2px}
-.empty-state{text-align:center;padding:40px 20px;color:var(--t3);font-size:13px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-3);font-size:13px}
 .empty-state .icon{font-size:40px;margin-bottom:12px;opacity:0.5}
 .date-filter{display:flex;gap:8px;align-items:center;margin-bottom:14px}
-.date-filter input{background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;flex:1}
-.date-filter span{color:var(--t3);font-size:12px;flex-shrink:0}
-.date-filter select{background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none}
-.day-summary{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:12px}
+.date-filter input{background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;flex:1}
+.date-filter span{color:var(--text-3);font-size:12px;flex-shrink:0}
+.date-filter select{background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none}
+.day-summary{background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px}
 .day-summary .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .day-summary .row:last-child{margin-bottom:0}
-.day-summary .label{font-size:12px;color:var(--t2)}
+.day-summary .label{font-size:12px;color:var(--text-2)}
 .day-summary .val{font-size:16px;font-weight:700}
 .day-summary .val.inc{color:var(--green)}
 .day-summary .val.exp{color:var(--red)}
 .month-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.month-card{background:var(--inset);border-radius:var(--rs);padding:16px;text-align:center}
-.month-card .month-name{font-size:12px;color:var(--t2);margin-bottom:8px}
+.month-card{background:var(--inset);border-radius:var(--radius-sm);padding:16px;text-align:center}
+.month-card .month-name{font-size:12px;color:var(--text-2);margin-bottom:8px}
 .month-card .month-exp{font-size:20px;font-weight:700;color:var(--red);margin-bottom:4px}
 .month-card .month-inc{font-size:14px;font-weight:600;color:var(--green)}
-.month-card .month-bal{font-size:12px;color:var(--t3);margin-top:4px}
-.income-section{background:var(--inset);border-radius:var(--rs);padding:14px;margin-top:12px}
+.month-card .month-bal{font-size:12px;color:var(--text-3);margin-top:4px}
+.income-section{background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-top:12px}
 .income-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)}
 .income-row:last-child{border-bottom:none}
-.income-row .name{font-size:13px;color:var(--t2)}
+.income-row .name{font-size:13px;color:var(--text-2)}
 .income-row .amt{font-size:14px;font-weight:600;color:var(--green)}
 .income-total{display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:6px;border-top:1px solid var(--bdr2)}
-.income-total .name{font-size:14px;font-weight:600;color:var(--t1)}
+.income-total .name{font-size:14px;font-weight:600;color:var(--text)}
 .income-total .amt{font-size:18px;font-weight:700;color:var(--green)}
 .progress-bar{height:6px;background:var(--inset);border-radius:3px;overflow:hidden;margin-top:6px}
 .progress-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
-.pz-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--t3);text-align:center}
+.pz-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--text-3);text-align:center}
 .pz-placeholder .icon{font-size:60px;margin-bottom:16px;opacity:0.3}
-.pz-placeholder .title{font-size:16px;color:var(--t2);margin-bottom:8px}
+.pz-placeholder .title{font-size:16px;color:var(--text-2);margin-bottom:8px}
 .pz-placeholder .desc{font-size:12px}
-input[type="date"],input[type="number"],input[type="text"],select{background:var(--inset)!important;color:var(--t1)!important;border:1px solid var(--bdr2)!important}
-input::placeholder{color:var(--t3)}
-.sub-tab{color:var(--t2)}
-.sub-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
-.main-tab{color:var(--t2)}
-.main-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+input[type="date"],input[type="number"],input[type="text"],select{background:var(--inset)!important;color:var(--text)!important;border:1px solid var(--bdr2)!important}
+input::placeholder{color:var(--text-3)}
 </style>
 </head>
 <body>
@@ -137,28 +133,28 @@ input::placeholder{color:var(--t3)}
   <!-- 记账 Panel -->
   <div class="main-panel active" id="panel-jizhang">
     <!-- 记账切换按钮 -->
-    <button onclick="toggleAddForm()" style="margin-top:12px;width:100%;padding:12px;background:var(--card);color:var(--t1);border:1px solid var(--bdr2);border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">✏️ 记账</button>
+    <button onclick="toggleAddForm()" style="margin-top:12px;width:100%;padding:12px;background:var(--card);color:var(--text);border:1px solid var(--bdr2);border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">✏️ 记账</button>
     <!-- 快速录入卡片（默认收起） -->
     <div class="card" id="add-card" style="display:none;margin-top:12px;padding:18px">
       <div class="card-title" style="margin-bottom:14px">✏️ 快速记账</div>
       <div id="add-form" style="display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;gap:10px">
           <div style="flex:1">
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">日期</label>
+            <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">日期</label>
             <input type="date" id="add-date" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
           </div>
           <div style="flex:1">
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">金额 (元)</label>
+            <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">金额 (元)</label>
             <input type="number" id="add-amount" step="0.01" placeholder="0.00" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
           </div>
         </div>
         <div style="display:flex;gap:10px">
           <div style="flex:1">
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">项目名称</label>
+            <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">项目名称</label>
             <input type="text" id="add-item" placeholder="消费项目" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
           </div>
           <div style="flex:1">
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">分类</label>
+            <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">分类</label>
             <select id="add-category" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
               <option value="">请选择</option>
               <option value="餐饮">餐饮</option>
@@ -177,12 +173,12 @@ input::placeholder{color:var(--t3)}
       </div>
       <div id="add-confirm" style="display:none;margin-top:16px">
         <div style="background:var(--inset);border-radius:12px;padding:16px;margin-bottom:16px">
-          <div style="font-size:13px;color:var(--t2);margin-bottom:8px">请确认以下记账信息：</div>
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:8px">请确认以下记账信息：</div>
           <div id="confirm-detail" style="font-size:15px;font-weight:500;line-height:1.8"></div>
         </div>
         <div style="display:flex;gap:12px">
           <button onclick="confirmTransaction()" style="flex:1;padding:12px;background:var(--green);color:#0f1115;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">✓ 确认录入</button>
-          <button onclick="cancelPreview()" style="flex:1;padding:12px;background:var(--bdr2);color:var(--t1);border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">取消</button>
+          <button onclick="cancelPreview()" style="flex:1;padding:12px;background:var(--bdr2);color:var(--text);border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">取消</button>
         </div>
       </div>
     </div>
@@ -210,8 +206,8 @@ input::placeholder{color:var(--t3)}
       <div style="display:flex;align-items:flex-start;gap:10px">
         <span style="font-size:24px;flex-shrink:0">📋</span>
         <div>
-          <div style="font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px">完整装备与补剂清单已移至健康管理工作台</div>
-          <div style="font-size:12px;color:var(--t3)">→ 请前往「健康管理工作台 → 备忘 Tab」查看完整清单</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">完整装备与补剂清单已移至健康管理工作台</div>
+          <div style="font-size:12px;color:var(--text-3)">→ 请前往「健康管理工作台 → 备忘 Tab」查看完整清单</div>
         </div>
       </div>
     </div>
@@ -306,7 +302,7 @@ function renderOverview() {
           <div class="kpi-label">结余</div>
         </div>
       </div>
-      <div style="margin-top:14px;font-size:12px;color:var(--t3)">
+      <div style="margin-top:14px;font-size:12px;color:var(--text-3)">
         记账天数 ${days} 天 · 日均支出 ¥${fmt(dailyAvg)}
       </div>
     </div>
@@ -323,7 +319,7 @@ function renderOverview() {
         <div class="cat-item" style="--cat-color:${cfg.color}">
           <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
           <div class="cat-icon">${cfg.emoji}</div>
-          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
+          <div class="cat-name">${cat}${cfg.desc ? '<div style="font-size:10px;color:var(--text-3);font-weight:400;margin-top:2px;line-height:1.2">'+cfg.desc+'</div>' : ''}</div>
           <div class="cat-amount">¥${fmt(amt)}</div>
           <div class="cat-pct">${pct}%</div>
           <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
@@ -432,7 +428,7 @@ function renderMonth() {
     detailHtml = '<div class="day-summary">' +
       '<div class="row"><span class="label">' + label + '支出</span><span class="val exp">¥' + fmt(expTotal) + '</span></div>' +
       '<div class="row"><span class="label">' + label + '收入</span><span class="val inc">¥' + fmt(incTotal) + '</span></div>' +
-      '<div class="row"><span class="label">' + label + '笔数</span><span class="val" style="color:var(--t1)">' + txs.length + ' 笔</span></div>' +
+      '<div class="row"><span class="label">' + label + '笔数</span><span class="val" style="color:var(--text)">' + txs.length + ' 笔</span></div>' +
     '</div>';
 
     if (catOrder.length > 0) {
@@ -444,7 +440,7 @@ function renderMonth() {
         detailHtml += '<div class="cat-item">' +
           '<div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:' + cfg.color + '"></div>' +
           '<div class="cat-icon">' + cfg.emoji + '</div>' +
-          '<div class="cat-name">' + cat + (cfg.desc ? '<div style="font-size:10px;color:var(--t3);font-weight:400;margin-top:2px;line-height:1.2">' + cfg.desc + '</div>' : '') + '</div>' +
+          '<div class="cat-name">' + cat + (cfg.desc ? '<div style="font-size:10px;color:var(--text-3);font-weight:400;margin-top:2px;line-height:1.2">' + cfg.desc + '</div>' : '') + '</div>' +
           '<div class="cat-amount">¥' + fmt(amt) + '</div>' +
           '<div class="cat-pct">' + pct + '%</div>' +
         '</div>';
@@ -541,7 +537,7 @@ function applyFilter() {
     <div class="day-summary">
       <div class="row"><span class="label">支出合计</span><span class="val exp">¥${fmt(expTotal)}</span></div>
       <div class="row"><span class="label">收入合计</span><span class="val inc">¥${fmt(incTotal)}</span></div>
-      <div class="row"><span class="label">共 ${all.length} 笔</span><span class="val" style="color:var(--t3);font-size:13px">${start||'起始'} ~ ${end==='9999-12-31'?'至今':end}</span></div>
+      <div class="row"><span class="label">共 ${all.length} 笔</span><span class="val" style="color:var(--text-3);font-size:13px">${start||'起始'} ~ ${end==='9999-12-31'?'至今':end}</span></div>
     </div>
     <div class="card"><div class="tx-list">`;
 
@@ -634,23 +630,23 @@ function renderDaigou() {
   let html = `
     <div class="card">
       <div class="card-title">🎯 愿望清单</div>
-      <div style="font-size:12px;color:var(--t3);margin-bottom:14px">想买的、计划买的，想好了再下手</div>`;
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:14px">想买的、计划买的，想好了再下手</div>`;
 
   wishlist.forEach((item, idx) => {
-    const borderColor = item.priority === '高' ? 'var(--red)' : item.priority === '中' ? 'var(--orange)' : 'var(--t3)';
+    const borderColor = item.priority === '高' ? 'var(--red)' : item.priority === '中' ? 'var(--orange)' : 'var(--text-3)';
     html += `
-      <div style="background:var(--inset);border-radius:var(--rs);padding:16px;margin-bottom:12px;border-left:4px solid ${borderColor}">
+      <div style="background:var(--inset);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;border-left:4px solid ${borderColor}">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
           <span style="font-size:24px">${item.icon}</span>
           <div style="flex:1">
-            <div style="font-size:15px;font-weight:600;color:var(--t1)">${item.name}</div>
-            <div style="font-size:11px;color:var(--t3);margin-top:2px">预算 ¥${item.price}</div>
+            <div style="font-size:15px;font-weight:600;color:var(--text)">${item.name}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:2px">预算 ¥${item.price}</div>
           </div>
           <span style="font-size:11px;padding:3px 8px;border-radius:10px;background:${item.priority === '高' ? 'rgba(255,59,48,0.15)' : 'rgba(255,149,0,0.15)'};color:${borderColor};font-weight:600">${item.status}</span>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">`;
     item.notes.forEach(note => {
-      html += `<div style="font-size:12px;color:var(--t2);padding:4px 8px;background:rgba(0,0,0,0.04);border-radius:6px">• ${note}</div>`;
+      html += `<div style="font-size:12px;color:var(--text-2);padding:4px 8px;background:rgba(0,0,0,0.04);border-radius:6px">• ${note}</div>`;
     });
     html += `
         </div>
@@ -663,8 +659,8 @@ function renderDaigou() {
     <div class="card">
       <div class="card-title">📝 配镜总预算参考</div>
       <div class="day-summary">
-        <div class="row"><span class="label">镜框（林德伯格Blok）</span><span class="val" style="color:var(--t1);font-size:14px">¥2,000-3,000</span></div>
-        <div class="row"><span class="label">镜片（新清锐/智锐）</span><span class="val" style="color:var(--t1);font-size:14px">¥500-1,500</span></div>
+        <div class="row"><span class="label">镜框（林德伯格Blok）</span><span class="val" style="color:var(--text);font-size:14px">¥2,000-3,000</span></div>
+        <div class="row"><span class="label">镜片（新清锐/智锐）</span><span class="val" style="color:var(--text);font-size:14px">¥500-1,500</span></div>
         <div class="row"><span class="label">整副预算</span><span class="val" style="color:var(--orange);font-size:16px">¥3,000-5,000</span></div>
         <div class="row"><span class="label">蹲好价渠道</span><span class="val" style="color:var(--green);font-size:13px">什么值得买</span></div>
       </div>
@@ -693,113 +689,177 @@ function switchSub(name) {
   document.querySelectorAll('.sub-panel').forEach(el => el.classList.toggle('active', el.id === 'sub-' + name));
 }
 
-// ========== 排盘 DATA ==========
-const pzWeek = '第12周（8/3-8/9）';
-const pzAccounts = [
-  {name:'李大笔', school:'霸刀', rg:'丁', sq:true, icon:'🔥'},
-  {name:'凌波', school:'凌雪阁', rg:'壬', sq:false, icon:'🌊'},
-  {name:'龙醒', school:'丐帮', rg:'丙', sq:true, icon:'🐉'}
+// ========== 奇门遁甲动态排盘引擎 ==========
+// 账号创建时间
+const PZ_ACCOUNTS = [
+  {name:'李大笔', school:'霸刀', created:'2017-08-01T16:28:00', icon:'🔥'},
+  {name:'凌波', school:'凌雪阁', created:'2022-02-03T23:58:26', icon:'🌊'},
+  {name:'龙醒', school:'丐帮', created:'2023-07-25T23:03:40', icon:'🐉'}
 ];
-const pzDays = [
-  {dt:'8/3',wd:'一',gz:'己酉',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
-  {dt:'8/4',wd:'二',gz:'庚戌',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:''},
-  {dt:'8/5',wd:'三',gz:'辛亥',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
-  {dt:'8/6',wd:'四',gz:'壬子',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:'英语课,亥时避开'},
-  {dt:'8/7',wd:'五',gz:'癸丑',jq:'大暑下元',ju:4,kw:'寅卯',kwG:'震3+巽4',note:''},
-  {dt:'8/8',wd:'六',gz:'甲寅',jq:'立秋上元',ju:8,kw:'子丑',kwG:'坎1+坤2+艮8',note:'周末全天'},
-  {dt:'8/9',wd:'日',gz:'乙卯',jq:'立秋上元',ju:8,kw:'子丑',kwG:'坎1+坤2+艮8',note:'周末全天'}
-];
-const pzRecommend = {
-  '李大笔': [
-    {dt:'8/6(四)',t:'戌时(19-21)',gong:'乾6',men:'生门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/6(四)',t:'子时(23-24)',gong:'离9',men:'休门',tag:'三奇得使★⚡+人遁★',pri:'A'},
-    {dt:'8/8(六)',t:'巳时(09-11)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/8(六)',t:'申时(15-17)',gong:'乾6',men:'开门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/9(日)',t:'丑时(01-03)',gong:'兑7',men:'生门',tag:'三奇得使★⚡+地遁★',pri:'A'},
-    {dt:'8/9(日)',t:'寅时(03-05)',gong:'乾6',men:'开门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/9(日)',t:'未时(13-15)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/9(日)',t:'酉时(17-19)',gong:'离9',men:'生门',tag:'三奇得使★⚡',pri:'A'}
-  ],
-  '凌波': [
-    {dt:'8/3(一)',t:'戌时(19-21)',gong:'乾6',men:'开门',tag:'',pri:'B'},
-    {dt:'8/4(二)',t:'亥时(21-23)',gong:'艮8',men:'休门',tag:'',pri:'B'},
-    {dt:'8/6(四)',t:'戌时(19-21)',gong:'坤2',men:'开门',tag:'',pri:'B'},
-    {dt:'8/7(五)',t:'戌时(19-21)',gong:'乾6',men:'开门',tag:'玉女守门★',pri:'A'},
-    {dt:'8/7(五)',t:'亥时(21-23)',gong:'坎1',men:'生门',tag:'玉女守门★',pri:'A'},
-    {dt:'8/8(六)',t:'寅时(03-05)',gong:'兑7',men:'休门',tag:'',pri:'B'},
-    {dt:'8/8(六)',t:'巳时(09-11)',gong:'巽4',men:'休门',tag:'',pri:'B'},
-    {dt:'8/8(六)',t:'亥时(21-23)',gong:'兑7',men:'开门',tag:'玉女守门★',pri:'A'}
-  ],
-  '龙醒': [
-    {dt:'8/3(一)',t:'戌时(19-21)',gong:'艮8',men:'生门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/4(二)',t:'戌时(19-21)',gong:'艮8',men:'开门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
-    {dt:'8/5(三)',t:'子时(23-24)',gong:'艮8',men:'开门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/7(五)',t:'戌时(19-21)',gong:'艮8',men:'生门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
-    {dt:'8/7(五)',t:'亥时(21-23)',gong:'兑7',men:'开门',tag:'三奇得使★⚡+玉女守门★',pri:'A'},
-    {dt:'8/8(六)',t:'酉时(17-19)',gong:'乾6',men:'休门',tag:'三奇得使★⚡',pri:'A'},
-    {dt:'8/9(日)',t:'卯时(05-07)',gong:'乾6',men:'休门',tag:'三奇得使★⚡',pri:'A'}
-  ]
-};
-const pzFiltered = {
-  '李大笔': [
-    {dt:'8/8(六)',t:'辰时(07-09)',gong:'坤2',men:'生门',reason:'空亡'},
-    {dt:'8/8(六)',t:'酉时(17-19)',gong:'坎1',men:'生门',reason:'空亡'},
-    {dt:'8/9(日)',t:'卯时(05-07)',gong:'坎1',men:'生门',reason:'空亡'},
-    {dt:'8/9(日)',t:'午时(11-13)',gong:'坤2',men:'生门',reason:'空亡'}
-  ],
-  '凌波': [
-    {dt:'8/5(三)',t:'戌时(19-21)',gong:'巽4',men:'开门',reason:'空亡'},
-    {dt:'8/7(五)',t:'子时(23-24)',gong:'坎1',men:'休门',reason:'空亡'},
-    {dt:'8/8(六)',t:'子时(00-01)',gong:'坎1',men:'休门',reason:'空亡'},
-    {dt:'8/8(六)',t:'午时(11-13)',gong:'艮8',men:'开门',reason:'空亡'},
-    {dt:'8/9(日)',t:'丑时(01-03)',gong:'坤2',men:'休门',reason:'空亡'},
-    {dt:'8/9(日)',t:'未时(13-15)',gong:'巽4',men:'休门',reason:'击刑'},
-    {dt:'8/9(日)',t:'申时(15-17)',gong:'坤2',men:'生门',reason:'空亡'},
-    {dt:'8/9(日)',t:'酉时(17-19)',gong:'巽4',men:'休门',reason:'击刑'},
-    {dt:'8/9(日)',t:'戌时(19-21)',gong:'艮8',men:'开门',reason:'空亡'}
-  ],
-  '龙醒': [
-    {dt:'8/8(六)',t:'未时(13-15)',gong:'艮8',men:'休门',reason:'空亡'},
-    {dt:'8/8(六)',t:'亥时(21-23)',gong:'坎1',men:'生门',reason:'空亡'},
-    {dt:'8/9(日)',t:'辰时(07-09)',gong:'坤2',men:'开门',reason:'空亡'},
-    {dt:'8/9(日)',t:'亥时(21-23)',gong:'坎1',men:'开门',reason:'空亡'}
-  ]
-};
+// 基础常量
+const TG=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const DZ=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const GONG_NM={1:'坎1',2:'坤2',3:'震3',4:'巽4',5:'中5',6:'乾6',7:'兑7',8:'艮8',9:'离9'};
+const GONG_WX={1:'水',2:'土',3:'木',4:'木',5:'土',6:'金',7:'金',8:'土',9:'火'};
+const MEN_WX={'休':'水','生':'土','伤':'木','杜':'木','景':'火','死':'土','惊':'金','开':'金'};
+const XUN=['甲子','甲戌','甲申','甲午','甲辰','甲寅'];
+const DUN={'甲子':'戊','甲戌':'己','甲申':'庚','甲午':'辛','甲辰':'壬','甲寅':'癸'};
+const SHEN=['值符','腾蛇','太阴','六合','白虎','玄武','九地','九天'];
+const WX_KE={'木':'土','土':'水','水':'火','火':'金','金':'木'};
+const ZHI_GONG={'子':1,'丑':8,'寅':8,'卯':3,'辰':5,'巳':4,'午':9,'未':2,'申':2,'酉':7,'戌':6,'亥':6};
+const XING_MAP={'戊':3,'己':2,'庚':8,'辛':9,'壬':6,'癸':4};
+const HOUR_LABELS={'子':'子时(23-01)','丑':'丑时(01-03)','寅':'寅时(03-05)','卯':'卯时(05-07)','辰':'辰时(07-09)','巳':'巳时(09-11)','午':'午时(11-13)','未':'未时(13-15)','申':'申时(15-17)','酉':'酉时(17-19)','戌':'戌时(19-21)','亥':'亥时(21-23)'};
+const JQ_JU={'冬至':[1,7,4],'小寒':[2,8,5],'大寒':[3,9,6],'立春':[8,5,2],'雨水':[9,6,3],'惊蛰':[1,7,4],'春分':[3,9,6],'清明':[4,1,7],'谷雨':[5,2,8],'立夏':[4,1,7],'小满':[5,2,8],'芒种':[6,3,9],'夏至':[9,3,6],'小暑':[8,2,5],'大暑':[7,1,4],'立秋':[2,5,8],'处暑':[1,4,7],'白露':[9,3,6],'秋分':[7,1,4],'寒露':[6,9,3],'霜降':[5,8,2],'立冬':[6,9,3],'小雪':[5,8,2],'大雪':[4,7,1]};
+const YANG_DUN=new Set(['冬至','小寒','大寒','立春','雨水','惊蛰','春分','清明','谷雨','立夏','小满','芒种']);
+const JQ_DATES=[['2024-12-21','冬至'],['2025-01-05','小寒'],['2025-01-20','大寒'],['2025-02-03','立春'],['2025-02-18','雨水'],['2025-03-05','惊蛰'],['2025-03-20','春分'],['2025-04-04','清明'],['2025-04-20','谷雨'],['2025-05-05','立夏'],['2025-05-21','小满'],['2025-06-05','芒种'],['2025-06-21','夏至'],['2025-07-07','小暑'],['2025-07-22','大暑'],['2025-08-07','立秋'],['2025-08-23','处暑'],['2025-09-07','白露'],['2025-09-23','秋分'],['2025-10-08','寒露'],['2025-10-23','霜降'],['2025-11-07','立冬'],['2025-11-22','小雪'],['2025-12-07','大雪'],['2025-12-21','冬至'],['2026-01-05','小寒'],['2026-01-20','大寒'],['2026-02-04','立春'],['2026-02-18','雨水'],['2026-03-05','惊蛰'],['2026-03-20','春分'],['2026-04-05','清明'],['2026-04-20','谷雨'],['2026-05-05','立夏'],['2026-05-21','小满'],['2026-06-05','芒种'],['2026-06-21','夏至'],['2026-07-07','小暑'],['2026-07-22','大暑'],['2026-08-07','立秋'],['2026-08-23','处暑'],['2026-09-07','白露'],['2026-09-23','秋分'],['2026-10-08','寒露'],['2026-10-23','霜降'],['2026-11-07','立冬'],['2026-11-22','小雪'],['2026-12-07','大雪'],['2026-12-22','冬至'],['2027-01-05','小寒'],['2027-01-20','大寒'],['2027-02-04','立春'],['2027-02-18','雨水'],['2027-03-05','惊蛰'],['2027-03-20','春分'],['2027-04-05','清明'],['2027-04-20','谷雨'],['2027-05-05','立夏'],['2027-05-21','小满'],['2027-06-05','芒种'],['2027-06-21','夏至'],['2027-07-07','小暑'],['2027-07-22','大暑'],['2027-08-07','立秋'],['2027-08-23','处暑'],['2027-09-07','白露'],['2027-09-23','秋分'],['2027-10-08','寒露'],['2027-10-23','霜降'],['2027-11-07','立冬'],['2027-11-22','小雪'],['2027-12-07','大雪'],['2027-12-22','冬至'],['2028-01-05','小寒'],['2028-01-20','大寒'],['2028-02-04','立春'],['2028-02-18','雨水'],['2028-03-05','惊蛰'],['2028-03-20','春分'],['2028-04-04','清明'],['2028-04-19','谷雨'],['2028-05-05','立夏'],['2028-05-20','小满'],['2028-06-05','芒种'],['2028-06-21','夏至'],['2028-07-06','小暑'],['2028-07-22','大暑'],['2028-08-07','立秋'],['2028-08-22','处暑']].map(([d,n])=>[new Date(d+'T00:00:00'),n]).sort((a,b)=>a[0]-b[0]);
+const BASE_DATE=new Date('2000-01-07T00:00:00');
+// 干支计算
+function getDayGZ(s){const d=new Date(s+'T00:00:00');const diff=Math.floor((d-BASE_DATE)/86400000);let idx=((diff%60)+60)%60;return{gz:TG[idx%10]+DZ[idx%12],gan:TG[idx%10],zhi:DZ[idx%12]};}
+function getHourGZ(dg,hz){const gi=TG.indexOf(dg);let sg;if([0,5].includes(gi))sg=0;else if([1,6].includes(gi))sg=2;else if([2,7].includes(gi))sg=4;else if([3,8].includes(gi))sg=6;else sg=8;const hi=DZ.indexOf(hz);return{gz:TG[(sg+hi)%10]+hz,gan:TG[(sg+hi)%10]};}
+function getXun(hg,hz){const g=TG.indexOf(hg),z=DZ.indexOf(hz);for(let n=0;n<60;n++)if(n%10===g&&n%12===z)return XUN[Math.floor(n/10)];return null;}
+function getKongWang(hg,hz){const x=getXun(hg,hz);const KW={'甲子':['戌','亥'],'甲戌':['申','酉'],'甲申':['午','未'],'甲午':['辰','巳'],'甲辰':['寅','卯'],'甲寅':['子','丑']};return KW[x];}
+function getJieqiYuan(s){const d=new Date(s+'T00:00:00');let jq=null,jd=null;for(const[x,n]of JQ_DATES){if(x<=d){jq=n;jd=x;}else if(jq===null){jq=n;jd=x;break;}}const ds=Math.floor((d-jd)/86400000);return{jq,yuan:['上元','中元','下元'][Math.floor(ds/5)%3]};}
+function getJu(jq,yuan){return JQ_JU[jq][['上元','中元','下元'].indexOf(yuan)];}
+// 九宫飞布
+function flyGong(ju,isYang){const LY=['戊','己','庚','辛','壬','癸','丁','丙','乙'];const od=[];let p=ju;for(let i=0;i<9;i++){od.push(p);p=isYang?(p%9+1):((p-2+9)%9+1);}const dp={};for(let i=0;i<9;i++)dp[od[i]]=LY[i];return dp;}
+function getTianpan(dp,hg,hz,isYang){const x=getXun(hg,hz);const dg=DUN[x];let zg=1;for(const[g,gn]of Object.entries(dp))if(gn===dg){zg=parseInt(g);break;}if(zg===5)zg=2;let sg=zg;for(const[g,gn]of Object.entries(dp))if(gn===hg){sg=parseInt(g);break;}const fly=[1,2,3,4,5,6,7,8,9];const zi=fly.indexOf(zg),si=fly.indexOf(sg);let off=0;if(hg!=='甲')off=isYang?((si-zi)%9+9)%9:((zi-si)%9+9)%9;const tp={};for(let i=0;i<9;i++){const dst=isYang?fly[(i+off)%9]:fly[((i-off)%9+9)%9];tp[dst]=dp[fly[i]];}return{tpan:tp,zhifuGong:zg};}
+function getBamen(zg,hg,hz,isYang){const x=getXun(hg,hz);const MO={1:'休',8:'生',3:'伤',4:'杜',9:'景',2:'死',7:'惊',6:'开'};const zm=MO[zg]||'休';const xc=XUN.indexOf(x)+1;const MR={};for(const[k,v]of Object.entries(MO))MR[v]=parseInt(k);const zog=MR[zm];const f8=[1,2,3,4,6,7,8,9];const oi=f8.indexOf(zog);let zsg=oi>=0?(isYang?f8[(oi+xc)%8]:f8[((oi-xc)%8+8)%8]):(isYang?f8[xc%8]:f8[((-xc)%8+8)%8]);const MS=['休','生','伤','杜','景','死','惊','开'];const mp={};const ti=f8.indexOf(zsg);for(let i=0;i<MS.length;i++){mp[isYang?f8[(ti+i)%8]:f8[((ti-i)%8+8)%8]]=MS[i];}return mp;}
+function getBashen(zg,isYang){const f8=[1,2,3,4,6,7,8,9];const sp={};const ti=f8.indexOf(zg);for(let i=0;i<SHEN.length;i++){sp[isYang?f8[(ti+i)%8]:f8[((ti-i)%8+8)%8]]=SHEN[i];}return sp;}
+// 格局判断
+function checkGeju(dp,tp,mp,sp,hg,hz){const tags=[];let f=false;const fr=[];const x=getXun(hg,hz);const dg=DUN[x];let sg=null;for(const[g,gn]of Object.entries(dp))if(gn===hg){sg=parseInt(g);break;}if(hg==='甲')for(const[g,gn]of Object.entries(dp))if(gn===dg){sg=parseInt(g);break;}if(sg===5)sg=2;if(sg&&mp[sg]){const m=mp[sg];if(WX_KE[MEN_WX[m]]===GONG_WX[sg]){f=true;fr.push('门迫');}}const kw=getKongWang(hg,hz);const kg=kw.map(z=>{let g=ZHI_GONG[z];return g===5?2:g;});if(sg&&kg.includes(sg)){f=true;fr.push('空亡');}if(sg){const tg=tp[sg];if(XING_MAP[tg]===sg){f=true;fr.push('击刑');}}for(const g of Object.keys(tp)){const gi=parseInt(g);if(gi===5)continue;const tg=tp[g],dgn=dp[g];if(['乙','丙','丁'].includes(tg)&&dgn===dg)tags.push('三奇得使★('+tg+')');if(tg==='丁'&&mp[g]==='开')tags.push('玉女守门★');if(tg==='丁'&&mp[g]==='休'&&sp[g]==='太阴')tags.push('人遁★');if(tg==='乙'&&mp[g]==='开'&&sp[g]==='九地')tags.push('地遁★');if(tg==='丙'&&mp[g]==='开'&&sp[g]==='九天')tags.push('天遁★');}return{tags,isFiltered:f,filterReason:fr,shiganGong:sg};}
+// 主排盘
+function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',tags,isFiltered,filterReason};}
+function getAccountRg(cs){return getDayGZ(cs.slice(0,10)).gan;}
+// 周排盘
+function getWeekDates(){const t=new Date();const dow=t.getDay()||7;const m=new Date(t);m.setDate(t.getDate()-dow+1);const dates=[];for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);dates.push(d.toISOString().slice(0,10));}return dates;}
+function getWeekNumber(){const t=new Date();const s=new Date(t.getFullYear(),0,1);return Math.ceil(((t-s)/86400000+s.getDay()+1)/7);}
+function generateWeekSchedule(){
+  const dates=getWeekDates();
+  const accounts=PZ_ACCOUNTS.map(a=>({...a,rg:getAccountRg(a.created),isSanqi:['乙','丙','丁'].includes(getAccountRg(a.created))}));
+  const days=[],recommend={},filtered={};
+  accounts.forEach(a=>{recommend[a.name]=[];filtered[a.name]=[];});
+  const wdN='一二三四五六日';
+  dates.forEach(dateStr=>{
+    const d=new Date(dateStr+'T00:00:00');
+    const wd=d.getDay()||7;
+    const isWeekend=wd>=6;
+    const sample=paiPan(dateStr,'子');
+    const dg=getDayGZ(dateStr);
+    const hg=getHourGZ(dg.gan,'子');
+    const kw=getKongWang(hg.gan,'子');
+    days.push({dt:dateStr.slice(5).replace('-','/'),wd:wdN[wd-1],dateStr,gz:sample.dayGz,jq:sample.jq,yuan:sample.yuan,ju:sample.ju,isYang:sample.isYang,isWeekend,kwStr:kw.join('')});
+    const hours=isWeekend?['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']:['戌','亥','子'];
+    accounts.forEach(a=>{
+      hours.forEach(hz=>{
+        if([1,3,4].includes(wd)&&hz==='亥')return;
+        const r=paiPan(dateStr,hz);
+        const entry={dt:dateStr.slice(5).replace('-','/')+'('+wdN[wd-1]+')',t:HOUR_LABELS[hz],gong:GONG_NM[r.shiganGong]||'?',men:r.menAtGong+'门',tag:r.tags.join('+'),pri:r.tags.length>0?'A':'B',shiganGan:r.tpanGan,shen:r.shenAtGong};
+        if(r.isFiltered){filtered[a.name].push({...entry,reason:r.filterReason[0]});}
+        else{let sqm=false;if(a.isSanqi)r.tags.forEach(t=>{if(t.includes('三奇得使')&&t.includes(a.rg))sqm=true;});entry.sanqiMatch=sqm;recommend[a.name].push(entry);}
+      });
+    });
+  });
+  return{accounts,days,recommend,filtered};
+}
+// 翻牌建议
+function generateFlipAdvice(schedule){
+  const advice={};
+  const PN=['左一','左二','中','右二','右一'];
+  const SR={'值符':5,'九天':4,'太阴':3,'六合':3,'九地':2,'白虎':1,'玄武':1,'腾蛇':0};
+  schedule.accounts.forEach(a=>{
+    const recs=schedule.recommend[a.name]||[];
+    if(recs.length===0){advice[a.name]={pos:'无推荐',reason:'本周无可用吉时，建议下周再试'};return;}
+    const best=recs.find(r=>r.sanqiMatch)||recs.find(r=>r.pri==='A')||recs[0];
+    const sr=SR[best.shen]||0;
+    let pi;if(sr>=4)pi=2;else if(sr>=3)pi=1;else if(sr>=2)pi=3;else if(sr>=1)pi=0;else pi=4;
+    advice[a.name]={pos:PN[pi],posIdx:pi,bestTime:best.dt+' '+best.t,gong:best.gong,men:best.men,tag:best.tag||'★吉门',shen:best.shen,reason:best.shen+'加临'+best.gong+'，'+best.men+'当位'+(best.sanqiMatch?'，三奇得使⚡':'')};
+  });
+  return advice;
+}
 
 // ========== RENDER: 排盘 ==========
-function renderPZRecommend() {
-  let html = `<div class="card">
-    <div class="card-title">🔮 ${pzWeek} 试炼排盘</div>
-    <div style="font-size:12px;color:var(--t3);margin-bottom:12px">奇门遁甲·转盘·增强版v9 | 已过滤凶格（门迫+空亡+击刑）</div>
-    <div class="day-summary">
-      <div class="row"><span class="label">8/3-8/7</span><span class="val" style="color:var(--orange);font-size:14px">大暑下元 · 阴遁4局</span></div>
-      <div class="row"><span class="label">8/8-8/9</span><span class="val" style="color:var(--purple);font-size:14px">立秋上元 · 阴遁8局</span></div>
-    </div>
-  </div>`;
+let _pzSchedule = null;
+function getPZSchedule(){
+  if(!_pzSchedule) _pzSchedule = generateWeekSchedule();
+  return _pzSchedule;
+}
 
-  pzAccounts.forEach(acc => {
-    const recs = pzRecommend[acc.name] || [];
-    const best = recs.find(r => r.pri === 'A') || recs[0];
-    const sqTag = acc.sq ? '<span style="color:var(--yellow);font-size:11px;margin-left:6px">⚡三奇</span>' : '';
+function renderPZRecommend() {
+  const sch = getPZSchedule();
+  const flipAdvice = generateFlipAdvice(sch);
+  const weekNum = getWeekNumber();
+  const firstDay = sch.days[0];
+  const lastDay = sch.days[sch.days.length-1];
+
+  let html = `<div class="card">
+    <div class="card-title">🔮 第${weekNum}周（${firstDay.dt}-${lastDay.dt}）试炼排盘</div>
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">奇门遁甲·动态排盘引擎 | 已过滤凶格（门迫+空亡+击刑）</div>
+    <div class="day-summary">`;
+
+  // 按节气+局数分组显示
+  const jqGroups = {};
+  sch.days.forEach(d => {
+    const key = `${d.jq}${d.yuan}`;
+    if(!jqGroups[key]) jqGroups[key] = {days:[], ju:d.ju, isYang:d.isYang, jq:d.jq, yuan:d.yuan};
+    jqGroups[key].days.push(d.dt);
+  });
+  Object.values(jqGroups).forEach(g => {
+    const yd = g.isYang ? '阳' : '阴';
+    const color = g.isYang ? 'var(--orange)' : 'var(--purple)';
+    html += `<div class="row"><span class="label">${g.days[0]}-${g.days[g.days.length-1]}</span><span class="val" style="color:${color};font-size:14px">${g.jq}${g.yuan} · ${yd}遁${g.ju}局</span></div>`;
+  });
+  html += `</div></div>`;
+
+  // 翻牌建议总览
+  html += `<div class="card">
+    <div class="card-title">🃏 翻牌建议</div>
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:10px">打完Boss出5张牌，根据八神推荐翻牌位置</div>`;
+  sch.accounts.forEach(a => {
+    const adv = flipAdvice[a.name];
+    const sqTag = a.isSanqi ? '<span style="color:var(--yellow);font-size:11px;margin-left:6px">⚡三奇</span>' : '';
+    html += `<div style="background:var(--inset);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;border-left:4px solid ${adv.posIdx!==undefined?'var(--blue)':'var(--red)'}">
+      <div style="font-size:13px;font-weight:600;margin-bottom:4px">${a.icon} ${a.name}（${a.school}·日干${a.rg}）${sqTag}</div>`;
+    if(adv.posIdx !== undefined){
+      html += `<div style="display:flex;align-items:center;gap:8px;margin:6px 0">
+        <div style="font-size:11px;color:var(--text-3)">推荐翻牌：</div>
+        <div style="font-size:18px;font-weight:700;color:var(--blue)">${adv.pos}</div>
+        <div style="font-size:11px;color:var(--text-2)">${adv.reason}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-2)">⏰ ${adv.bestTime} · ${adv.gong} ${adv.men} ${adv.tag}</div>`;
+    } else {
+      html += `<div style="font-size:12px;color:var(--red)">⚠️ ${adv.reason}</div>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+
+  // 每个账号的推荐时段
+  sch.accounts.forEach(acc => {
+    const recs = sch.recommend[acc.name] || [];
+    const best = recs.find(r => r.sanqiMatch) || recs.find(r => r.pri === 'A') || recs[0];
+    const sqTag = acc.isSanqi ? '<span style="color:var(--yellow);font-size:11px;margin-left:6px">⚡三奇</span>' : '';
     html += `<div class="card">
       <div class="card-title">${acc.icon} ${acc.name}（${acc.school}·日干${acc.rg}）${sqTag}</div>`;
     if (best) {
       const isTop = best.tag.includes('三奇得使');
-      html += `<div style="background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px;border-left:4px solid ${isTop ? 'var(--yellow)' : 'var(--green)'}">
-        <div style="font-size:11px;color:var(--t3);margin-bottom:4px">🎯 首选</div>
-        <div style="font-size:16px;font-weight:700;color:var(--t1)">${best.dt} ${best.t}</div>
-        <div style="font-size:13px;color:${isTop ? 'var(--yellow)' : 'var(--green)'};margin-top:4px">${best.gong} ${best.men} ${best.tag || '★吉门'}</div>
+      const isSqMatch = best.sanqiMatch;
+      const borderColor = isSqMatch ? 'var(--yellow)' : (isTop ? 'var(--yellow)' : 'var(--green)');
+      html += `<div style="background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;border-left:4px solid ${borderColor}">
+        <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">🎯 首选${isSqMatch?' ⚡三奇得使':''}</div>
+        <div style="font-size:16px;font-weight:700;color:var(--text)">${best.dt} ${best.t}</div>
+        <div style="font-size:13px;color:${borderColor};margin-top:4px">${best.gong} ${best.men} ${best.tag || '★吉门'} · ${best.shen}</div>
       </div>`;
     }
     if (recs.length > 1) {
-      html += `<div style="font-size:12px;color:var(--t2);margin-bottom:6px">全部可用 ${recs.length} 个时段：</div>`;
+      html += `<div style="font-size:12px;color:var(--text-2);margin-bottom:6px">全部可用 ${recs.length} 个时段：</div>`;
       recs.slice(0, 4).forEach(r => {
-        const c = r.pri === 'A' ? 'var(--yellow)' : 'var(--t2)';
-        html += `<div style="font-size:12px;color:var(--t3);padding:4px 0;border-bottom:1px solid var(--bdr)">
-          <span style="color:${c};font-weight:600">${r.dt}</span> ${r.t} · ${r.gong}${r.men} ${r.tag || '★'}</div>`;
+        const c = r.sanqiMatch ? 'var(--yellow)' : (r.pri === 'A' ? 'var(--yellow)' : 'var(--text-2)');
+        const sqIcon = r.sanqiMatch ? '⚡' : '';
+        html += `<div style="font-size:12px;color:var(--text-3);padding:4px 0;border-bottom:1px solid var(--bdr)">
+          <span style="color:${c};font-weight:600">${sqIcon}${r.dt}</span> ${r.t} · ${r.gong}${r.men} ${r.tag || '★'}</div>`;
       });
       if (recs.length > 4) {
-        html += `<div style="font-size:11px;color:var(--t3);margin-top:4px">等 ${recs.length - 4} 个更多时段...</div>`;
+        html += `<div style="font-size:11px;color:var(--text-3);margin-top:4px">等 ${recs.length - 4} 个更多时段...</div>`;
       }
     } else if (recs.length === 0) {
       html += `<div style="font-size:13px;color:var(--red);padding:10px 0">⚠️ 本周无可用吉时</div>`;
@@ -808,18 +868,18 @@ function renderPZRecommend() {
   });
 
   // 凶格过滤汇总
-  const totalFiltered = Object.values(pzFiltered).reduce((s, a) => s + a.length, 0);
+  const totalFiltered = Object.values(sch.filtered).reduce((s, a) => s + a.length, 0);
   html += `<div class="card">
     <div class="card-title" style="color:var(--red)">⚠️ 凶格过滤</div>
-    <div style="font-size:12px;color:var(--t3);margin-bottom:8px">共排除 ${totalFiltered} 个吉门时段（门迫/空亡/击刑）</div>`;
-  pzAccounts.forEach(acc => {
-    const items = pzFiltered[acc.name] || [];
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:8px">共排除 ${totalFiltered} 个吉门时段（门迫/空亡/击刑）</div>`;
+  sch.accounts.forEach(acc => {
+    const items = sch.filtered[acc.name] || [];
     if (items.length > 0) {
-      html += `<div style="font-size:12px;color:var(--t2);margin-bottom:4px;margin-top:8px">${acc.name} 被排除 ${items.length} 个：</div>`;
+      html += `<div style="font-size:12px;color:var(--text-2);margin-bottom:4px;margin-top:8px">${acc.name} 被排除 ${items.length} 个：</div>`;
       items.slice(0, 3).forEach(f => {
-        html += `<div style="font-size:11px;color:var(--t3);padding:2px 0">· ${f.dt} ${f.t} ${f.gong}${f.men} ← ${f.reason}</div>`;
+        html += `<div style="font-size:11px;color:var(--text-3);padding:2px 0">· ${f.dt} ${f.t} ${f.gong}${f.men} ← ${f.reason}</div>`;
       });
-      if (items.length > 3) html += `<div style="font-size:11px;color:var(--t3)">...等共 ${items.length} 个</div>`;
+      if (items.length > 3) html += `<div style="font-size:11px;color:var(--text-3)">...等共 ${items.length} 个</div>`;
     }
   });
   html += `</div>`;
@@ -828,25 +888,29 @@ function renderPZRecommend() {
 }
 
 function renderPZDetail() {
+  const sch = getPZSchedule();
   let html = '';
-  pzAccounts.forEach(acc => {
-    const recs = pzRecommend[acc.name] || [];
+  sch.accounts.forEach(acc => {
+    const recs = sch.recommend[acc.name] || [];
     html += `<div class="card">
       <div class="card-title">${acc.icon} ${acc.name} · 吉时表</div>
       <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+        <tr style="color:var(--text-3);border-bottom:1px solid var(--bdr)">
           <th style="text-align:left;padding:6px 4px">日期</th>
           <th style="text-align:left;padding:6px 4px">时段</th>
           <th style="text-align:left;padding:6px 4px">宫·门</th>
+          <th style="text-align:left;padding:6px 4px">八神</th>
           <th style="text-align:left;padding:6px 4px">吉格</th>
         </tr>`;
     recs.forEach(r => {
       const isA = r.pri === 'A';
+      const sqIcon = r.sanqiMatch ? '⚡' : '';
       html += `<tr style="border-bottom:1px solid var(--bdr)">
-          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--t2)'};font-weight:${isA ? 600 : 400}">${r.dt}</td>
-          <td style="padding:8px 4px;color:var(--t1)">${r.t}</td>
-          <td style="padding:8px 4px;color:var(--t1)">${r.gong} ${r.men}</td>
+          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--text-2)'};font-weight:${isA ? 600 : 400}">${sqIcon}${r.dt}</td>
+          <td style="padding:8px 4px;color:var(--text)">${r.t}</td>
+          <td style="padding:8px 4px;color:var(--text)">${r.gong} ${r.men}</td>
+          <td style="padding:8px 4px;color:var(--text-2)">${r.shen}</td>
           <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--green)'}">${r.tag || '★吉门'}</td>
         </tr>`;
     });
@@ -856,39 +920,66 @@ function renderPZDetail() {
 }
 
 function renderPZInfo() {
+  const sch = getPZSchedule();
   let html = `<div class="card">
     <div class="card-title">📅 每日干支与局数</div>
     <div style="overflow-x:auto">
     <table style="width:100%;border-collapse:collapse;font-size:12px">
-      <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
+      <tr style="color:var(--text-3);border-bottom:1px solid var(--bdr)">
         <th style="text-align:left;padding:6px 4px">日期</th>
         <th style="text-align:left;padding:6px 4px">干支</th>
         <th style="text-align:left;padding:6px 4px">节气·元</th>
         <th style="text-align:left;padding:6px 4px">局数</th>
         <th style="text-align:left;padding:6px 4px">空亡</th>
       </tr>`;
-  pzDays.forEach(d => {
-    const juColor = d.ju === 4 ? 'var(--orange)' : 'var(--purple)';
+  sch.days.forEach(d => {
+    const yd = d.isYang ? '阳' : '阴';
+    const juColor = d.isYang ? 'var(--orange)' : 'var(--purple)';
     html += `<tr style="border-bottom:1px solid var(--bdr)">
-        <td style="padding:8px 4px;color:var(--t1)">${d.dt}(${d.wd})</td>
-        <td style="padding:8px 4px;color:var(--t1)">${d.gz}</td>
-        <td style="padding:8px 4px;color:var(--t2)">${d.jq}</td>
-        <td style="padding:8px 4px;color:${juColor};font-weight:600">阴${d.ju}局</td>
-        <td style="padding:8px 4px;color:var(--t3)">${d.kw}(${d.kwG})</td>
+        <td style="padding:8px 4px;color:var(--text)">${d.dt}(${d.wd})${d.isWeekend?' 🏠':''}</td>
+        <td style="padding:8px 4px;color:var(--text)">${d.gz}</td>
+        <td style="padding:8px 4px;color:var(--text-2)">${d.jq}${d.yuan}</td>
+        <td style="padding:8px 4px;color:${juColor};font-weight:600">${yd}${d.ju}局</td>
+        <td style="padding:8px 4px;color:var(--text-3)">${d.kwStr}</td>
+      </tr>`;
+  });
+  html += `</table></div></div>`;
+
+  // 账号信息
+  html += `<div class="card">
+    <div class="card-title">🎮 账号信息</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <tr style="color:var(--text-3);border-bottom:1px solid var(--bdr)">
+        <th style="text-align:left;padding:6px 4px">账号</th>
+        <th style="text-align:left;padding:6px 4px">门派</th>
+        <th style="text-align:left;padding:6px 4px">创建时间</th>
+        <th style="text-align:left;padding:6px 4px">日干</th>
+        <th style="text-align:left;padding:6px 4px">三奇</th>
+      </tr>`;
+  sch.accounts.forEach(a => {
+    html += `<tr style="border-bottom:1px solid var(--bdr)">
+        <td style="padding:8px 4px;color:var(--text)">${a.icon} ${a.name}</td>
+        <td style="padding:8px 4px;color:var(--text-2)">${a.school}</td>
+        <td style="padding:8px 4px;color:var(--text-3)">${a.created.slice(0,10)}</td>
+        <td style="padding:8px 4px;color:var(--text);font-weight:600">${a.rg}</td>
+        <td style="padding:8px 4px;color:${a.isSanqi?'var(--yellow)':'var(--text-3)'}">${a.isSanqi?'⚡是':'否'}</td>
       </tr>`;
   });
   html += `</table></div></div>`;
 
   html += `<div class="card">
     <div class="card-title">📖 排盘说明</div>
-    <div style="font-size:12px;color:var(--t2);line-height:1.8">
+    <div style="font-size:12px;color:var(--text-2);line-height:1.8">
       <div>• 工作日仅排19:00后（戌时19-21起）</div>
       <div>• 周末/节假日全天可排</div>
       <div>• 英语课日(周一/三/四)亥时(21-23)已避开</div>
       <div>• 子时(23-01)采用23:00换日约定</div>
-      <div style="margin-top:8px;color:var(--t3)">凶格过滤：门迫+空亡+击刑，满足任一即剔除</div>
-      <div style="color:var(--t3)">吉格标注：青龙返首/飞鸟跌穴/玉女守门/天遁/地遁/人遁</div>
-      <div style="margin-top:8px;color:var(--t3);font-style:italic">仅供游戏娱乐参考</div>
+      <div style="margin-top:8px;color:var(--text-3)">凶格过滤：门迫+空亡+击刑，满足任一即剔除</div>
+      <div style="color:var(--text-3)">吉格标注：三奇得使/玉女守门/天遁/地遁/人遁</div>
+      <div style="margin-top:8px;color:var(--text-3)">翻牌建议：根据首选时辰八神位置推荐</div>
+      <div style="color:var(--text-3)">三奇得使⚡：账号日干为乙丙丁且时辰排盘匹配</div>
+      <div style="margin-top:8px;color:var(--text-3);font-style:italic">动态排盘引擎·基于当日干支节气自动计算 | 仅供游戏娱乐参考</div>
     </div>
   </div>`;
   document.getElementById('sub-pz-info').innerHTML = html;

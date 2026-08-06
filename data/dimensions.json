@@ -1,0 +1,32 @@
+[
+  {
+    "date": "2026-06-07",
+    "waist": 101.5,
+    "hip": 101.5,
+    "chest": 108.5,
+    "thigh": 62.5,
+    "armFlex": 37.5,
+    "armRelax": 31.5,
+    "note": "晚饭后,腰围虚高"
+  },
+  {
+    "date": "2026-06-21",
+    "waist": 98.5,
+    "hip": 101.5,
+    "chest": 108.5,
+    "thigh": 48.5,
+    "armFlex": 34.5,
+    "armRelax": 29.5,
+    "note": "空腹晨测"
+  },
+  {
+    "date": "2026-07-26",
+    "waist": 94.5,
+    "hip": 102.5,
+    "chest": 104.5,
+    "thigh": 50.5,
+    "armFlex": 35.5,
+    "armRelax": 31.5,
+    "note": "空腹晨测"
+  }
+]

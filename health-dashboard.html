@@ -7,93 +7,93 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>健康管理工作台 | 大笔哥</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWkp+eslOWTpSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBmMTExNSIsInRoZW1lX2NvbG9yIjoiIzBmMTExNSJ9">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBmMTExNSIsInRoZW1lX2NvbG9yIjoiIzBmMTExNSIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nIzBmMTExNScvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzRBOUVGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#0f1115;color:#fff;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--t1:#fff;--t2:#8892a0;--t3:#5a6373;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:14px;--rs:10px}
+body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--text:#e5e7eb;--text-2:#8b8f9a;--text-3:#4b5563;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:var(--radius);--rs:var(--radius-sm)}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
 .header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--red));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
-.header-title{font-size:15px;font-weight:600;color:var(--t1)}
-.header-sub{font-size:11px;color:var(--t2);margin-top:1px}
-.header-date{font-size:11px;color:var(--t3);text-align:right}
+.header-title{font-size:15px;font-weight:600;color:var(--text)}
+.header-sub{font-size:11px;color:var(--text-2);margin-top:1px}
+.header-date{font-size:11px;color:var(--text-3);text-align:right}
 .tab-bar{position:sticky;top:60px;z-index:99;background:rgba(15,17,21,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .tab-bar::-webkit-scrollbar{display:none}
-.tab-item{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--t2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
-.tab-item.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+.tab-item{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
+.tab-item.active{color:var(--text);background:var(--card);border-color:var(--bdr2)}
 .tab-content{display:none;padding-top:16px}
 .tab-content.active{display:block}
-.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px;border:none}
-.card-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:14px}
-.big-num{font-size:36px;font-weight:800;color:var(--t1);line-height:1.1}
-.big-num .unit{font-size:14px;font-weight:400;color:var(--t2)}
-.big-sub{font-size:13px;color:var(--t2);margin-top:4px}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:16px;border:none}
+.card-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px}
+.big-num{font-size:28px;font-weight:800;color:var(--text);line-height:1.1}
+.big-num .unit{font-size:14px;font-weight:400;color:var(--text-2)}
+.big-sub{font-size:13px;color:var(--text-2);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kpi-item{background:var(--inset);border-radius:var(--rs);padding:14px;text-align:center}
-.kpi-value{font-size:24px;font-weight:700;color:var(--t1)}
-.kpi-value .unit{font-size:11px;font-weight:400;color:var(--t2)}
-.kpi-label{font-size:10px;color:var(--t2);margin-top:4px}
+.kpi-item{background:var(--inset);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.kpi-value{font-size:24px;font-weight:700;color:var(--text)}
+.kpi-value .unit{font-size:11px;font-weight:400;color:var(--text-2)}
+.kpi-label{font-size:11px;color:var(--text-2);margin-top:4px}
 .progress-bar{height:8px;background:var(--inset);border-radius:4px;overflow:hidden;margin:8px 0}
 .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--orange),var(--red));transition:width 0.6s ease}
-.stage-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--t2)}
-.stage-row .num{font-size:20px;font-weight:700;color:var(--t1)}
+.stage-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-2)}
+.stage-row .num{font-size:20px;font-weight:700;color:var(--text)}
 .check-group{display:flex;gap:12px;flex-wrap:wrap}
-.check-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t2)}
-.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--t3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px}
+.check-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2)}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--text-3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px}
 .check-box.checked{background:var(--green);border-color:var(--green);color:#fff}
 .supplement-list{display:flex;flex-wrap:wrap;gap:8px}
-.sup-tag{background:var(--inset);border-radius:8px;padding:6px 12px;font-size:10px;color:var(--t2)}
+.sup-tag{background:var(--inset);border-radius:8px;padding:6px 12px;font-size:10px;color:var(--text-2)}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;padding:8px 6px;color:var(--t3);font-weight:500;border-bottom:1px solid var(--bdr);font-size:10px}
-td{padding:8px 6px;border-bottom:1px solid var(--bdr);color:var(--t2);font-size:12px}
+th{text-align:left;padding:8px 6px;color:var(--text-3);font-weight:500;border-bottom:1px solid var(--bdr);font-size:10px}
+td{padding:8px 6px;border-bottom:1px solid var(--bdr);color:var(--text-2);font-size:12px}
 .chart-svg{width:100%;height:auto}
-select,input[type="date"]{background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:13px;outline:none}
+select,input[type="date"]{background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:13px;outline:none}
 select{width:100%}
 .date-range{display:flex;gap:8px;align-items:center}
 .date-range input{flex:1}
-.date-range span{color:var(--t3);font-size:12px}
-.meal-block{background:var(--inset);border-radius:var(--rs);padding:12px;margin-bottom:8px}
+.date-range span{color:var(--text-3);font-size:12px}
+.meal-block{background:var(--inset);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px}
 .meal-label{font-size:10px;font-weight:600;color:var(--blue);margin-bottom:6px;text-transform:uppercase}
-.meal-items{font-size:13px;color:var(--t2);line-height:1.6}
-.meal-macros{font-size:10px;color:var(--t3);margin-top:4px}
-.action-card{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px}
-.action-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px}
+.meal-items{font-size:13px;color:var(--text-2);line-height:1.6}
+.meal-macros{font-size:10px;color:var(--text-3);margin-top:4px}
+.action-card{background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
+.action-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
 .action-meta{font-size:10px;color:var(--blue);margin-bottom:8px}
-.action-detail{font-size:13px;color:var(--t2)}
+.action-detail{font-size:13px;color:var(--text-2)}
 .action-tip{font-size:10px;color:var(--orange);margin-top:4px}
-.hiit-box{background:rgba(74,158,255,0.1);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--blue)}
-.warmup-box{background:rgba(52,211,153,0.08);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--green)}
-.note-box{background:rgba(245,158,11,0.08);border-radius:var(--rs);padding:10px;margin-top:8px;font-size:10px;color:var(--orange)}
+.hiit-box{background:rgba(74,158,255,0.1);border-radius:var(--radius-sm);padding:12px;margin-top:10px;border-left:3px solid var(--blue)}
+.warmup-box{background:rgba(52,211,153,0.08);border-radius:var(--radius-sm);padding:12px;margin-top:10px;border-left:3px solid var(--green)}
+.note-box{background:rgba(245,158,11,0.08);border-radius:var(--radius-sm);padding:10px;margin-top:8px;font-size:10px;color:var(--orange)}
 .flex-row{display:flex;gap:8px;flex-wrap:wrap}
 .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600}
 .badge-green{background:rgba(52,211,153,0.15);color:var(--green)}
 .badge-blue{background:rgba(74,158,255,0.15);color:var(--blue)}
 .badge-orange{background:rgba(245,158,11,0.15);color:var(--orange)}
 .badge-red{background:rgba(239,68,68,0.15);color:var(--red)}
-.review-section{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px}
+.review-section{background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px}
 .review-title{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px}
-.summary-text{font-size:13px;color:var(--t2);line-height:1.7}
+.summary-text{font-size:13px;color:var(--text-2);line-height:1.7}
 svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 /* Metric risk cards */
 .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.metric-card{background:var(--inset);border-radius:var(--rs);padding:14px;display:flex;flex-direction:column;gap:8px}
+.metric-card{background:var(--inset);border-radius:var(--radius-sm);padding:14px;display:flex;flex-direction:column;gap:8px}
 .metric-card-head{display:flex;justify-content:space-between;align-items:flex-start}
-.metric-card-name{font-size:13px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:6px}
-.metric-card-value{font-size:22px;font-weight:800;color:var(--t1);line-height:1.1}
-.metric-card-value .unit{font-size:11px;font-weight:400;color:var(--t2)}
-.metric-card-ref{font-size:10px;color:var(--t3);margin-top:2px}
+.metric-card-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+.metric-card-value{font-size:22px;font-weight:800;color:var(--text);line-height:1.1}
+.metric-card-value .unit{font-size:11px;font-weight:400;color:var(--text-2)}
+.metric-card-ref{font-size:10px;color:var(--text-3);margin-top:2px}
 .metric-card-trend{font-size:10px;padding-top:6px;border-top:1px solid var(--bdr)}
 /* Body part ring cards */
 .ring-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ring-card{background:var(--inset);border-radius:var(--rs);padding:14px;display:flex;gap:12px;align-items:center}
+.ring-card{background:var(--inset);border-radius:var(--radius-sm);padding:14px;display:flex;gap:12px;align-items:center}
 .ring-card-info{flex:1;min-width:0}
-.ring-card-name{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px}
-.ring-card-values{font-size:12px;color:var(--t2);margin-bottom:4px}
-.ring-card-layers{font-size:10px;color:var(--t3);line-height:1.5}
-.formula-note{margin-top:12px;font-size:10px;color:var(--t3);line-height:1.6}
+.ring-card-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.ring-card-values{font-size:12px;color:var(--text-2);margin-bottom:4px}
+.ring-card-layers{font-size:10px;color:var(--text-3);line-height:1.5}
+.formula-note{margin-top:12px;font-size:10px;color:var(--text-3);line-height:1.6}
 </style>
 </head>
 <body>
@@ -132,10 +132,10 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card">
 <div class="card-title">⚖️ 今日体重</div>
 <div style="display:flex;gap:10px;align-items:center">
-<input type="number" id="dailyWeightInput" step="0.1" min="50" max="150" placeholder="输入体重(kg)" style="flex:1;background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:15px;outline:none">
+<input type="number" id="dailyWeightInput" step="0.1" min="50" max="150" placeholder="输入体重(kg)" style="flex:1;background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:15px;outline:none">
 <button onclick="saveDailyWeight()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer">确定</button>
 </div>
-<div id="weightFeedback" style="font-size:12px;color:var(--t2);margin-top:8px"></div>
+<div id="weightFeedback" style="font-size:12px;color:var(--text-2);margin-top:8px"></div>
 </div>
 <div class="card">
 <div class="card-title">⚖️ 体重对比</div>
@@ -153,14 +153,14 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:8px">🌅 早餐</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="bCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bSf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bFr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bC" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bCal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bP" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bSf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bFr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="bC" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="bDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="text" id="bDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveMealItem('b','早餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
 </div>
 <div id="mealListB" style="margin-top:6px"></div>
@@ -168,14 +168,14 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px">☀️ 午餐</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="lCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lSf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lFr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lC" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lCal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lP" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lSf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lFr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="lC" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="lDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="text" id="lDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveMealItem('l','午餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
 </div>
 <div id="mealListL" style="margin-top:6px"></div>
@@ -183,14 +183,14 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">🌙 晚餐</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="dCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dSf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dFr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dC" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dCal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dP" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dSf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dFr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dC" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="dDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="text" id="dDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveMealItem('d','晚餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
 </div>
 <div id="mealListD" style="margin-top:6px"></div>
@@ -217,16 +217,16 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div onclick="toggleTrainingSection()" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px" id="trainToggle">+</div>
 </div>
 </div>
-<div id="trainRecordInfo" style="font-size:12px;color:var(--t3);margin:8px 0 0"></div>
+<div id="trainRecordInfo" style="font-size:12px;color:var(--text-3);margin:8px 0 0"></div>
 <div id="trainRecordContent" style="display:none;margin-top:12px">
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="trDyn" placeholder="动态消耗" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="trTotal" placeholder="总消耗(可选)" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trDyn" placeholder="动态消耗" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trTotal" placeholder="总消耗(可选)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="trHr" placeholder="心率(可选 如122 (88-169))" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="text" id="trHr" placeholder="心率(可选 如122 (88-169))" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveTrainingItem()" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
 </div>
 </div>
@@ -241,25 +241,25 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">🔥 累计热量缺口</div>
 <div class="big-num" id="heatDeficit" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
-<div class="big-sub" id="heatDeficitSub" style="color:var(--t2)">—</div>
+<div class="big-sub" id="heatDeficitSub" style="color:var(--text-2)">—</div>
 </div>
 <div class="card">
 <div class="card-title">📅 双进度对比</div>
 <div style="margin-bottom:14px">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-<span style="font-size:12px;color:var(--t2)">⏱ 时间进度</span>
+<span style="font-size:12px;color:var(--text-2)">⏱ 时间进度</span>
 <span style="font-size:12px;font-weight:600;color:var(--blue)" id="timePctLabel">—</span>
 </div>
 <div class="progress-bar" style="height:10px"><div class="progress-fill" id="timeProgressBar" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--green))"></div></div>
 </div>
 <div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-<span style="font-size:12px;color:var(--t2)">🏋️ 减脂进度</span>
+<span style="font-size:12px;color:var(--text-2)">🏋️ 减脂进度</span>
 <span style="font-size:12px;font-weight:600;color:var(--orange)" id="fatPctLabel">—</span>
 </div>
 <div class="progress-bar" style="height:10px"><div class="progress-fill" id="fatProgressBar" style="width:0%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
 </div>
-<div id="dualProgressSub" style="margin-top:10px;font-size:11px;color:var(--t3);text-align:center"></div>
+<div id="dualProgressSub" style="margin-top:10px;font-size:11px;color:var(--text-3);text-align:center"></div>
 </div>
 <div class="kpi-grid" id="overviewKpis" style="margin-top:12px"></div>
 <div class="card">
@@ -274,7 +274,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">⚡ 全口径总消耗</div>
 <div class="big-num" id="totalExpBig" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
-<div class="big-sub" id="totalExpSub" style="color:var(--t2)">BMR + NEAT + 训练</div>
+<div class="big-sub" id="totalExpSub" style="color:var(--text-2)">BMR + NEAT + 训练</div>
 </div>
 <div class="kpi-grid">
 <div class="kpi-item"><div class="kpi-value" id="totalTrainDays">—</div><div class="kpi-label">累计训练天数</div></div>
@@ -305,7 +305,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card" style="background:linear-gradient(135deg,#1a1400,#12151c)">
 <div style="font-size:12px;color:var(--red);margin-bottom:4px">📊 预估总摄入</div>
 <div class="big-num" id="totalCalIn" style="color:var(--red)">—<span class="unit"> kcal</span></div>
-<div class="big-sub" id="totalProteinIn" style="color:var(--t2)">—</div>
+<div class="big-sub" id="totalProteinIn" style="color:var(--text-2)">—</div>
 </div>
 <div class="card">
 <div class="card-title">📅 日期范围</div>
@@ -340,20 +340,20 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
 <div class="card-title" style="margin-bottom:0;font-size:14px">📝 今日围度录入</div>
 </div>
-<div id="dimFeedback" style="font-size:12px;color:var(--t2);margin-top:4px"></div>
+<div id="dimFeedback" style="font-size:12px;color:var(--text-2);margin-top:4px"></div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
-<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
 </div>
 </div>
@@ -436,10 +436,26 @@ const SCAP_PROTOCOL=[
 {n:"弹力带外旋",s:"2×15/侧",t:"窄带10磅，手肘夹毛巾卷固定，慢速3秒离心，组间休45秒"},
 {n:"弹力带内旋",s:"2×15/侧",t:"窄带10磅，手肘夹毛巾卷固定，慢速3秒离心，组间休45秒"}
 ];
-const WD=[{"date": "2026-05-26", "weight": 89.85}, {"date": "2026-05-31", "weight": 87.4}, {"date": "2026-06-03", "weight": 87.9}, {"date": "2026-06-06", "weight": 88.45}, {"date": "2026-06-07", "weight": 87.8, "bf": 31.1, "bmi": 28.9, "bmr": 1737, "muscle": 57.4, "ffm": 60.5, "vf": 13, "sf": 20.7, "protein": 12.3, "sm": 38.6, "water": 49.1, "bone": 3.1}, {"date": "2026-06-09", "weight": 87.65}, {"date": "2026-06-14", "weight": 87.2, "bf": 31.1, "bmi": 28.8, "bmr": 1729, "muscle": 57.0, "ffm": 60.1, "vf": 13, "sf": 20.7, "protein": 12.3, "sm": 38.6, "water": 49.1, "bone": 3.1}, {"date": "2026-06-15", "weight": 88.6}, {"date": "2026-06-19", "weight": 87.65}, {"date": "2026-06-21", "weight": 87.5, "bf": 31.0, "bmi": 28.9, "bmr": 1733, "muscle": 57.3, "ffm": 60.4, "vf": 13, "sf": 20.7, "protein": 12.3, "sm": 38.6, "water": 49.2, "bone": 3.1}, {"date": "2026-06-25", "weight": 87.1}, {"date": "2026-06-26", "weight": 86.75}, {"date": "2026-06-28", "weight": 86.5, "bf": 30.6, "bmi": 28.5, "bmr": 1718, "muscle": 57.0, "ffm": 60.0, "vf": 13, "sf": 20.4, "protein": 12.4, "sm": 38.9, "water": 49.4, "bone": 3.1}, {"date": "2026-06-29", "weight": 86.65}, {"date": "2026-06-30", "weight": 86.85}, {"date": "2026-07-01", "weight": 86.9}, {"date": "2026-07-02", "weight": 86.65}, {"date": "2026-07-03", "weight": 86.6}, {"date": "2026-07-04", "weight": 86.25}, {"date": "2026-07-05", "weight": 86.05, "bf": 30.4, "bmi": 28.4, "bmr": 1711, "muscle": 56.8, "ffm": 59.9, "vf": 13, "sf": 20.3, "protein": 12.4, "sm": 39.0, "water": 49.6, "bone": 3.1}, {"date": "2026-07-12", "weight": 83.9, "bf": 29.4, "bmi": 27.7, "bmr": 1679, "muscle": 56.3, "ffm": 59.2, "vf": 12}, {"date": "2026-07-13", "weight": 84.1}, {"date": "2026-07-14", "weight": 84.15}, {"date": "2026-07-15", "weight": 84.15}, {"date": "2026-07-16", "weight": 84.6}, {"date": "2026-07-17", "weight": 84.55}, {"date": "2026-07-18", "weight": 84.05}, {"date": "2026-07-19", "weight": 84.7, "bf": 29.6, "bmi": 27.9, "bmr": 1691, "muscle": 56.7, "ffm": 59.6, "vf": 12, "sf": 19.7, "protein": 12.7, "sm": 39.4, "water": 50.1, "bone": 3.0}, {"date": "2026-07-20", "weight": 86.55}, {"date": "2026-07-21", "weight": 85.8}, {"date": "2026-07-22", "weight": 85.05}, {"date": "2026-07-23", "weight": 84.85}, {"date": "2026-07-24", "weight": 84.5}, {"date": "2026-07-25", "weight": 84.65}, {"date": "2026-07-26", "weight": 84.45, "bf": 29.6, "bmi": 27.8, "bmr": 1687, "muscle": 56.5, "ffm": 59.5, "vf": 12, "sf": 19.7, "protein": 12.7, "sm": 39.4, "water": 50.1, "bone": 3.0}, {"date": "2026-07-27", "weight": 85.35}, {"date": "2026-07-28", "weight": 84.7}, {"date": "2026-07-29", "weight": 84.05}, {"date": "2026-07-30", "weight": 84.75}, {"date": "2026-07-31", "weight": 84.6}, {"date": "2026-08-01", "weight": 84.1}, {"date": "2026-08-02", "weight": 83.4, "bf": 29.2, "bmi": 27.5, "bmr": 1672, "muscle": 56.1, "ffm": 59.0, "vf": 12, "sf": 19.5, "protein": 12.7, "sm": 39.6, "water": 50.4, "bone": 3.0}, {"date": "2026-08-03", "weight": 84.15}, {"date": "2026-08-04", "weight": 83.7}];
-const DD=[{"date": "2026-06-01", "m": {"b": "4蛋+酱牛肉+燕麦+酸奶+美式", "l": "外卖", "d": "彩椒牛腱+毛豆+菠菜+木耳+燕麦饭"}, "t": {"cal": 1800, "p": 148, "sf": 16, "fr": 5, "c": 35}}, {"date": "2026-06-02", "m": {"b": "4蛋+拿铁+美式", "l": "沙县去皮鸡腿饭", "d": "牛腱200g+菠菜+彩椒+木耳+毛豆+海参"}, "t": {"cal": 1321, "p": 139, "sf": 8, "fr": 4, "c": 30}}, {"date": "2026-06-03", "m": {"b": "牛腱200g+4蛋+拿铁", "l": "麻辣烫(肥牛+鸭血+菠菜+木耳+香菇)", "d": "虾120g+牛排100g+毛豆+彩椒+香蕉"}, "t": {"cal": 1570, "p": 179, "sf": 22, "fr": 6, "c": 40}}, {"date": "2026-06-04", "m": {"b": "4蛋+150g牛肉+拿铁", "l": "Subway鸡肉三明治6寸", "d": "西兰花+牛肉+番茄排骨+菌菇+咖喱土豆+彩椒"}, "t": {"cal": 1602, "p": 136, "sf": 19, "fr": 5, "c": 80}}, {"date": "2026-06-05", "m": {"b": "Subway牛肉三明治", "l": "麻辣烫(牛鸡鹌鹑蛋+菠菜+木耳+海带+鸭血+豆腐)", "d": "彩椒洋葱炒鸡+卤牛肉+毛豆+半碗米饭"}, "t": {"cal": 1380, "p": 120, "sf": 10, "fr": 3, "c": 70}}, {"date": "2026-06-06", "m": {"b": "2香蕉+150g牛肉+4蛋+拿铁", "d": "窑鸡300g+酱牛肉150g+四季豆80g"}, "t": {"cal": 1690, "p": 193, "sf": 22, "fr": 12, "c": 30}}, {"date": "2026-06-07", "m": {"b": "牛排150g+4蛋+拿铁", "d": "钵钵鸡大份+酸菜土豆+米饭+菠菜250g"}, "t": {"cal": 1550, "p": 125, "sf": 20, "fr": 5, "c": 80}}, {"date": "2026-06-08", "m": {"b": "4蛋+150g牛肉+拿铁", "l": "金枪鱼滑蛋轻蔬碗", "d": "虾+毛豆+酸奶+香蕉"}, "t": {"cal": 1450, "p": 130, "sf": 18, "fr": 8, "c": 60}}, {"date": "2026-06-09", "m": {"b": "4蛋+拿铁+150g牛肉", "l": "刘家牛肉饭+鸡蛋炒番茄", "d": "卤牛肉+蔬菜+蛋白粉"}, "t": {"cal": 1500, "p": 155, "sf": 15, "fr": 5, "c": 55}}, {"date": "2026-06-10", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "龙虾应酬"}, "t": {"cal": 1600, "p": 130, "sf": 15, "fr": 5, "c": 60}}, {"date": "2026-06-11", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "正常晚餐"}, "t": {"cal": 1500, "p": 140, "sf": 14, "fr": 5, "c": 60}}, {"date": "2026-06-12", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "烧烤"}, "t": {"cal": 1600, "p": 135, "sf": 18, "fr": 5, "c": 60}}, {"date": "2026-06-13", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "蛋白奶昔"}, "t": {"cal": 1300, "p": 110, "sf": 12, "fr": 5, "c": 50}}, {"date": "2026-06-14", "m": {"b": "4蛋+拿铁+牛肉", "l": "外卖", "d": "正常晚餐"}, "t": {"cal": 1500, "p": 140, "sf": 14, "fr": 5, "c": 60}}, {"date": "2026-06-15", "m": {"b": "4蛋+拿铁+牛肉", "l": "西芹炒牛肉+莴笋+菜心+糙米", "d": "蛋白粉+卤牛肉"}, "t": {"cal": 1290, "p": 124, "sf": 15, "fr": 3, "c": 50}}, {"date": "2026-06-16", "m": {"b": "4蛋+拿铁+牛肉", "l": "小炒黄牛肉+西红柿炒蛋+米饭", "d": "蛋白粉+三文鱼"}, "t": {"cal": 1380, "p": 161, "sf": 16, "fr": 3, "c": 45}}, {"date": "2026-06-17", "m": {"b": "4蛋+拿铁+牛肉", "l": "口水鸡+虾仁滑蛋+糙米", "d": "蛋白粉+牛肉+蔬菜"}, "t": {"cal": 1410, "p": 147, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-06-18", "m": {"b": "袁记云饺18个", "l": "牛肉拌面碗", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1532, "p": 126, "sf": 12, "fr": 3, "c": 80}}, {"date": "2026-06-19", "m": {"l": "白酒应酬", "d": "白酒4壶+菜"}, "t": {"cal": 4892, "p": 116, "sf": 20, "fr": 10, "c": 80}}, {"date": "2026-06-20", "m": {"b": "皮蛋瘦肉粥", "l": "虾饺", "d": "简单晚餐"}, "t": {"cal": 1359, "p": 143, "sf": 11, "fr": 3, "c": 50}}, {"date": "2026-06-21", "m": {"note": "称重日"}, "t": {"cal": 0, "p": 0, "sf": 0, "fr": 0, "c": 0}}, {"date": "2026-06-22", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-23", "m": {"l": "蒜蓉粉丝虾套餐"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-24", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-25", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-26", "m": {"l": "广东菜心牛肉+苦瓜牛肉+番茄炒蛋+牛骨清汤"}, "t": {"cal": 1450, "p": 140, "sf": 14, "fr": 4, "c": 60}}, {"date": "2026-06-27", "m": {"l": "外卖"}, "t": {"cal": 1450, "p": 135, "sf": 13, "fr": 4, "c": 60}}, {"date": "2026-06-28", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 135, "sf": 13, "fr": 4, "c": 55}}, {"date": "2026-06-29", "m": {"l": "菲力鸡胸牛排沙拉"}, "t": {"cal": 1400, "p": 135, "sf": 13, "fr": 4, "c": 55}}, {"date": "2026-06-30", "m": {"l": "眼肉牛排+太阳蛋+土豆泥+时蔬"}, "t": {"cal": 1400, "p": 135, "sf": 13, "fr": 4, "c": 55}}, {"date": "2026-07-01", "m": {"l": "鸡胸能量碗+卤牛肉120g", "d": "卤牛肉150g+西红柿炒蛋+香菇+海参+杂粮饭+菠菜"}, "t": {"cal": 1453, "p": 142, "sf": 10, "fr": 3, "c": 55}}, {"date": "2026-07-02", "m": {"b": "卤牛肉120g", "l": "熏牛肉120g+沙拉碗", "d": "米饭+菠菜+牛腱180g+虾150g+菌菇+芹菜+彩椒"}, "t": {"cal": 1450, "p": 160, "sf": 8, "fr": 3, "c": 55}}, {"date": "2026-07-03", "m": {"l": "外卖", "d": "卤牛肉+蔬菜+蛋白粉"}, "t": {"cal": 1400, "p": 145, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-04", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-05", "m": {"l": "双倍鸡胸鲜蔬杂粮饭", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 145, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-06", "m": {"l": "双倍鸡胸鲜蔬杂粮饭"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-07", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-08", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-09", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-10", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-11", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-12", "m": {"l": "外卖", "d": "蛋白粉+蔬菜"}, "t": {"cal": 1400, "p": 140, "sf": 12, "fr": 3, "c": 55}}, {"date": "2026-07-13", "m": {"b": "拿铁+蛋白粉3勺", "pre": "蛋白粉1勺+精氨酸瓜氨酸", "d": "蛋白粉1勺+卤牛肉200g+西兰花60g"}, "t": {"cal": 871, "p": 168, "sf": 7, "fr": 14, "c": 15}}, {"date": "2026-07-14", "m": {"b": "美式咖啡", "l": "烤牛肉拌饭+牛肉粒", "d": "蛋白粉1勺+三文鱼200g", "s": "蛋白粉半勺"}, "t": {"cal": 1552, "p": 121, "sf": 15, "fr": 8, "c": 60}}, {"date": "2026-07-15", "m": {"b": "美式咖啡", "l": "延边辣牛肉汤+米饭一半", "d": "三文鱼240g+蛋白粉2勺", "s": "精氨酸瓜氨酸"}, "t": {"cal": 1603, "p": 114, "sf": 10, "fr": 5, "c": 55}}, {"date": "2026-07-16", "m": {"b": "美式咖啡", "l": "CrazyCat能量碗", "d": "卤牛腱子220g+西兰花", "s": "蛋白粉3勺"}, "t": {"cal": 1468, "p": 145, "sf": 10, "fr": 5, "c": 50}}, {"date": "2026-07-17", "m": {"b": "美式2杯+蛋白粉2勺+精氨酸瓜氨酸", "l": "蛋白粉2勺", "d": "日料刺身+沙拉+芝士卷×2"}, "t": {"cal": 1065, "p": 132, "sf": 13, "fr": 8, "c": 30}}, {"date": "2026-07-18", "m": {"l": "牛肉面+辣椒油+煎蛋+羊肉串×5", "s": "蛋白粉1勺", "d": "牛排200g", "s2": "蛋白粉1勺"}, "t": {"cal": 1467, "p": 148, "sf": 12, "fr": 3, "c": 50}}, {"date": "2026-07-19", "m": {"l": "炸鸡腿+琵琶腿×2+鸡柳(欺骗餐)", "s": "蛋白粉2勺", "d": "馄饨20个+披萨1/4"}, "t": {"cal": 2956, "p": 174, "sf": 25, "fr": 5, "c": 135}}, {"date": "2026-07-20", "m": {"l": "蛋羹鸡胸鲜蔬杂粮饭+西兰花", "d": "菠菜+黄瓜+三文鱼100g+蛋白粉+精氨酸瓜氨酸"}, "t": {"cal": 1456, "p": 106, "sf": 13, "fr": 2, "c": 55}}, {"date": "2026-07-21", "m": {"l": "鸡胸肉100g+烤时蔬+低GI饭", "d": "卤牛肉200g+西红柿+海参+西兰花+海带"}, "t": {"cal": 1270, "p": 135, "sf": 7, "fr": 8, "c": 45}}, {"date": "2026-07-22", "m": {"l": "香煎鱼柳杂蔬饭", "d": "卤牛肉200g+毛豆100g", "s": "蛋白粉2勺"}, "t": {"cal": 1311, "p": 132, "sf": 14, "fr": 7, "c": 50}}, {"date": "2026-07-23", "m": {"l": "黑椒鸡胸糙米饭+金枪鱼", "d": "卤牛腱167g+毛豆100g+蛋白粉2勺"}, "t": {"cal": 1436, "p": 151, "sf": 7, "fr": 5, "c": 50}}, {"date": "2026-07-24", "m": {"l": "双倍鸡胸鲜蔬杂粮饭", "d": "卤鸭舌35根+西兰花+黄瓜+豆腐+香菇"}, "t": {"cal": 1240, "p": 109, "sf": 10, "fr": 3, "c": 45}}, {"date": "2026-07-25", "m": {"l": "猪肉150g+青椒洋葱+米饭+蛋花汤", "s": "蛋白粉2勺+精氨酸瓜氨酸", "d": "三文鱼107g+卤牛腱89g", "s2": "卤鸭舌40根"}, "t": {"cal": 1358, "p": 154, "sf": 9, "fr": 6, "c": 45}}, {"date": "2026-07-26", "m": {"d": "牛蛙米线+里脊串+咖啡", "s": "蛋白粉3勺+A2牛奶150ml"}, "t": {"cal": 1139, "p": 122, "sf": 12, "fr": 0, "c": 25}}, {"date": "2026-07-27", "m": {"l": "蛋羹鸡胸杂粮饭+西兰花×1.2", "d": "卤鸭舌30根+炒青菜", "s": "蛋白粉3勺"}, "t": {"cal": 1316, "p": 135, "sf": 12, "fr": 0, "c": 40}}, {"date": "2026-07-28", "m": {"l": "鸡胸180g+圣女果+黄瓜+玉米+酸奶", "s": "抹茶拿铁+蛋白粉1勺", "d": "青菜+黄瓜+虾仁+卤牛肉87g"}, "t": {"cal": 1164, "p": 155, "sf": 10, "fr": 3, "c": 45}}, {"date": "2026-07-29", "m": {"b": "卤牛肉140g", "l": "杭椒牛肉套餐×1.5", "d": "西兰花鸡胸+豆腐虾仁汤+杂粮饭", "s": "蛋白粉1勺"}, "t": {"cal": 1802, "p": 148, "sf": 11, "fr": 0, "c": 80}}, {"date": "2026-07-30", "m": {"l": "杏鲍菇鸡胸+青菜+豆芽韭菜+糙米", "d": "油麦菜+菠菜+番茄炒蛋", "s": "蛋白粉3勺"}, "t": {"cal": 1262, "p": 115, "sf": 6, "fr": 0, "c": 71}}, {"date": "2026-07-31", "m": {"l": "寿司10枚", "d": "青菜+菌菇豆腐+卤牛肉185g", "s": "蛋白粉2勺"}, "t": {"cal": 1138, "p": 130, "sf": 8, "fr": 0, "c": 56}}, {"date": "2026-08-01", "m": {"l": "毛豆+牛肉50g+鸡胸100g+番茄炒蛋+米饭红薯+三文鱼100g", "d": "洋葱鸡胸+番茄炒蛋+毛豆+红薯+米饭", "s": "蛋白粉2勺"}, "t": {"cal": 1146, "p": 126, "sf": 6, "fr": 0, "c": 79}}, {"date": "2026-08-02", "m": {"d": "小龙虾20个+花蛤20个+面条130g", "s": "蛋白粉3勺"}, "t": {"cal": 1295, "p": 119, "sf": 9, "fr": 0, "c": 100}}, {"date": "2026-08-03", "m": {"b": "美式咖啡", "l": "谨食三拼能量碗（鸡胸+牛肉+虾饼+蛋+杂粮饭+蔬菜）", "s": "奈雪老盐黄皮小黄瓶(微甜)", "d": "卤牛肉80g+咖喱牛肉+毛豆+米饭167g", "s2": "蛋白粉1勺+精氨酸瓜氨酸"}, "t": {"cal": 1594, "p": 145.5, "sf": 13.7, "fr": 1, "c": 122}}, {"date": "2026-08-04", "m": {"l": "泰式打抛饭", "d": "西红柿蛋汤+西芹彩椒+盐水牛肉150g+海带丝", "s": "蛋白粉2.5勺"}, "t": {"cal": 1458, "p": 138.5, "sf": 17, "fr": 6, "c": 102}}];;
-const TD=[{"date": "2026-05-27", "type": "力量+柔韧", "dur": 29, "dyn": 154, "total": 200}, {"date": "2026-05-29", "type": "力量+有氧", "dur": 55, "dyn": 371, "total": 500}, {"date": "2026-06-02", "type": "有氧日", "dur": 24, "dyn": 60, "total": 78}, {"date": "2026-06-04", "type": "力量日", "dur": 45, "dyn": 280, "total": 400}, {"date": "2026-06-09", "type": "拉力+有氧", "dur": 50, "dyn": 300, "total": 420}, {"date": "2026-06-10", "type": "下肢日", "dur": 45, "dyn": 280, "total": 400}, {"date": "2026-06-11", "type": "上肢推日", "dur": 40, "dyn": 250, "total": 350}, {"date": "2026-06-15", "type": "推力日", "dur": 50, "dyn": 326, "total": 450}, {"date": "2026-06-16", "type": "拉力+有氧", "dur": 45, "dyn": 288, "total": 400}, {"date": "2026-06-17", "type": "下肢+核心", "dur": 55, "dyn": 461, "total": 600}, {"date": "2026-06-20", "type": "有氧+柔韧", "dur": 30, "dyn": 407, "total": 500}, {"date": "2026-07-01", "type": "下肢+核心", "dur": 74, "dyn": 538, "total": 676}, {"date": "2026-07-02", "type": "肩臂专项", "dur": 60, "dyn": 350, "total": 480}, {"date": "2026-07-03", "type": "推力日", "dur": 55, "dyn": 320, "total": 440}, {"date": "2026-07-04", "type": "拉力日", "dur": 60, "dyn": 380, "total": 510}, {"date": "2026-07-05", "type": "下肢+核心", "dur": 55, "dyn": 350, "total": 470}, {"date": "2026-07-06", "type": "推力日", "dur": 55, "dyn": 330, "total": 450}, {"date": "2026-07-07", "type": "拉力日", "dur": 60, "dyn": 380, "total": 510}, {"date": "2026-07-09", "type": "下肢", "dur": 60, "dyn": 400, "total": 540}, {"date": "2026-07-13", "type": "推力日", "dur": 114, "dyn": 815, "total": 1022}, {"date": "2026-07-14", "type": "拉力日", "dur": 99, "dyn": 723, "total": 904}, {"date": "2026-07-15", "type": "下肢+核心", "dur": 76, "dyn": 473, "total": 611}, {"date": "2026-07-16", "type": "肩臂专项", "dur": 83, "dyn": 538, "total": 689}, {"date": "2026-07-17", "type": "全身整合", "dur": 95, "dyn": 722, "total": 903}, {"date": "2026-07-20", "type": "推力日", "dur": 57, "dyn": 358, "total": 462}, {"date": "2026-07-21", "type": "拉力日", "dur": 90, "dyn": 683, "total": 867}, {"date": "2026-07-22", "type": "下肢+肩胛", "dur": 78, "dyn": 527, "total": 669}, {"date": "2026-07-23", "type": "肩臂+核心", "dur": 80, "dyn": 447, "total": 594}, {"date": "2026-07-25", "type": "有氧整合+核心", "dur": 82, "dyn": 662, "total": 811}, {"date": "2026-07-27", "type": "推力日", "dur": 94, "dyn": 649, "total": 820}, {"date": "2026-07-28", "type": "拉力日", "dur": 98, "dyn": 880, "total": 1059}, {"date": "2026-07-30", "type": "拉力日", "dur": 87, "dyn": 561, "total": 719}, {"date": "2026-08-01", "type": "下肢+肩胛+HIIT", "dur": 128, "dyn": 1051, "total": 1285}, {"date": "2026-08-02", "type": "Zone2有氧", "dur": 80, "dyn": 455, "total": 634}, {"date": "2026-08-03", "type": "推日+HIIT×3", "dur": 68, "dyn": 462, "total": 584, "hr": "125 (92-162)"}, {"date": "2026-08-04", "type": "拉力日", "dur": 101, "dyn": 653, "total": 835, "hr": "122 (88-169)"}];
-const DIM=[{"date": "2026-06-07", "waist": 101.5, "hip": 101.5, "chest": 108.5, "thigh": 62.5, "armFlex": 37.5, "armRelax": 31.5, "note": "晚饭后,腰围虚高"}, {"date": "2026-06-21", "waist": 98.5, "hip": 101.5, "chest": 108.5, "thigh": 48.5, "armFlex": 34.5, "armRelax": 29.5, "note": "空腹晨测"}, {"date": "2026-07-26", "waist": 94.5, "hip": 102.5, "chest": 104.5, "thigh": 50.5, "armFlex": 35.5, "armRelax": 31.5, "note": "空腹晨测"}];
+let WD=[],DD=[],TD=[],DIM=[];
+async function loadData(){
+  try{
+    const [w,d,t,dim] = await Promise.all([
+      fetch('data/weight.json').then(r=>r.json()),
+      fetch('data/diet.json').then(r=>r.json()),
+      fetch('data/training.json').then(r=>r.json()),
+      fetch('data/dimensions.json').then(r=>r.json())
+    ]);
+    WD=w;DD=d;TD=t;DIM=dim;
+    mergeWeightLS();mergeDimLS();
+    initNav();initOverview();filterTraining();filterDiet();filterBody();initMemo();renderReviewSection();
+  }catch(e){
+    console.error('数据加载失败',e);
+    // 降级：仍然用空数据初始化
+    mergeWeightLS();mergeDimLS();
+    initNav();initOverview();filterTraining();filterDiet();filterBody();initMemo();renderReviewSection();
+  }
+}
+loadData();
 const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "鱼油(海力生2+BM2) 4粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽 10-15g/天"];
 
 const ACTIONS={
@@ -680,18 +696,18 @@ function addSnackSlot(){
   div.style.cssText='margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--bdr)';
   div.innerHTML=`
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-<span style="font-size:11px;color:var(--t2)">加餐 #${id}</span>
+<span style="font-size:11px;color:var(--text-2)">加餐 #${id}</span>
 <span onclick="this.closest('[id^=snackSlot]').remove()" style="color:var(--red);font-size:16px;cursor:pointer">×</span>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="s${id}Cal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="s${id}P" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="s${id}Sf" placeholder="饱和脂" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="s${id}Fr" placeholder="果糖" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="s${id}C" placeholder="碳水" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}Cal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}P" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}Sf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}Fr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="s${id}C" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
 <div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="s${id}Desc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="text" id="s${id}Desc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveMealItem('s${id}','加餐#${id}')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
 </div>`;
   $('snackSlots').appendChild(div);
@@ -738,9 +754,9 @@ function renderMealList(key){
   let h='';
   items.forEach((item,i)=>{
     h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr)">
-<div style="flex:1;font-size:11px;color:var(--t2)">
-<span style="color:var(--t3)">${item.time||''}</span>
-${item.desc?'<span style="color:var(--t1);margin-left:4px">'+item.desc+'</span>':''}
+<div style="flex:1;font-size:11px;color:var(--text-2)">
+<span style="color:var(--text-3)">${item.time||''}</span>
+${item.desc?'<span style="color:var(--text);margin-left:4px">'+item.desc+'</span>':''}
 <span style="margin-left:4px;color:var(--orange)">${item.cal}kcal</span>
 <span style="color:var(--green);margin-left:3px">P${item.p}g</span>
 <span style="margin-left:3px">脂${item.sf} 果${item.fr} 碳${item.c}</span>
@@ -830,8 +846,8 @@ function renderTrainingList(){
   let h='';
   items.forEach(function(item,i){
     h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)">';
-    h+='<div style="flex:1;font-size:12px;color:var(--t2)">';
-    h+='<span style="color:var(--t3)">'+(item.time||'')+'</span>';
+    h+='<div style="flex:1;font-size:12px;color:var(--text-2)">';
+    h+='<span style="color:var(--text-3)">'+(item.time||'')+'</span>';
     h+='<span style="color:var(--blue);margin-left:6px;font-weight:600">'+item.type+'</span>';
     h+='<span style="margin-left:6px">'+item.dur+'min</span>';
     h+='<span style="color:var(--orange);margin-left:6px">'+item.dyn+'kcal</span>';
@@ -861,7 +877,7 @@ function initTrainingRecordInfo(){
   if(plan&&plan.w&&plan.w.length>0){
     $('trainRecordInfo').innerHTML='<span style="color:var(--blue)">'+todayStr+' '+dayName+'</span> · <span style="color:var(--orange)">'+plan.name+'</span> · 计划'+plan.dur;
   }else{
-    $('trainRecordInfo').innerHTML='<span style="color:var(--blue)">'+todayStr+' '+dayName+'</span> · <span style="color:var(--t3)">休息日</span>';
+    $('trainRecordInfo').innerHTML='<span style="color:var(--blue)">'+todayStr+' '+dayName+'</span> · <span style="color:var(--text-3)">休息日</span>';
   }
   updateTrainDailySummary();
   renderTrainingList();
@@ -901,8 +917,8 @@ function initNav(){
   let html='';
   // Module composition overview
   if(modules.length>0){
-    html+='<div style="font-size:12px;color:var(--t3);margin-bottom:10px;padding:8px;background:var(--inset);border-radius:8px">';
-    html+='<span style="color:var(--t2);font-weight:600">模块组成：</span>';
+    html+='<div style="font-size:12px;color:var(--text-3);margin-bottom:10px;padding:8px;background:var(--inset);border-radius:8px">';
+    html+='<span style="color:var(--text-2);font-weight:600">模块组成：</span>';
     html+='<span style="color:var(--orange)">'+modules.join(' + ')+'</span>';
     html+='</div>';
   }
@@ -910,13 +926,13 @@ function initNav(){
   html+='<div style="font-size:13px;color:var(--blue);margin-bottom:8px">'+todayStr+' '+dayName+' · '+plan.name+'</div>';
   
   if(plan.w.length===0){
-    html+='<div style="font-size:14px;color:var(--t2);text-align:center;padding:20px">🛌 休息日'+(plan.note?' · '+plan.note:'')+'</div>';
+    html+='<div style="font-size:14px;color:var(--text-2);text-align:center;padding:20px">🛌 休息日'+(plan.note?' · '+plan.note:'')+'</div>';
   }else{
     // 1. 热身
     if(plan.warmup && (typeof plan.warmup==='string'?plan.warmup:plan.warmup.length>0)){
       html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px">🔥 热身</div>';
       if(typeof plan.warmup==='string'){
-        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--rs)">'+plan.warmup+'</div>';
+        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--radius-sm)">'+plan.warmup+'</div>';
       }else{
         plan.warmup.forEach(a=>{
           html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
@@ -950,7 +966,7 @@ function initNav(){
     if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){
       html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">⚡ HIIT</div>';
       if(typeof plan.hiit==='string'){
-        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(74,158,255,0.06);border-radius:var(--rs)">'+plan.hiit+'</div>';
+        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(74,158,255,0.06);border-radius:var(--radius-sm)">'+plan.hiit+'</div>';
       }else{
         plan.hiit.forEach(a=>{
           html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+a.s+'</div><div class="action-detail">'+a.t+'</div></div>';
@@ -962,7 +978,7 @@ function initNav(){
     if(plan.cd && (typeof plan.cd==='string'?plan.cd:plan.cd.length>0)){
       html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 6px">🧘 冷身拉伸</div>';
       if(typeof plan.cd==='string'){
-        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--rs)">'+plan.cd+'</div>';
+        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--radius-sm)">'+plan.cd+'</div>';
       }else{
         plan.cd.forEach(a=>{
           html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
@@ -979,7 +995,7 @@ function initNav(){
   const todayWeight=WD.find(d=>d.date===todayStr);
   if(todayWeight){
     document.getElementById('dailyWeightInput').value=todayWeight.weight;
-    document.getElementById('weightFeedback').innerHTML='<span style="color:var(--t2)">今日已记录</span>';
+    document.getElementById('weightFeedback').innerHTML='<span style="color:var(--text-2)">今日已记录</span>';
   }
 
   // Update header date
@@ -1026,7 +1042,7 @@ function makeLineChart(data,xKey,yKey,w,h,color,label,showAll){
   const pad={l:40,r:15,t:20,b:30};
   const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
   const vals=data.map(d=>d[yKey]).filter(v=>v!=null);
-  if(vals.length<2)return '<div style="text-align:center;color:var(--t3);padding:20px">数据不足</div>';
+  if(vals.length<2)return '<div style="text-align:center;color:var(--text-3);padding:20px">数据不足</div>';
   const minY=Math.min(...vals),maxY=Math.max(...vals);
   const rangeY=maxY-minY||1;
   const yMin=minY-rangeY*0.1,yMax=maxY+rangeY*0.1;
@@ -1224,7 +1240,7 @@ function initOverview(){
     {v:TD.length,l:'累计训练',u:'天',c:'var(--green)',sub:'自5/31起'},
     {v:fmt(TD.reduce((s,t)=>s+t.dur,0)/60,1),l:'训练总时长',u:'h',c:'var(--red)',sub:'自5/31起'},
   ];
-  $('overviewKpis').innerHTML=kpis.map(k=>'<div class="kpi-item"><div class="kpi-value" style="color:'+k.c+'">'+k.v+'<span class="unit"> '+k.u+'</span></div><div class="kpi-label">'+k.l+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">'+k.sub+'</div></div>').join('');
+  $('overviewKpis').innerHTML=kpis.map(k=>'<div class="kpi-item"><div class="kpi-value" style="color:'+k.c+'">'+k.v+'<span class="unit"> '+k.u+'</span></div><div class="kpi-label">'+k.l+'</div><div style="font-size:10px;color:var(--text-3);margin-top:2px">'+k.sub+'</div></div>').join('');
   
   // Charts
   const chartW=450,chartH=200;
@@ -1319,7 +1335,7 @@ function filterDiet(){
   combined.slice().reverse().forEach(d=>{
     if(d.t.cal===0)return;
     html+='<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bdr)">';
-    html+='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:13px;font-weight:600;color:var(--t1)">'+d.date.slice(5)+'</span><span style="font-size:12px;color:var(--blue)">'+d.t.cal+'kcal / '+d.t.p+'g蛋白</span></div>';
+    html+='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:13px;font-weight:600;color:var(--text)">'+d.date.slice(5)+'</span><span style="font-size:12px;color:var(--blue)">'+d.t.cal+'kcal / '+d.t.p+'g蛋白</span></div>';
     
     if(d._fromLS && d._meals){
       // Render localStorage meal items
@@ -1343,7 +1359,7 @@ function filterDiet(){
       });
     }
     
-    html+='<div style="font-size:10px;color:var(--t3);margin-top:4px">饱和脂肪:'+d.t.sf+'g | 果糖:'+d.t.fr+'g | 碳水:'+d.t.c+'g</div>';
+    html+='<div style="font-size:10px;color:var(--text-3);margin-top:4px">饱和脂肪:'+d.t.sf+'g | 果糖:'+d.t.fr+'g | 碳水:'+d.t.c+'g</div>';
     html+='</div>';
   });
   $('dietDetail').innerHTML=html;
@@ -1381,7 +1397,7 @@ function filterBody(){
     const gap=r.lower?(r.cur-r.target):(r.target-r.cur);
     const gapOk=r.lower?(gap<=0):(gap<=0);
     const improving=r.lower?(change<0):(change>0);
-    const changeColor=improving?'var(--green)':(change>0&&r.lower?'var(--red)':(change<0&&!r.lower?'var(--red)':'var(--t2)'));
+    const changeColor=improving?'var(--green)':(change>0&&r.lower?'var(--red)':(change<0&&!r.lower?'var(--red)':'var(--text-2)'));
     const statusBadge=gapOk?'<span class="badge badge-green">正常</span>':(r.lower?'<span class="badge badge-red">偏高</span>':'<span class="badge badge-orange">偏低</span>');
     rc+='<div class="metric-card">';
     rc+='<div class="metric-card-head">';
@@ -1404,25 +1420,25 @@ function filterBody(){
   const wPct=Math.min(100,lostW/needLoseW*100);
   const bfPct=Math.min(100,lostBF/needLoseBF*100);
   const overallPct=(wPct+bfPct)/2;
-  let ach='<div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;font-weight:800;color:var(--orange)">'+overallPct.toFixed(1)+'%</div><div style="font-size:13px;color:var(--t2)">综合达成率</div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--t2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:13px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--t2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:13px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
+  let ach='<div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;font-weight:800;color:var(--orange)">'+overallPct.toFixed(1)+'%</div><div style="font-size:13px;color:var(--text-2)">综合达成率</div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--text-2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:13px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--text-2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:13px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
   $('achievementArea').innerHTML=ach;
   
   // Body history cards (横向滑动)
   const bd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null).slice().reverse();
-  const cardStyle='flex-shrink:0;width:160px;background:var(--inset);border-radius:var(--rs);padding:14px';
+  const cardStyle='flex-shrink:0;width:160px;background:var(--inset);border-radius:var(--radius-sm);padding:14px';
   $('bodyHistoryCards').innerHTML=bd.map(d=>{
     var h='<div style="'+cardStyle+'">';
     h+='<div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px">'+d.date.slice(5)+'</div>';
-    h+='<div style="font-size:12px;color:var(--t2);line-height:1.8">';
-    h+='<div><span style="color:var(--t3)">体重</span> <span style="color:var(--orange);font-weight:600">'+d.weight+'kg</span></div>';
-    h+='<div><span style="color:var(--t3)">体脂</span> <span style="color:var(--green);font-weight:600">'+d.bf+'%</span></div>';
-    h+='<div><span style="color:var(--t3)">BMI</span> '+(d.bmi||'—')+'</div>';
-    h+='<div><span style="color:var(--t3)">BMR</span> '+(d.bmr||'—')+'</div>';
-    h+='<div><span style="color:var(--t3)">肌肉</span> '+(d.muscle||'—')+'kg</div>';
-    h+='<div><span style="color:var(--t3)">去脂</span> '+(d.ffm||'—')+'kg</div>';
-    h+='<div><span style="color:var(--t3)">内脏</span> '+(d.vf||'—')+'</div>';
+    h+='<div style="font-size:12px;color:var(--text-2);line-height:1.8">';
+    h+='<div><span style="color:var(--text-3)">体重</span> <span style="color:var(--orange);font-weight:600">'+d.weight+'kg</span></div>';
+    h+='<div><span style="color:var(--text-3)">体脂</span> <span style="color:var(--green);font-weight:600">'+d.bf+'%</span></div>';
+    h+='<div><span style="color:var(--text-3)">BMI</span> '+(d.bmi||'—')+'</div>';
+    h+='<div><span style="color:var(--text-3)">BMR</span> '+(d.bmr||'—')+'</div>';
+    h+='<div><span style="color:var(--text-3)">肌肉</span> '+(d.muscle||'—')+'kg</div>';
+    h+='<div><span style="color:var(--text-3)">去脂</span> '+(d.ffm||'—')+'kg</div>';
+    h+='<div><span style="color:var(--text-3)">内脏</span> '+(d.vf||'—')+'</div>';
     h+='</div>';
     h+='</div>';
     return h;
@@ -1433,14 +1449,14 @@ function filterBody(){
   $('dimHistoryCards').innerHTML=dims.map(d=>{
     var h='<div style="'+cardStyle+'">';
     h+='<div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px">'+d.date.slice(5)+'</div>';
-    h+='<div style="font-size:12px;color:var(--t2);line-height:1.8">';
-    h+='<div><span style="color:var(--t3)">腰围</span> '+d.waist+'cm</div>';
-    h+='<div><span style="color:var(--t3)">臀围</span> '+d.hip+'cm</div>';
-    h+='<div><span style="color:var(--t3)">胸围</span> '+d.chest+'cm</div>';
-    h+='<div><span style="color:var(--t3)">大腿</span> '+d.thigh+'cm</div>';
-    h+='<div><span style="color:var(--t3)">上臂绷紧</span> '+d.armFlex+'cm</div>';
-    h+='<div><span style="color:var(--t3)">上臂放松</span> '+d.armRelax+'cm</div>';
-    h+='<div style="font-size:10px;color:var(--t3);margin-top:4px">'+(d.note||'')+'</div>';
+    h+='<div style="font-size:12px;color:var(--text-2);line-height:1.8">';
+    h+='<div><span style="color:var(--text-3)">腰围</span> '+d.waist+'cm</div>';
+    h+='<div><span style="color:var(--text-3)">臀围</span> '+d.hip+'cm</div>';
+    h+='<div><span style="color:var(--text-3)">胸围</span> '+d.chest+'cm</div>';
+    h+='<div><span style="color:var(--text-3)">大腿</span> '+d.thigh+'cm</div>';
+    h+='<div><span style="color:var(--text-3)">上臂绷紧</span> '+d.armFlex+'cm</div>';
+    h+='<div><span style="color:var(--text-3)">上臂放松</span> '+d.armRelax+'cm</div>';
+    h+='<div style="font-size:10px;color:var(--text-3);margin-top:4px">'+(d.note||'')+'</div>';
     h+='</div>';
     h+='</div>';
     return h;
@@ -1488,7 +1504,7 @@ function renderBodyPartDistance(){
     h+='</svg>';
     h+='<div class="ring-card-info">';
     h+='<div class="ring-card-name">'+p.icon+' '+p.name+'</div>';
-    h+='<div class="ring-card-values"><span style="color:var(--t1);font-weight:600">'+p.cur+'</span><span style="color:var(--t3)"> → </span><span style="color:var(--t3)">'+p.tgt+'cm</span></div>';
+    h+='<div class="ring-card-values"><span style="color:var(--text);font-weight:600">'+p.cur+'</span><span style="color:var(--text-3)"> → </span><span style="color:var(--text-3)">'+p.tgt+'cm</span></div>';
     h+='<div class="ring-card-layers">脂肪层 <span style="color:var(--orange)">'+curFat+'</span>→<span style="color:var(--green)">'+tgtFat+'</span>cm<br>肌肉层 <span style="color:var(--orange)">'+curMuscle+'</span>→<span style="color:var(--green)">'+tgtMuscle+'</span>cm</div>';
     h+='</div>';
     h+='</div>';
@@ -1524,14 +1540,14 @@ function initMemo(){
     const badge=ind.status==='high'?'<span class="badge badge-red">偏高</span>':ind.status==='low'?'<span class="badge badge-orange">偏低</span>':'<span class="badge badge-green">正常</span>';
     h+='<div style="padding:10px 0;border-bottom:1px solid var(--bdr)">';
     h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">';
-    h+='<div style="display:flex;align-items:center;gap:6px"><span>'+ind.icon+'</span><span style="font-size:13px;color:var(--t1);font-weight:500">'+ind.name+'</span></div>';
-    h+='<div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px;font-weight:700;color:var(--t1)">'+ind.val+(ind.unit?' <span style="font-size:10px;font-weight:400;color:var(--t3)">'+ind.unit+'</span>':'')+'</span>'+badge+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:6px"><span>'+ind.icon+'</span><span style="font-size:13px;color:var(--text);font-weight:500">'+ind.name+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px;font-weight:700;color:var(--text)">'+ind.val+(ind.unit?' <span style="font-size:10px;font-weight:400;color:var(--text-3)">'+ind.unit+'</span>':'')+'</span>'+badge+'</div>';
     h+='</div>';
-    h+='<div style="font-size:11px;color:var(--t2);margin-left:22px">📌 '+ind.impact+'</div>';
-    if(ind.note) h+='<div style="font-size:11px;color:var(--t3);margin-left:22px">💡 '+ind.note+' | 参照: '+ind.ref+'</div>';
+    h+='<div style="font-size:11px;color:var(--text-2);margin-left:22px">📌 '+ind.impact+'</div>';
+    if(ind.note) h+='<div style="font-size:11px;color:var(--text-3);margin-left:22px">💡 '+ind.note+' | 参照: '+ind.ref+'</div>';
     h+='</div>';
   });
-  h+='<div style="margin-top:10px;font-size:11px;color:var(--t3)">体检日期: 2025-11 | 🔴需重点关注 🟡需关注 🟢正常</div>';
+  h+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">体检日期: 2025-11 | 🔴需重点关注 🟡需关注 🟢正常</div>';
   $('healthIndicators').innerHTML=h;
 
   // 器材清单
@@ -1543,9 +1559,9 @@ function initMemo(){
     {name:'摇摇杯(BlenderBottle)',note:'Pro28钢铁侠800ml',date:'2026-06-17',price:114.69},
     {name:'开孔硅胶圈护膝',note:'右膝适配，仅运动佩戴',date:'已有',price:0}
   ];
-  let eq='<div style="font-size:12px;color:var(--t2);margin-bottom:10px">总计 ¥'+equipment.filter(e=>e.price>0).reduce((s,e)=>s+e.price,0).toFixed(0)+'</div>';
+  let eq='<div style="font-size:12px;color:var(--text-2);margin-bottom:10px">总计 ¥'+equipment.filter(e=>e.price>0).reduce((s,e)=>s+e.price,0).toFixed(0)+'</div>';
   equipment.forEach(e=>{
-    eq+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:13px;color:var(--t1)">'+e.name+'</div><div style="font-size:11px;color:var(--t3)">'+e.note+'</div></div>';
+    eq+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:13px;color:var(--text)">'+e.name+'</div><div style="font-size:11px;color:var(--text-3)">'+e.note+'</div></div>';
     if(e.price>0) eq+='<div style="font-size:12px;color:var(--orange)">¥'+e.price+'</div>';
     eq+='</div>';
   });
@@ -1576,9 +1592,9 @@ function initMemo(){
       lastTime=s.time;
       sp+='<div style="font-size:12px;font-weight:700;color:var(--blue);padding:10px 0 4px;border-top:1px solid var(--bdr)">'+(timeLabels[s.time]||s.time)+'</div>';
     }
-    sp+='<div style="display:flex;justify-content:space-between;padding:5px 0 5px 12px;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--t1)">'+s.name+'</span><span style="font-size:11px;color:var(--t3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--t3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'<br><span style="color:var(--blue)">¥'+s.price+'</span></div></div>';
+    sp+='<div style="display:flex;justify-content:space-between;padding:5px 0 5px 12px;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--text)">'+s.name+'</span><span style="font-size:11px;color:var(--text-3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--text-3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'<br><span style="color:var(--blue)">¥'+s.price+'</span></div></div>';
   });
-  sp+='<div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:8px;border-top:2px solid var(--blue)"><div style="font-size:14px;font-weight:700;color:var(--t1)">补剂总花费</div><div style="font-size:16px;font-weight:700;color:var(--blue)">¥'+totalPrice.toFixed(0)+'</div></div>';
+  sp+='<div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:8px;border-top:2px solid var(--blue)"><div style="font-size:14px;font-weight:700;color:var(--text)">补剂总花费</div><div style="font-size:16px;font-weight:700;color:var(--blue)">¥'+totalPrice.toFixed(0)+'</div></div>';
   $('supplementMemo').innerHTML=sp;
 
   // 减脂部位与体脂率对应区间
@@ -1593,12 +1609,12 @@ function initMemo(){
   zones.forEach((zn,i)=>{
     const highlight=zn.status==='你在这'?'background:rgba(52,211,153,0.08);border-left:3px solid #34D399;':'border-left:3px solid transparent;';
     z+='<div style="padding:10px 8px;'+highlight+'border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">';
-    z+='<div><div style="font-size:13px;color:var(--t1);font-weight:500">'+zn.icon+' 体脂 '+zn.range+'</div>';
-    z+='<div style="font-size:11px;color:var(--t2);margin-top:3px">'+zn.parts+'</div></div>';
+    z+='<div><div style="font-size:13px;color:var(--text);font-weight:500">'+zn.icon+' 体脂 '+zn.range+'</div>';
+    z+='<div style="font-size:11px;color:var(--text-2);margin-top:3px">'+zn.parts+'</div></div>';
     z+='<div style="text-align:right"><div style="font-size:11px;color:var(--orange);font-weight:500">'+zn.status+'</div>';
-    z+='<div style="font-size:10px;color:var(--t3);margin-top:3px">'+zn.note+'</div></div></div>';
+    z+='<div style="font-size:10px;color:var(--text-3);margin-top:3px">'+zn.note+'</div></div></div>';
   });
-  z+='<div style="margin-top:10px;font-size:11px;color:var(--t3)">💡 当前体脂率~29%（8/2），距腹部明显变化还需降至23%以下。男性腹部脂肪α受体密度高，天然最后消退。</div>';
+  z+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">💡 当前体脂率~29%（8/2），距腹部明显变化还需降至23%以下。男性腹部脂肪α受体密度高，天然最后消退。</div>';
   $('fatLossZones').innerHTML=z;
 }
 
@@ -1682,13 +1698,13 @@ function renderReviewSection(){
   // Weekly reviews
   html+='<div class="card"><div class="card-title">📅 最近4周复盘</div>';
   weeks.forEach(function(w){
-    var wcColor=parseFloat(w.wChange)<0?'var(--green)':(parseFloat(w.wChange)>0?'var(--red)':'var(--t2)');
+    var wcColor=parseFloat(w.wChange)<0?'var(--green)':(parseFloat(w.wChange)>0?'var(--red)':'var(--text-2)');
     html+='<div class="review-section">';
     html+='<div class="review-title">'+w.label+'</div>';
     html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px">';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:'+wcColor+'">'+w.wChange+'<span style="font-size:10px;color:var(--t3)"> kg</span></div><div style="font-size:10px;color:var(--t3)">体重变化</div><div style="font-size:9px;color:var(--t3)">'+w.wRange+'</div></div>';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--blue)">'+w.trainDays+'<span style="font-size:10px;color:var(--t3)"> 天</span></div><div style="font-size:10px;color:var(--t3)">训练'+w.trainHours+'h</div></div>';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--orange)">'+w.avgCal+'<span style="font-size:10px;color:var(--t3)"> kcal</span></div><div style="font-size:10px;color:var(--t3)">日均摄入</div><div style="font-size:9px;color:var(--t3)">蛋白'+w.avgProtein+'g</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:'+wcColor+'">'+w.wChange+'<span style="font-size:10px;color:var(--text-3)"> kg</span></div><div style="font-size:10px;color:var(--text-3)">体重变化</div><div style="font-size:9px;color:var(--text-3)">'+w.wRange+'</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--blue)">'+w.trainDays+'<span style="font-size:10px;color:var(--text-3)"> 天</span></div><div style="font-size:10px;color:var(--text-3)">训练'+w.trainHours+'h</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--orange)">'+w.avgCal+'<span style="font-size:10px;color:var(--text-3)"> kcal</span></div><div style="font-size:10px;color:var(--text-3)">日均摄入</div><div style="font-size:9px;color:var(--text-3)">蛋白'+w.avgProtein+'g</div></div>';
     html+='</div>';
     html+='</div>';
   });
@@ -1697,14 +1713,14 @@ function renderReviewSection(){
   // Monthly reviews
   html+='<div class="card"><div class="card-title">📅 最近3月复盘</div>';
   months.forEach(function(m){
-    var wcColor=parseFloat(m.wChange)<0?'var(--green)':(parseFloat(m.wChange)>0?'var(--red)':'var(--t2)');
+    var wcColor=parseFloat(m.wChange)<0?'var(--green)':(parseFloat(m.wChange)>0?'var(--red)':'var(--text-2)');
     html+='<div class="review-section">';
     html+='<div class="review-title">'+m.label+'</div>';
     html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:6px">';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:'+wcColor+'">'+m.wChange+'<span style="font-size:10px;color:var(--t3)"> kg</span></div><div style="font-size:10px;color:var(--t3)">体重变化</div><div style="font-size:9px;color:var(--t3)">'+m.wRange+'</div></div>';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--blue)">'+m.trainDays+'<span style="font-size:10px;color:var(--t3)"> 天</span></div><div style="font-size:10px;color:var(--t3)">训练'+m.trainHours+'h</div></div>';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--orange)">'+m.avgCal+'<span style="font-size:10px;color:var(--t3)"> kcal</span></div><div style="font-size:10px;color:var(--t3)">日均摄入</div></div>';
-    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--green)">'+m.complianceRate+'<span style="font-size:10px;color:var(--t3)"> %</span></div><div style="font-size:10px;color:var(--t3)">饮食达标率</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:'+wcColor+'">'+m.wChange+'<span style="font-size:10px;color:var(--text-3)"> kg</span></div><div style="font-size:10px;color:var(--text-3)">体重变化</div><div style="font-size:9px;color:var(--text-3)">'+m.wRange+'</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--blue)">'+m.trainDays+'<span style="font-size:10px;color:var(--text-3)"> 天</span></div><div style="font-size:10px;color:var(--text-3)">训练'+m.trainHours+'h</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--orange)">'+m.avgCal+'<span style="font-size:10px;color:var(--text-3)"> kcal</span></div><div style="font-size:10px;color:var(--text-3)">日均摄入</div></div>';
+    html+='<div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--green)">'+m.complianceRate+'<span style="font-size:10px;color:var(--text-3)"> %</span></div><div style="font-size:10px;color:var(--text-3)">饮食达标率</div></div>';
     html+='</div>';
     html+='</div>';
   });
@@ -1716,13 +1732,26 @@ function renderReviewSection(){
 // ===== INIT =====
 const _today=getTodayStr();
 ['trainEnd','dietEnd','bodyEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
-initNav();
-initOverview();
-filterTraining();
-filterDiet();
-filterBody();
-renderReviewSection();
-initMemo();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  const swCode = `
+    const CACHE='health-dashboard-v1';
+    self.addEventListener('install',e=>{self.skipWaiting();});
+    self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});
+    self.addEventListener('fetch',e=>{
+      e.respondWith(
+        caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
+          const copy=resp.clone();
+          caches.open(CACHE).then(c=>c.put(e.request,copy));
+          return resp;
+        }).catch(()=>caches.match(e.request)))
+      );
+    });
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
 </script>
 </body>
 </html>
