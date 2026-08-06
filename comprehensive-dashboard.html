@@ -10,16 +10,16 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#f5f5f7;--card:#ffffff;--inset:#f0f0f2;--t1:#1d1d1f;--t2:#86868b;--t3:#aeaeb2;--blue:#007aff;--green:#34c759;--orange:#ff9500;--red:#ff3b30;--purple:#af52de;--teal:#5ac8fa;--yellow:#ffcc00;--pink:#ff2d55;--bdr:rgba(0,0,0,0.06);--bdr2:rgba(0,0,0,0.12);--r:14px;--rs:10px}
+body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#0f1115;color:#e5e7eb;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--t1:#e5e7eb;--t2:#9ca3af;--t3:#6b7280;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--purple:#a78bfa;--teal:#5ac8fa;--yellow:#fbbf24;--pink:#ec4899;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:14px;--rs:10px}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
-.header{position:sticky;top:0;z-index:100;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
 .header-title{font-size:15px;font-weight:600;color:var(--t1)}
 .header-sub{font-size:11px;color:var(--t2);margin-top:1px}
 .header-date{font-size:11px;color:var(--t3);text-align:right}
-.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.main-tabs{position:sticky;top:56px;z-index:99;background:rgba(15,17,21,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .main-tabs::-webkit-scrollbar{display:none}
 .main-tab{flex-shrink:0;padding:10px 24px;border-radius:12px 12px 0 0;font-size:14px;font-weight:600;color:var(--t2);background:transparent;border:1px solid transparent;border-bottom:none;cursor:pointer;transition:all 0.2s}
 .main-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
@@ -95,6 +95,12 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 .pz-placeholder .icon{font-size:60px;margin-bottom:16px;opacity:0.3}
 .pz-placeholder .title{font-size:16px;color:var(--t2);margin-bottom:8px}
 .pz-placeholder .desc{font-size:12px}
+input[type="date"],input[type="number"],input[type="text"],select{background:var(--inset)!important;color:var(--t1)!important;border:1px solid var(--bdr2)!important}
+input::placeholder{color:var(--t3)}
+.sub-tab{color:var(--t2)}
+.sub-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
+.main-tab{color:var(--t2)}
+.main-tab.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
 </style>
 </head>
 <body>
@@ -104,17 +110,16 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
       <div class="avatar">综</div>
       <div>
         <div class="header-title">综合工作台</div>
-        <div class="header-sub">排盘 · 记账 · 待购入 · 训练</div>
+        <div class="header-sub">排盘 · 记账 · 装备补给</div>
       </div>
     </div>
     <div class="header-date" id="headerDate"></div>
   </div>
 
   <div class="main-tabs">
-    <div class="main-tab" data-main="paipan" onclick="switchMain('paipan')">排盘</div>
+    <div class="main-tab" data-main="paipan" onclick="switchMain('paipan')">奇门排盘</div>
     <div class="main-tab active" data-main="jizhang" onclick="switchMain('jizhang')">记账</div>
-    <div class="main-tab" data-main="daigou" onclick="switchMain('daigou')">待购入</div>
-    <div class="main-tab" data-main="training" onclick="switchMain('training')">训练</div>
+    <div class="main-tab" data-main="daigou" onclick="switchMain('daigou')">装备补给</div>
   </div>
 
   <!-- 排盘 Panel -->
@@ -131,9 +136,57 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 
   <!-- 记账 Panel -->
   <div class="main-panel active" id="panel-jizhang">
+    <!-- 快速录入卡片（置顶） -->
+    <div class="card" style="margin-top:12px;padding:18px">
+      <div class="card-title" style="margin-bottom:14px">✏️ 快速记账</div>
+      <div id="add-form" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:10px">
+          <div style="flex:1">
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">日期</label>
+            <input type="date" id="add-date" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
+          </div>
+          <div style="flex:1">
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">金额 (元)</label>
+            <input type="number" id="add-amount" step="0.01" placeholder="0.00" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <div style="flex:1">
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">项目名称</label>
+            <input type="text" id="add-item" placeholder="消费项目" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
+          </div>
+          <div style="flex:1">
+            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">分类</label>
+            <select id="add-category" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
+              <option value="">请选择</option>
+              <option value="餐饮">餐饮</option>
+              <option value="交通">交通</option>
+              <option value="娱乐">娱乐</option>
+              <option value="固定支出">固定支出</option>
+              <option value="补剂">补剂</option>
+              <option value="训练">训练</option>
+              <option value="个人护理">个人护理</option>
+              <option value="个人生活">个人生活</option>
+              <option value="数码产品">数码产品</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="previewTransaction()" style="margin-top:4px;padding:12px;background:var(--blue);color:white;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">保存</button>
+      </div>
+      <div id="add-confirm" style="display:none;margin-top:16px">
+        <div style="background:var(--inset);border-radius:12px;padding:16px;margin-bottom:16px">
+          <div style="font-size:13px;color:var(--t2);margin-bottom:8px">请确认以下记账信息：</div>
+          <div id="confirm-detail" style="font-size:15px;font-weight:500;line-height:1.8"></div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <button onclick="confirmTransaction()" style="flex:1;padding:12px;background:var(--green);color:#0f1115;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">✓ 确认录入</button>
+          <button onclick="cancelPreview()" style="flex:1;padding:12px;background:var(--bdr2);color:var(--t1);border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">取消</button>
+        </div>
+      </div>
+    </div>
+
     <div class="sub-tabs">
       <div class="sub-tab active" data-sub="overview" onclick="switchSub('overview')">总览</div>
-      <div class="sub-tab" data-sub="add" onclick="switchSub('add')">+ 记账</div>
       <div class="sub-tab" data-sub="today" onclick="switchSub('today')">当日</div>
       <div class="sub-tab" data-sub="week" onclick="switchSub('week')">当周</div>
       <div class="sub-tab" data-sub="month" onclick="switchSub('month')">当月</div>
@@ -154,61 +207,24 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 
     <!-- 明细 -->
     <div class="sub-panel" id="sub-detail"></div>
+  </div>
 
-    <!-- 记账 -->
-    <div class="sub-panel" id="sub-add">
-      <div class="card" style="padding:20px">
-        <h3 style="margin:0 0 16px 0;font-size:16px;font-weight:600">新增支出</h3>
-        <div id="add-form" style="display:flex;flex-direction:column;gap:12px">
-          <div>
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">日期</label>
-            <input type="date" id="add-date" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
-          </div>
-          <div>
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">金额 (元)</label>
-            <input type="number" id="add-amount" step="0.01" placeholder="0.00" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
-          </div>
-          <div>
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">分类</label>
-            <select id="add-category" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
-              <option value="">请选择分类</option>
-              <option value="餐饮">餐饮</option>
-              <option value="交通">交通</option>
-              <option value="娱乐">娱乐</option>
-              <option value="固定支出">固定支出</option>
-              <option value="补剂">补剂</option>
-              <option value="训练">训练</option>
-              <option value="个人护理">个人护理</option>
-              <option value="个人生活">个人生活</option>
-              <option value="数码产品">数码产品</option>
-            </select>
-          </div>
-          <div>
-            <label style="display:block;font-size:13px;color:var(--t2);margin-bottom:4px">备注</label>
-            <input type="text" id="add-item" placeholder="消费项目" style="width:100%;padding:10px;border:1px solid var(--bdr2);border-radius:8px;font-size:14px">
-          </div>
-          <button onclick="previewTransaction()" style="margin-top:8px;padding:12px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">预览</button>
-        </div>
-        <div id="add-confirm" style="display:none;margin-top:16px">
-          <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px">
-            <div style="font-size:13px;color:var(--t2);margin-bottom:8px">请确认以下记账信息：</div>
-            <div id="confirm-detail" style="font-size:15px;font-weight:500;line-height:1.8"></div>
-          </div>
-          <div style="display:flex;gap:12px">
-            <button onclick="confirmTransaction()" style="flex:1;padding:12px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">✓ 确认录入</button>
-            <button onclick="cancelPreview()" style="flex:1;padding:12px;background:var(--bdr2);color:var(--t1);border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">取消</button>
-          </div>
+  <!-- 装备补给 Panel -->
+  <div class="main-panel" id="panel-daigou">
+    <!-- 装备/补剂迁移提示 -->
+    <div class="card" style="margin-top:12px;border-left:4px solid var(--orange)">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <span style="font-size:24px;flex-shrink:0">📋</span>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px">完整装备与补剂清单已移至健康管理工作台</div>
+          <div style="font-size:12px;color:var(--t3)">→ 请前往「健康管理工作台 → 备忘 Tab」查看完整清单</div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- 待购入 Panel -->
-  <div class="main-panel" id="panel-daigou"></div>
-
-  <!-- 训练 Panel -->
-  <div class="main-panel" id="panel-training">
-    <div class="sub-tabs">
+    <!-- 眼镜选配（愿望清单） -->
+    <div id="daigou-glasses"></div>
+    <!-- 训练计划 -->
+    <div class="sub-tabs" style="margin-top:4px">
       <div class="sub-tab active" data-sub="tr-today" onclick="switchSub('tr-today')">今日训练</div>
       <div class="sub-tab" data-sub="tr-week" onclick="switchSub('tr-week')">本周计划</div>
       <div class="sub-tab" data-sub="tr-lib" onclick="switchSub('tr-lib')">动作库</div>
@@ -723,7 +739,7 @@ function renderDaigou() {
       </div>
     </div>`;
 
-  document.getElementById('panel-daigou').innerHTML = html;
+  document.getElementById('daigou-glasses').innerHTML = html;
 }
 
 // ========== TAB SWITCHING ==========
@@ -739,6 +755,9 @@ function switchSub(name) {
   else if(name==='week'){var r=getWeekRange();renderPeriod('sub-week',r[0],r[1],'本周');}
   else if(name==='month'){renderMonth();}
   else if(name==='detail'){renderDetail();}
+  else if(name==='tr-today'){renderTrToday();}
+  else if(name==='tr-week'){renderTrWeek();}
+  else if(name==='tr-lib'){renderTrLib();}
   document.querySelectorAll('.sub-tab').forEach(el => el.classList.toggle('active', el.dataset.sub === name));
   document.querySelectorAll('.sub-panel').forEach(el => el.classList.toggle('active', el.id === 'sub-' + name));
 }
@@ -1280,10 +1299,12 @@ function confirmTransaction() {
   saveTransactions();
   
   // Reset form
-  document.getElementById('add-date').value = '';
   document.getElementById('add-amount').value = '';
   document.getElementById('add-category').value = '';
   document.getElementById('add-item').value = '';
+  // Reset date to today
+  var today = new Date().toISOString().slice(0,10);
+  document.getElementById('add-date').value = today;
   
   // Hide confirm, show form
   document.getElementById('add-confirm').style.display = 'none';
@@ -1309,6 +1330,8 @@ function init() {
   // Set header date
   const now = new Date();
   document.getElementById('headerDate').textContent = now.toISOString().slice(0,10);
+  // Set default date for add form
+  document.getElementById('add-date').value = now.toISOString().slice(0,10);
 
   renderOverview();
   renderPeriod('sub-today', now.toISOString().slice(0,10), now.toISOString().slice(0,10), '今日');

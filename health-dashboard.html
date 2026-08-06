@@ -3,41 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0f1115">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>健康管理工作台 | 大笔哥</title>
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWkp+eslOWTpSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzAwMDAwMCIsInRoZW1lX2NvbG9yIjoiIzAwMDAwMCJ9">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWkp+eslOWTpSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBmMTExNSIsInRoZW1lX2NvbG9yIjoiIzBmMTExNSJ9">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#000;color:#fff;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#000;--card:#1A1A1A;--inset:#0A0A0A;--t1:#fff;--t2:#888;--t3:#555;--blue:#00B8D4;--green:#00E676;--orange:#FFB300;--red:#FF3D00;--purple:#B388FF;--teal:#00BFA5;--warm:#FFB300;--warm2:#FF8F00;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:12px;--rs:8px}
+body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:#0f1115;color:#fff;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{--bg:#0f1115;--card:#1a1d24;--inset:#12151c;--t1:#fff;--t2:#8892a0;--t3:#5a6373;--blue:#4A9EFF;--green:#34D399;--orange:#F59E0B;--red:#EF4444;--bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);--r:14px;--rs:10px}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
-.header{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.header{position:sticky;top:0;z-index:100;background:rgba(15,17,21,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
 .avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--red));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff}
 .header-title{font-size:15px;font-weight:600;color:var(--t1)}
 .header-sub{font-size:11px;color:var(--t2);margin-top:1px}
 .header-date{font-size:11px;color:var(--t3);text-align:right}
-.tab-bar{position:sticky;top:60px;z-index:99;background:rgba(0,0,0,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tab-bar{position:sticky;top:60px;z-index:99;background:rgba(15,17,21,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .tab-bar::-webkit-scrollbar{display:none}
 .tab-item{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--t2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
 .tab-item.active{color:var(--t1);background:var(--card);border-color:var(--bdr2)}
 .tab-content{display:none;padding-top:16px}
 .tab-content.active{display:block}
-.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;border:none}
-.card-title{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:14px}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px;border:none}
+.card-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:14px}
 .big-num{font-size:36px;font-weight:800;color:var(--t1);line-height:1.1}
 .big-num .unit{font-size:14px;font-weight:400;color:var(--t2)}
-.big-sub{font-size:12px;color:var(--t2);margin-top:4px}
+.big-sub{font-size:13px;color:var(--t2);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .kpi-item{background:var(--inset);border-radius:var(--rs);padding:14px;text-align:center}
 .kpi-value{font-size:24px;font-weight:700;color:var(--t1)}
 .kpi-value .unit{font-size:11px;font-weight:400;color:var(--t2)}
-.kpi-label{font-size:11px;color:var(--t2);margin-top:4px}
+.kpi-label{font-size:10px;color:var(--t2);margin-top:4px}
 .progress-bar{height:8px;background:var(--inset);border-radius:4px;overflow:hidden;margin:8px 0}
-.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--orange),var(--warm2));transition:width 0.6s ease}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--orange),var(--red));transition:width 0.6s ease}
 .stage-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--t2)}
 .stage-row .num{font-size:20px;font-weight:700;color:var(--t1)}
 .check-group{display:flex;gap:12px;flex-wrap:wrap}
@@ -45,10 +45,10 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 .check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--t3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;font-size:14px}
 .check-box.checked{background:var(--green);border-color:var(--green);color:#fff}
 .supplement-list{display:flex;flex-wrap:wrap;gap:8px}
-.sup-tag{background:var(--inset);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--t2)}
+.sup-tag{background:var(--inset);border-radius:8px;padding:6px 12px;font-size:10px;color:var(--t2)}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;padding:8px 6px;color:var(--t3);font-weight:500;border-bottom:1px solid var(--bdr);font-size:11px}
-td{padding:8px 6px;border-bottom:1px solid var(--bdr);color:var(--t2)}
+th{text-align:left;padding:8px 6px;color:var(--t3);font-weight:500;border-bottom:1px solid var(--bdr);font-size:10px}
+td{padding:8px 6px;border-bottom:1px solid var(--bdr);color:var(--t2);font-size:12px}
 .chart-svg{width:100%;height:auto}
 select,input[type="date"]{background:var(--inset);color:var(--t1);border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:13px;outline:none}
 select{width:100%}
@@ -56,27 +56,44 @@ select{width:100%}
 .date-range input{flex:1}
 .date-range span{color:var(--t3);font-size:12px}
 .meal-block{background:var(--inset);border-radius:var(--rs);padding:12px;margin-bottom:8px}
-.meal-label{font-size:11px;font-weight:600;color:var(--blue);margin-bottom:6px;text-transform:uppercase}
+.meal-label{font-size:10px;font-weight:600;color:var(--blue);margin-bottom:6px;text-transform:uppercase}
 .meal-items{font-size:12px;color:var(--t2);line-height:1.6}
-.meal-macros{font-size:11px;color:var(--t3);margin-top:4px}
+.meal-macros{font-size:10px;color:var(--t3);margin-top:4px}
 .action-card{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px}
 .action-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:4px}
-.action-meta{font-size:11px;color:var(--blue);margin-bottom:8px}
+.action-meta{font-size:10px;color:var(--blue);margin-bottom:8px}
 .action-detail{font-size:12px;color:var(--t2)}
-.action-tip{font-size:11px;color:var(--orange);margin-top:4px}
-.hiit-box{background:rgba(0,184,212,0.1);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--blue)}
-.warmup-box{background:rgba(0,230,118,0.08);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--green)}
-.note-box{background:rgba(255,179,0,0.08);border-radius:var(--rs);padding:10px;margin-top:8px;font-size:11px;color:var(--orange)}
+.action-tip{font-size:10px;color:var(--orange);margin-top:4px}
+.hiit-box{background:rgba(74,158,255,0.1);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--blue)}
+.warmup-box{background:rgba(52,211,153,0.08);border-radius:var(--rs);padding:12px;margin-top:10px;border-left:3px solid var(--green)}
+.note-box{background:rgba(245,158,11,0.08);border-radius:var(--rs);padding:10px;margin-top:8px;font-size:10px;color:var(--orange)}
 .flex-row{display:flex;gap:8px;flex-wrap:wrap}
 .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600}
-.badge-green{background:rgba(0,230,118,0.15);color:var(--green)}
-.badge-blue{background:rgba(0,184,212,0.15);color:var(--blue)}
-.badge-orange{background:rgba(255,179,0,0.15);color:var(--orange)}
-.badge-red{background:rgba(255,59,48,0.15);color:var(--red)}
+.badge-green{background:rgba(52,211,153,0.15);color:var(--green)}
+.badge-blue{background:rgba(74,158,255,0.15);color:var(--blue)}
+.badge-orange{background:rgba(245,158,11,0.15);color:var(--orange)}
+.badge-red{background:rgba(239,68,68,0.15);color:var(--red)}
 .review-section{background:var(--inset);border-radius:var(--rs);padding:14px;margin-bottom:10px}
 .review-title{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px}
 .summary-text{font-size:12px;color:var(--t2);line-height:1.7}
 svg text{font-family:-apple-system,'PingFang SC',sans-serif}
+/* Metric risk cards */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.metric-card{background:var(--inset);border-radius:var(--rs);padding:14px;display:flex;flex-direction:column;gap:8px}
+.metric-card-head{display:flex;justify-content:space-between;align-items:flex-start}
+.metric-card-name{font-size:13px;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:6px}
+.metric-card-value{font-size:22px;font-weight:800;color:var(--t1);line-height:1.1}
+.metric-card-value .unit{font-size:11px;font-weight:400;color:var(--t2)}
+.metric-card-ref{font-size:10px;color:var(--t3);margin-top:2px}
+.metric-card-trend{font-size:10px;padding-top:6px;border-top:1px solid var(--bdr)}
+/* Body part ring cards */
+.ring-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ring-card{background:var(--inset);border-radius:var(--rs);padding:14px;display:flex;gap:12px;align-items:center}
+.ring-card-info{flex:1;min-width:0}
+.ring-card-name{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px}
+.ring-card-values{font-size:12px;color:var(--t2);margin-bottom:4px}
+.ring-card-layers{font-size:10px;color:var(--t3);line-height:1.5}
+.formula-note{margin-top:12px;font-size:10px;color:var(--t3);line-height:1.6}
 </style>
 </head>
 <body>
@@ -102,7 +119,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 1: 今日导航 -->
 <div class="tab-content active" id="tab-nav">
-<div class="card" style="background:linear-gradient(135deg,#0d1a14,#0A0A0A)">
+<div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:8px">📊 今日剩余额度</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center">
 <div>
@@ -167,7 +184,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="mealListL" style="margin-top:6px"></div>
 </div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:8px">🌙 晚餐</div>
+<div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">🌙 晚餐</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
 <input type="number" id="dCal" placeholder="热量" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 <input type="number" id="dP" placeholder="蛋白" style="background:var(--card);color:var(--t1);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
@@ -183,20 +200,12 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<div style="font-size:12px;font-weight:600;color:var(--warm)">🍎 加餐</div>
-<button onclick="addSnackSlot()" style="background:rgba(255,179,0,0.15);color:var(--warm);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">+ 加一条</button>
+<div style="font-size:12px;font-weight:600;color:var(--orange)">🍎 加餐</div>
+<button onclick="addSnackSlot()" style="background:rgba(245,158,11,0.15);color:var(--orange);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">+ 加一条</button>
 </div>
 <div id="snackSlots"></div>
 <div id="mealListS" style="margin-top:6px"></div>
 </div>
-</div>
-</div>
-<div class="card">
-<div class="card-title">🏋️ 凯格尔打卡</div>
-<div class="check-group" id="kegelChecks">
-<div class="check-item"><div class="check-box" onclick="toggleCheck(this)" data-k="am">✓</div><span>上午</span></div>
-<div class="check-item"><div class="check-box" onclick="toggleCheck(this)" data-k="pm">✓</div><span>下午</span></div>
-<div class="check-item"><div class="check-box" onclick="toggleCheck(this)" data-k="bed">✓</div><span>睡前(4-7-8)</span></div>
 </div>
 </div>
 <div class="card">
@@ -232,7 +241,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
-<div class="card" style="background:linear-gradient(135deg,#0d1a14,#0A0A0A)">
+<div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">🔥 累计热量缺口</div>
 <div class="big-num" id="heatDeficit" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="heatDeficitSub" style="color:var(--t2)">—</div>
@@ -244,7 +253,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <span style="font-size:12px;color:var(--t2)">⏱ 时间进度</span>
 <span style="font-size:12px;font-weight:600;color:var(--blue)" id="timePctLabel">—</span>
 </div>
-<div class="progress-bar" style="height:10px"><div class="progress-fill" id="timeProgressBar" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--teal))"></div></div>
+<div class="progress-bar" style="height:10px"><div class="progress-fill" id="timeProgressBar" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--green))"></div></div>
 </div>
 <div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -260,15 +269,11 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">⚖️ 体重趋势</div>
 <div id="weightChart"></div>
 </div>
-<div class="card">
-<div class="card-title">📏 腰围趋势</div>
-<div id="waistChart"></div>
-</div>
 </div>
 
 <!-- TAB 3: 训练 -->
 <div class="tab-content" id="tab-training">
-<div class="card" style="background:linear-gradient(135deg,#0d1a14,#0A0A0A)">
+<div class="card" style="background:linear-gradient(135deg,#0d1a14,#12151c)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">⚡ 全口径总消耗</div>
 <div class="big-num" id="totalExpBig" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="totalExpSub" style="color:var(--t2)">BMR + NEAT + 训练</div>
@@ -276,7 +281,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="kpi-grid">
 <div class="kpi-item"><div class="kpi-value" id="totalTrainDays">—</div><div class="kpi-label">累计训练天数</div></div>
 <div class="kpi-item"><div class="kpi-value" id="totalTrainHours">—<span class="unit">h</span></div><div class="kpi-label">累计总时长</div></div>
-<div class="kpi-item"><div class="kpi-value" id="totalDynCal" style="color:var(--warm2)">—<span class="unit">kcal</span></div><div class="kpi-label">累计动态消耗</div></div>
+<div class="kpi-item"><div class="kpi-value" id="totalDynCal" style="color:var(--orange)">—<span class="unit">kcal</span></div><div class="kpi-label">累计动态消耗</div></div>
 <div class="kpi-item"><div class="kpi-value" id="totalCal" style="color:var(--orange)">—<span class="unit">kcal</span></div><div class="kpi-label">训练总消耗</div></div>
 </div>
 <div class="card" style="margin-top:12px">
@@ -299,7 +304,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 4: 饮食 -->
 <div class="tab-content" id="tab-diet">
-<div class="card" style="background:linear-gradient(135deg,#1a1400,#0A0A0A)">
+<div class="card" style="background:linear-gradient(135deg,#1a1400,#12151c)">
 <div style="font-size:12px;color:var(--red);margin-bottom:4px">📊 预估总摄入</div>
 <div class="big-num" id="totalCalIn" style="color:var(--red)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="totalProteinIn" style="color:var(--t2)">—</div>
@@ -320,7 +325,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 5: 体测 -->
 <div class="tab-content" id="tab-body">
-<div class="card" style="background:linear-gradient(135deg,#001a12,#0A0A0A)">
+<div class="card" style="background:linear-gradient(135deg,#001a12,#12151c)">
 <div class="card-title">🎯 减脂达成率</div>
 <div id="achievementArea"></div>
 </div>
@@ -978,8 +983,8 @@ function renderTrainingList(){
     h+='<span style="color:var(--blue);margin-left:6px;font-weight:600">'+item.type+'</span>';
     h+='<span style="margin-left:6px">'+item.dur+'min</span>';
     h+='<span style="color:var(--orange);margin-left:6px">'+item.dyn+'kcal</span>';
-    if(item.total&&item.total!==item.dyn)h+='<span style="margin-left:4px;color:var(--warm2)">总'+item.total+'</span>';
-    if(item.hr)h+='<span style="margin-left:4px;color:var(--purple)">HR '+item.hr+'</span>';
+    if(item.total&&item.total!==item.dyn)h+='<span style="margin-left:4px;color:var(--orange)">总'+item.total+'</span>';
+    if(item.hr)h+='<span style="margin-left:4px;color:var(--blue)">HR '+item.hr+'</span>';
     h+='</div>';
     h+='<span onclick="deleteTrainingRecord('+i+')" style="color:var(--red);font-size:16px;cursor:pointer;padding:0 4px">×</span>';
     h+='</div>';
@@ -1059,7 +1064,7 @@ function initNav(){
     if(plan.warmup && (typeof plan.warmup==='string'?plan.warmup:plan.warmup.length>0)){
       html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px">🔥 热身</div>';
       if(typeof plan.warmup==='string'){
-        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(0,230,118,0.06);border-radius:var(--rs)">'+plan.warmup+'</div>';
+        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--rs)">'+plan.warmup+'</div>';
       }else{
         plan.warmup.forEach(a=>{
           html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
@@ -1075,9 +1080,9 @@ function initNav(){
     
     // 3. 肩胛协议（从 note 中提取）
     if(plan.note && plan.note.includes('肩胛协议')){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--purple);margin:10px 0 6px">🛡️ 肩胛协议（20min）</div>';
+      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议（20min）</div>';
       SCAP_PROTOCOL.forEach(a=>{
-        html+='<div class="action-card" style="border-left:3px solid var(--purple)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+a.s+'</div><div class="action-detail">'+a.t+'</div></div>';
+        html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+a.s+'</div><div class="action-detail">'+a.t+'</div></div>';
       });
     }
     
@@ -1093,7 +1098,7 @@ function initNav(){
     if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){
       html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">⚡ HIIT</div>';
       if(typeof plan.hiit==='string'){
-        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(0,184,212,0.06);border-radius:var(--rs)">'+plan.hiit+'</div>';
+        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(74,158,255,0.06);border-radius:var(--rs)">'+plan.hiit+'</div>';
       }else{
         plan.hiit.forEach(a=>{
           html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+a.s+'</div><div class="action-detail">'+a.t+'</div></div>';
@@ -1103,12 +1108,12 @@ function initNav(){
     
     // 6. 冷身拉伸
     if(plan.cd && (typeof plan.cd==='string'?plan.cd:plan.cd.length>0)){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--teal);margin:10px 0 6px">🧘 冷身拉伸</div>';
+      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 6px">🧘 冷身拉伸</div>';
       if(typeof plan.cd==='string'){
-        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(78,205,196,0.06);border-radius:var(--rs)">'+plan.cd+'</div>';
+        html+='<div style="font-size:12px;color:var(--t2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--rs)">'+plan.cd+'</div>';
       }else{
         plan.cd.forEach(a=>{
-          html+='<div class="action-card" style="border-left:3px solid var(--teal)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
+          html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
         });
       }
     }
@@ -1180,7 +1185,7 @@ function makeLineChart(data,xKey,yKey,w,h,color,label,showAll){
     const y=pad.t+ch*(1-i/4);
     const v=yMin+(yMax-yMin)*i/4;
     svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>';
-    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#555" font-size="9" text-anchor="end">'+v.toFixed(1)+'</text>';
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#5a6373" font-size="9" text-anchor="end">'+v.toFixed(1)+'</text>';
   }
   // Line + dots
   let path='';let pts=[];
@@ -1201,7 +1206,7 @@ function makeLineChart(data,xKey,yKey,w,h,color,label,showAll){
         svg+='<text x="'+p.x+'" y="'+(p.y-8)+'" fill="'+color+'" font-size="9" text-anchor="middle" font-weight="600">'+p.v.toFixed(1)+'</text>';
       }
       if(i%Math.ceil(pts.length/6)===0||i===pts.length-1){
-        svg+='<text x="'+p.x+'" y="'+(h-5)+'" fill="#555" font-size="8" text-anchor="middle">'+p.label+'</text>';
+        svg+='<text x="'+p.x+'" y="'+(h-5)+'" fill="#5a6373" font-size="8" text-anchor="middle">'+p.label+'</text>';
       }
     });
   }
@@ -1214,7 +1219,7 @@ function makePieChart(slices,w,h){
   const total=slices.reduce((s,d)=>s+d.value,0);
   let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
   let angle=-Math.PI/2;
-  const colors=['#FFB300','#FF3D00','#FF8F00','#00E676','#00BFA5','#B388FF'];
+  const colors=['#F59E0B','#EF4444','#F59E0B','#34D399','#4A9EFF','#4A9EFF'];
   slices.forEach((s,i)=>{
     const pct=s.value/total;
     const a1=angle,a2=angle+pct*Math.PI*2;
@@ -1233,7 +1238,7 @@ function makePieChart(slices,w,h){
   slices.forEach((s,i)=>{
     const lx=10+i*(w/slices.length);
     svg+='<rect x="'+lx+'" y="'+(ly-8)+'" width="8" height="8" rx="2" fill="'+colors[i%colors.length]+'"/>';
-    svg+='<text x="'+(lx+12)+'" y="'+(ly)+'" fill="#8a8a8a" font-size="9">'+s.label+'</text>';
+    svg+='<text x="'+(lx+12)+'" y="'+(ly)+'" fill="#5a6373" font-size="9">'+s.label+'</text>';
   });
   svg+='</svg>';
   return svg;
@@ -1265,21 +1270,21 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   for(let v=Math.ceil(yMin/5)*5;v<=yMax;v+=5){
     const y=yPx(v);
     svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(255,255,255,0.06)"/>';
-    svg+='<text x="'+(pad.l-5)+'" y="'+(y+4)+'" fill="#666" font-size="10" text-anchor="end">'+v+'</text>';
+    svg+='<text x="'+(pad.l-5)+'" y="'+(y+4)+'" fill="#5a6373" font-size="10" text-anchor="end">'+v+'</text>';
   }
   
   // BMI 30 line (green) - thicker, more visible
   const y30=yPx(bmi30);
   if(y30>=pad.t-10 && y30<=pad.t+ch+10){
-    svg+='<line x1="'+pad.l+'" y1="'+y30+'" x2="'+(w-pad.r)+'" y2="'+y30+'" stroke="#00E676" stroke-width="2" stroke-dasharray="8,4" opacity="0.8"/>';
-    svg+='<text x="'+(w-pad.r-4)+'" y="'+(y30-6)+'" fill="#00E676" font-size="10" font-weight="600" text-anchor="end">BMI30 '+bmi30.toFixed(1)+'kg</text>';
+    svg+='<line x1="'+pad.l+'" y1="'+y30+'" x2="'+(w-pad.r)+'" y2="'+y30+'" stroke="#34D399" stroke-width="2" stroke-dasharray="8,4" opacity="0.8"/>';
+    svg+='<text x="'+(w-pad.r-4)+'" y="'+(y30-6)+'" fill="#34D399" font-size="10" font-weight="600" text-anchor="end">BMI30 '+bmi30.toFixed(1)+'kg</text>';
   }
   
   // BMI 24 line (blue)
   const y24=yPx(bmi24);
   if(y24>=pad.t-10 && y24<=pad.t+ch+10){
-    svg+='<line x1="'+pad.l+'" y1="'+y24+'" x2="'+(w-pad.r)+'" y2="'+y24+'" stroke="#00B8D4" stroke-width="2" stroke-dasharray="8,4" opacity="0.8"/>';
-    svg+='<text x="'+(w-pad.r-4)+'" y="'+(y24-6)+'" fill="#00B8D4" font-size="10" font-weight="600" text-anchor="end">BMI24 '+bmi24.toFixed(1)+'kg</text>';
+    svg+='<line x1="'+pad.l+'" y1="'+y24+'" x2="'+(w-pad.r)+'" y2="'+y24+'" stroke="#4A9EFF" stroke-width="2" stroke-dasharray="8,4" opacity="0.8"/>';
+    svg+='<text x="'+(w-pad.r-4)+'" y="'+(y24-6)+'" fill="#4A9EFF" font-size="10" font-weight="600" text-anchor="end">BMI24 '+bmi24.toFixed(1)+'kg</text>';
   }
   
   // X month labels
@@ -1290,7 +1295,7 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
     const ds=ld.toISOString().slice(0,10);
     const x=xPx(ds);
     if(x>pad.l+10 && x<w-pad.r-10){
-      svg+='<text x="'+x+'" y="'+(h-8)+'" fill="#666" font-size="10" text-anchor="middle">'+mos[ld.getMonth()]+'</text>';
+      svg+='<text x="'+x+'" y="'+(h-8)+'" fill="#5a6373" font-size="10" text-anchor="middle">'+mos[ld.getMonth()]+'</text>';
     }
     ld.setMonth(ld.getMonth()+1);
   }
@@ -1298,7 +1303,7 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   // Start→Target connecting line
   const sx=xPx(data[0].date), sy=yPx(data[0].weight);
   const tx=xPx(targetDate), ty=yPx(targetKg);
-  svg+='<line x1="'+sx.toFixed(1)+'" y1="'+sy.toFixed(1)+'" x2="'+tx.toFixed(1)+'" y2="'+ty.toFixed(1)+'" stroke="rgba(255,179,0,0.4)" stroke-width="2" stroke-dasharray="6,6"/>';
+  svg+='<line x1="'+sx.toFixed(1)+'" y1="'+sy.toFixed(1)+'" x2="'+tx.toFixed(1)+'" y2="'+ty.toFixed(1)+'" stroke="rgba(245,158,11,0.4)" stroke-width="2" stroke-dasharray="6,6"/>';
   
   // Scatter dots - small, clean
   data.forEach(d=>{
@@ -1307,13 +1312,13 @@ function drawWeightProgressChart(containerId, data, targetKg, targetDate, height
   });
   
   // Start marker
-  svg+='<circle cx="'+sx.toFixed(1)+'" cy="'+sy.toFixed(1)+'" r="5.5" fill="none" stroke="#00E676" stroke-width="2"/>';
-  svg+='<text x="'+sx.toFixed(1)+'" y="'+(sy-10)+'" fill="#00E676" font-size="11" text-anchor="middle" font-weight="700">'+data[0].weight.toFixed(1)+'</text>';
+  svg+='<circle cx="'+sx.toFixed(1)+'" cy="'+sy.toFixed(1)+'" r="5.5" fill="none" stroke="#34D399" stroke-width="2"/>';
+  svg+='<text x="'+sx.toFixed(1)+'" y="'+(sy-10)+'" fill="#34D399" font-size="11" text-anchor="middle" font-weight="700">'+data[0].weight.toFixed(1)+'</text>';
   
   // Target marker
-  svg+='<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="6" fill="#FF6D00" opacity="0.85"/>';
-  svg+='<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="10" fill="none" stroke="#FF6D00" stroke-width="1.5" opacity="0.35"/>';
-  svg+='<text x="'+tx.toFixed(1)+'" y="'+(ty-14)+'" fill="#FF6D00" font-size="12" text-anchor="middle" font-weight="700">目标'+targetKg+'kg</text>';
+  svg+='<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="6" fill="#EF4444" opacity="0.85"/>';
+  svg+='<circle cx="'+tx.toFixed(1)+'" cy="'+ty.toFixed(1)+'" r="10" fill="none" stroke="#EF4444" stroke-width="1.5" opacity="0.35"/>';
+  svg+='<text x="'+tx.toFixed(1)+'" y="'+(ty-14)+'" fill="#EF4444" font-size="12" text-anchor="middle" font-weight="700">目标'+targetKg+'kg</text>';
   
   // Latest weight label
   const last=data[data.length-1];
@@ -1362,9 +1367,9 @@ function initOverview(){
   const kpis=[
     {v:fmt(89.85-curW),l:'累计减重',u:'kg',c:'var(--orange)',sub:'89.85→'+curW},
     {v:fmt(31.5-(latest?latest.bf:29.2)),l:'体脂下降',u:'%',c:'var(--green)',sub:'31.5%→'+(latest?latest.bf:29.2)+'%'},
-    {v:fmt(101.5-(latestDim2?latestDim2.waist:94.5)),l:'腰围缩小',u:'cm',c:'var(--warm2)',sub:'101.5→'+(latestDim2?latestDim2.waist:94.5)},
-    {v:fmt(61.5-(latest?latest.ffm:59.0)),l:'去脂体重变化',u:'kg',c:'var(--purple)',sub:'61.5→'+(latest?latest.ffm:59.0)},
-    {v:TD.length,l:'累计训练',u:'天',c:'var(--teal)',sub:'自5/31起'},
+    {v:fmt(101.5-(latestDim2?latestDim2.waist:94.5)),l:'腰围缩小',u:'cm',c:'var(--orange)',sub:'101.5→'+(latestDim2?latestDim2.waist:94.5)},
+    {v:fmt(61.5-(latest?latest.ffm:59.0)),l:'去脂体重变化',u:'kg',c:'var(--blue)',sub:'61.5→'+(latest?latest.ffm:59.0)},
+    {v:TD.length,l:'累计训练',u:'天',c:'var(--green)',sub:'自5/31起'},
     {v:fmt(TD.reduce((s,t)=>s+t.dur,0)/60,1),l:'训练总时长',u:'h',c:'var(--red)',sub:'自5/31起'},
   ];
   $('overviewKpis').innerHTML=kpis.map(k=>'<div class="kpi-item"><div class="kpi-value" style="color:'+k.c+'">'+k.v+'<span class="unit"> '+k.u+'</span></div><div class="kpi-label">'+k.l+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">'+k.sub+'</div></div>').join('');
@@ -1372,9 +1377,6 @@ function initOverview(){
   // Charts
   const chartW=450,chartH=200;
   drawWeightProgressChart('weightChart',WD,75,'2026-12-01',1.74);
-  // Waist chart from dimensions
-  const waistData=DIM.map(d=>({date:d.date,waist:d.waist}));
-  $('waistChart').innerHTML=makeLineChart(waistData,'date','waist',chartW,160,'#FF8F00','腰围',true);
 }
 
 // ===== TAB 3: TRAINING =====
@@ -1501,10 +1503,10 @@ function filterBody(){
   const chartW=450,chartH=200;
   
   const fw=WD.filter(d=>d.date>=s&&d.date<=e);
-  $('bodyWeightChart').innerHTML=makeLineChart(fw,'date','weight',chartW,chartH,'#FFB300','体重',false);
+  $('bodyWeightChart').innerHTML=makeLineChart(fw,'date','weight',chartW,chartH,'#F59E0B','体重',false);
   
   const bfd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null);
-  $('bfChart').innerHTML=makeLineChart(bfd,'date','bf',chartW,180,'#00E676','体脂率',true);
+  $('bfChart').innerHTML=makeLineChart(bfd,'date','bf',chartW,180,'#34D399','体脂率',true);
   
   renderBodyPartDistance();
   
@@ -1520,7 +1522,7 @@ function filterBody(){
     {name:'肌肉量',icon:'💪',cur:latest.muscle,unit:'kg',ref:'维持>55',target:55,base:baseline.muscle,lower:false},
     {name:'去脂体重',icon:'🏃',cur:latest.ffm,unit:'kg',ref:'保持',target:58,base:baseline.ffm,lower:false}
   ];
-  let rc='<div style="overflow-x:auto"><table style="width:100%;font-size:11px"><thead><tr><th style="text-align:left;font-size:10px">指标</th><th style="font-size:10px">起点</th><th style="font-size:10px">当前</th><th style="font-size:10px">较起始</th><th style="font-size:10px">目标</th><th style="font-size:10px">距目标</th></tr></thead><tbody>';
+  let rc='<div class="metric-grid">';
   refs.forEach(r=>{
     if(r.cur==null)return;
     const change=r.cur-r.base;
@@ -1528,17 +1530,18 @@ function filterBody(){
     const gapOk=r.lower?(gap<=0):(gap<=0);
     const improving=r.lower?(change<0):(change>0);
     const changeColor=improving?'var(--green)':(change>0&&r.lower?'var(--red)':(change<0&&!r.lower?'var(--red)':'var(--t2)'));
-    const gapColor=gapOk?'var(--green)':'var(--orange)';
-    rc+='<tr>';
-    rc+='<td style="color:var(--t1);font-weight:500;white-space:nowrap">'+r.icon+' '+r.name+'</td>';
-    rc+='<td style="text-align:center;color:var(--t3)">'+r.base+r.unit+'</td>';
-    rc+='<td style="text-align:center;font-weight:600;color:var(--t1)">'+r.cur+r.unit+'</td>';
-    rc+='<td style="text-align:center;font-weight:600;color:'+changeColor+'">'+(change>0?'+':'')+change.toFixed(1)+r.unit+'</td>';
-    rc+='<td style="text-align:center;color:var(--t3)">'+r.target+r.unit+'</td>';
-    rc+='<td style="text-align:center;font-weight:600;color:'+gapColor+'">'+(gap>0?'+':'')+gap.toFixed(1)+r.unit+(gapOk?' ✅':'')+'</td>';
-    rc+='</tr>';
+    const statusBadge=gapOk?'<span class="badge badge-green">正常</span>':(r.lower?'<span class="badge badge-red">偏高</span>':'<span class="badge badge-orange">偏低</span>');
+    rc+='<div class="metric-card">';
+    rc+='<div class="metric-card-head">';
+    rc+='<div class="metric-card-name">'+r.icon+' '+r.name+'</div>';
+    rc+=statusBadge;
+    rc+='</div>';
+    rc+='<div><div class="metric-card-value">'+r.cur+'<span class="unit">'+r.unit+'</span></div>';
+    rc+='<div class="metric-card-ref">参考 '+r.ref+' · 目标 '+r.target+r.unit+'</div></div>';
+    rc+='<div class="metric-card-trend" style="color:'+changeColor+'">较起始 '+(change>0?'+':'')+change.toFixed(1)+r.unit+' · 距目标 '+(gap>0?'+':'')+gap.toFixed(1)+r.unit+(gapOk?' ✅':'')+'</div>';
+    rc+='</div>';
   });
-  rc+='</tbody></table></div>';
+  rc+='</div>';
   $('refCompareArea').innerHTML=rc;
   
   // Achievement rate (latest already defined above in ref compare)
@@ -1550,8 +1553,8 @@ function filterBody(){
   const bfPct=Math.min(100,lostBF/needLoseBF*100);
   const overallPct=(wPct+bfPct)/2;
   let ach='<div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;font-weight:800;color:var(--orange)">'+overallPct.toFixed(1)+'%</div><div style="font-size:12px;color:var(--t2)">综合达成率</div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--t2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:12px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--warm2))"></div></div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--t2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:12px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--t2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:12px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--t2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:12px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
   $('achievementArea').innerHTML=ach;
   
   // Composition analysis (baseline already defined above)
@@ -1580,69 +1583,47 @@ function renderBodyPartDistance(){
     {name:'上臂围',icon:'💪',cur:35.5,tgt:37,coeff:0.04,dir:'muscle-up'},
     {name:'大腿围',icon:'🦵',cur:50.5,tgt:51,coeff:0.05,dir:'muscle-up'}
   ];
-  let h='<div style="overflow-x:auto"><table style="width:100%;font-size:11px;border-collapse:collapse">';
-  h+='<thead><tr style="border-bottom:1px solid var(--bdr)">';
-  h+='<th style="text-align:left;padding:6px 4px;color:var(--t2);font-weight:500">部位</th>';
-  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">当前</th>';
-  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">目标</th>';
-  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">差距</th>';
-  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">脂肪层</th>';
-  h+='<th style="text-align:center;padding:6px 4px;color:var(--t2);font-weight:500">肌肉层</th>';
-  h+='</tr></thead><tbody>';
+  let h='<div class="ring-grid">';
   parts.forEach(p=>{
     const curFat=+(p.cur*bf/100*p.coeff).toFixed(2);
     const tgtFat=+(p.tgt*tgtBF/100*p.coeff).toFixed(2);
     const curMuscle=+(p.cur-curFat*2).toFixed(1);
     const tgtMuscle=+(p.tgt-tgtFat*2).toFixed(1);
-    const fatDiff=(curFat-tgtFat).toFixed(2);
-    const muscleDiff=(tgtMuscle-curMuscle).toFixed(1);
-    const totalGap=(p.cur-p.tgt).toFixed(1);
-    const dirArrow=p.dir==='fat-down'?'↓减脂':'↑增肌';
-    const gapColor=p.cur>p.tgt?'var(--orange)':'var(--green)';
-    h+='<tr style="border-bottom:1px solid var(--bdr)">';
-    h+='<td style="padding:8px 4px;color:var(--t1);font-weight:600;white-space:nowrap">'+p.icon+' '+p.name+'</td>';
-    h+='<td style="text-align:center;padding:8px 4px;color:var(--t1);font-weight:700;font-size:14px">'+p.cur+'</td>';
-    h+='<td style="text-align:center;padding:8px 4px;color:var(--t3)">'+p.tgt+'</td>';
-    h+='<td style="text-align:center;padding:8px 4px;font-weight:700;color:'+gapColor+'">'+(p.cur>p.tgt?'−':'+')+(p.cur>p.tgt?Math.abs(totalGap):totalGap)+'cm</td>';
-    h+='<td style="text-align:center;padding:8px 4px"><span style="color:var(--orange);font-weight:600">'+curFat+'</span><span style="color:var(--t3)">→</span><span style="color:var(--green)">'+tgtFat+'</span><span style="color:var(--t3);font-size:9px">cm</span></td>';
-    h+='<td style="text-align:center;padding:8px 4px"><span style="color:var(--orange);font-weight:600">'+curMuscle+'</span><span style="color:var(--t3)">→</span><span style="color:var(--green)">'+tgtMuscle+'</span><span style="color:var(--t3);font-size:9px">cm</span></td>';
-    h+='</tr>';
+    // Achievement rate: for fat-down, progress = how much already lost vs total needed
+    // For muscle-up, progress = how much already gained vs total needed
+    // Simplified: use overall gap closure percentage
+    const totalGap=Math.abs(p.cur-p.tgt);
+    const startGap=p.dir==='fat-down'?(94.5-78):(35.5-37); // approximate start gaps
+    // Better approach: achievement = 1 - (current gap / initial gap)
+    // For fat-down parts: initial = DIM[0] values, current = p.cur
+    const initialVals={腰围:101.5,臀围:101.5,胸围:108.5,上臂围:34.5,大腿围:48.5};
+    const initialVal=initialVals[p.name]||p.cur;
+    const totalChange=Math.abs(p.tgt-initialVal);
+    const achieved=Math.abs(p.cur-initialVal);
+    let pct=totalChange>0?Math.min(100,Math.round(achieved/totalChange*100)):0;
+    if(p.dir==='muscle-up' && p.cur<p.tgt) pct=Math.min(pct,100);
+    const ringColor=p.dir==='fat-down'?'#F59E0B':'#34D399';
+    const circumference=2*Math.PI*26;
+    const dashOffset=circumference*(1-pct/100);
+    h+='<div class="ring-card">';
+    h+='<svg width="64" height="64" viewBox="0 0 64 64" style="flex-shrink:0">';
+    h+='<circle cx="32" cy="32" r="26" fill="none" stroke="var(--bdr)" stroke-width="5"/>';
+    h+='<circle cx="32" cy="32" r="26" fill="none" stroke="'+ringColor+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+dashOffset+'" transform="rotate(-90 32 32)"/>';
+    h+='<text x="32" y="36" text-anchor="middle" fill="'+ringColor+'" font-size="14" font-weight="700">'+pct+'%</text>';
+    h+='</svg>';
+    h+='<div class="ring-card-info">';
+    h+='<div class="ring-card-name">'+p.icon+' '+p.name+'</div>';
+    h+='<div class="ring-card-values"><span style="color:var(--t1);font-weight:600">'+p.cur+'</span><span style="color:var(--t3)"> → </span><span style="color:var(--t3)">'+p.tgt+'cm</span></div>';
+    h+='<div class="ring-card-layers">脂肪层 <span style="color:var(--orange)">'+curFat+'</span>→<span style="color:var(--green)">'+tgtFat+'</span>cm<br>肌肉层 <span style="color:var(--orange)">'+curMuscle+'</span>→<span style="color:var(--green)">'+tgtMuscle+'</span>cm</div>';
+    h+='</div>';
+    h+='</div>';
   });
-  h+='</tbody></table></div>';
-  h+='<div style="margin-top:12px;font-size:10px;color:var(--t3);line-height:1.6">';
+  h+='</div>';
+  h+='<div class="formula-note">';
   h+='💡 脂肪层=围度×体脂率×分布系数 | 肌肉层=围度−脂肪层×2<br>';
   h+='分布系数：腰0.08 臀0.06 胸0.05 臂0.04 腿0.05<br>';
   h+='⚠️ 腰/臀围肌肉层也在降——整体围度缩小不止减脂，核心也在缩减';
   h+='</div>';
-  // 进度达成率可视化
-  h+='<div style="margin-top:16px">';
-  parts.forEach(p=>{
-    const curFat=+(p.cur*bf/100*p.coeff).toFixed(2);
-    const tgtFat=+(p.tgt*tgtBF/100*p.coeff).toFixed(2);
-    const curMuscle=+(p.cur-curFat*2).toFixed(1);
-    const tgtMuscle=+(p.tgt-tgtFat*2).toFixed(1);
-    const fatGoalDrop=curFat-tgtFat;
-    const muscleGoalGain=tgtMuscle-curMuscle;
-    h+='<div style="margin-bottom:10px">';
-    h+='<div style="display:flex;justify-content:space-between;margin-bottom:3px">';
-    h+='<span style="font-size:11px;color:var(--t1);font-weight:500">'+p.icon+' '+p.name+'</span>';
-    h+='<span style="font-size:10px;color:var(--t3)">脂肪↓'+fatGoalDrop.toFixed(2)+'cm | 肌肉'+(muscleGoalGain>=0?'↑':'↓')+Math.abs(muscleGoalGain).toFixed(1)+'cm</span>';
-    h+='</div>';
-    // 双进度条：脂肪缩短 + 肌肉增长
-    h+='<div style="display:flex;gap:4px;align-items:center">';
-    h+='<div style="flex:1">';
-    h+='<div style="font-size:9px;color:var(--t3);margin-bottom:2px">脂肪达成</div>';
-    h+='<div style="height:6px;background:var(--inset);border-radius:3px;overflow:hidden"><div style="width:0%;height:100%;border-radius:3px;background:var(--orange);transition:width 0.6s"></div></div>';
-    h+='</div>';
-    h+='<div style="flex:1">';
-    h+='<div style="font-size:9px;color:var(--t3);margin-bottom:2px">肌肉达成</div>';
-    h+='<div style="height:6px;background:var(--inset);border-radius:3px;overflow:hidden"><div style="width:0%;height:100%;border-radius:3px;background:var(--green);transition:width 0.6s"></div></div>';
-    h+='</div>';
-    h+='</div>';
-    h+='</div>';
-  });
-  h+='</div>';
-  h+='<div style="margin-top:8px;font-size:10px;color:var(--t3)">📌 进度条随每次体测数据更新自动推进</div>';
   $('bodyPartDistance').innerHTML=h;
 }
 
@@ -1781,11 +1762,11 @@ function initMemo(){
     if(s.price>0)totalPrice+=s.price;
     if(s.time!==lastTime){
       lastTime=s.time;
-      sp+='<div style="font-size:12px;font-weight:700;color:var(--accent);padding:10px 0 4px;border-top:1px solid var(--bdr)">'+(timeLabels[s.time]||s.time)+'</div>';
+      sp+='<div style="font-size:12px;font-weight:700;color:var(--blue);padding:10px 0 4px;border-top:1px solid var(--bdr)">'+(timeLabels[s.time]||s.time)+'</div>';
     }
-    sp+='<div style="display:flex;justify-content:space-between;padding:5px 0 5px 12px;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--t1)">'+s.name+'</span><span style="font-size:11px;color:var(--t3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--t3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'<br><span style="color:var(--accent)">¥'+s.price+'</span></div></div>';
+    sp+='<div style="display:flex;justify-content:space-between;padding:5px 0 5px 12px;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--t1)">'+s.name+'</span><span style="font-size:11px;color:var(--t3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--t3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'<br><span style="color:var(--blue)">¥'+s.price+'</span></div></div>';
   });
-  sp+='<div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:8px;border-top:2px solid var(--accent)"><div style="font-size:14px;font-weight:700;color:var(--t1)">补剂总花费</div><div style="font-size:16px;font-weight:700;color:var(--accent)">¥'+totalPrice.toFixed(0)+'</div></div>';
+  sp+='<div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:8px;border-top:2px solid var(--blue)"><div style="font-size:14px;font-weight:700;color:var(--t1)">补剂总花费</div><div style="font-size:16px;font-weight:700;color:var(--blue)">¥'+totalPrice.toFixed(0)+'</div></div>';
   $('supplementMemo').innerHTML=sp;
 
   // 减脂部位与体脂率对应区间
@@ -1798,7 +1779,7 @@ function initMemo(){
   ];
   let z='';
   zones.forEach((zn,i)=>{
-    const highlight=zn.status==='你在这'?'background:rgba(0,200,100,0.08);border-left:3px solid #00c864;':'border-left:3px solid transparent;';
+    const highlight=zn.status==='你在这'?'background:rgba(52,211,153,0.08);border-left:3px solid #34D399;':'border-left:3px solid transparent;';
     z+='<div style="padding:10px 8px;'+highlight+'border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">';
     z+='<div><div style="font-size:13px;color:var(--t1);font-weight:500">'+zn.icon+' 体脂 '+zn.range+'</div>';
     z+='<div style="font-size:11px;color:var(--t2);margin-top:3px">'+zn.parts+'</div></div>';
