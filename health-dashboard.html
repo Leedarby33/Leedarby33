@@ -153,6 +153,19 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 </div>
 <div id="dietContent" style="display:none">
+<div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">⚡ 快捷食物 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击填入当前餐次，可点多次累加</span></div>
+<div id="quickFoods" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)">
+<div style="font-size:11px;color:var(--text-3);margin-bottom:4px">当前填入餐次：</div>
+<div style="display:flex;gap:5px">
+<button onclick="setQuickTarget('b')" id="qtB" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer">早餐</button>
+<button onclick="setQuickTarget('l')" id="qtL" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">午餐</button>
+<button onclick="setQuickTarget('d')" id="qtD" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">晚餐</button>
+<button onclick="setQuickTarget('s')" id="qtS" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">加餐</button>
+</div>
+</div>
+</div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:8px">🌅 早餐</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
@@ -685,6 +698,101 @@ function saveDailyWeight(){
 }
 
 // ===== 饮食记录模块 =====
+// 常用食物库 [名称, 热量, 蛋白, 饱和脂, 果糖, 碳水, 份量描述]
+const QUICK_FOODS=[
+  // 家常常备
+  ['🥩盐水卤牛腱(切片)',120,30,1.5,0,0,'1份≈100g'],
+  ['🫛盐水卤毛豆',147,13,0.6,0.8,11,'1份≈100g带壳'],
+  ['🥬青菜炒黑木耳(不喝汤)',45,3.5,0.2,0.8,6,'青菜200g+木耳50g'],
+  ['🥗核桃油拌青菜',50,2,0.5,0.6,5,'1份≈200g'],
+  // 主食
+  ['🍚藜麦白米饭(1:1)',160,4,0.3,0.1,32,'1碗≈150g'],
+  ['🍚白米饭(熟)',116,2.6,0.3,0,26,'1碗≈150g'],
+  ['🍚杂粮饭(混合)',140,3.5,0.3,0.1,28,'1碗≈150g'],
+  ['🥣燕麦仁粥(熟)',105,3.7,0.3,0,19,'1碗≈200g'],
+  // 蛋白质
+  ['💊蛋白粉(微Protein)',113,22,0.5,0,1.5,'1勺≈30g'],
+  ['🥚水煮蛋',78,6.3,1.6,0,0.6,'1个≈50g'],
+  ['🐟三文鱼刺身',139,17.2,1.5,0,0,'1份≈80g'],
+  ['🍗鸡胸肉(无酱)',133,31,0.4,0,0,'1份≈120g'],
+  ['🥩牛排(瘦)',175,26,3,0,0,'1份≈120g'],
+  // 轻食外卖
+  ['🥗轻食蔬菜底(无酱)',65,3,0.2,1.5,12,'生菜+南瓜+玉米仁+蔬果'],
+  ['🥗轻食-鸡胸肉单倍(无酱)',175,28,0.4,1.5,13,'蔬菜底+鸡胸80g'],
+  ['🥗轻食-双倍鸡胸(无酱)',270,49,0.6,1.5,13,'蔬菜底+鸡胸150g'],
+  ['🥗轻食-牛排(无酱)',280,37,3.2,1.5,13,'蔬菜底+牛排120g'],
+  ['🥗轻食-三文鱼(无酱)',180,17,1.7,1.5,13,'蔬菜底+三文鱼80g'],
+  // 其他
+  ['🎃蒸南瓜',22,0.7,0.1,0.3,5.3,'1份≈150g'],
+  ['🌽煮玉米(可食)',86,3.2,0.2,0.4,19,'1根≈150g可食']
+];
+let _quickTarget='b'; // 当前快捷食物填入的餐次
+function setQuickTarget(t){
+  _quickTarget=t;
+  const labels={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'};
+  const colors={b:'var(--orange)',l:'var(--green)',d:'var(--blue)',s:'var(--orange)'};
+  ['b','l','d','s'].forEach(k=>{
+    const el=$('qt'+k.toUpperCase());
+    if(k===t){el.style.background=colors[k];el.style.color='#fff';el.style.border='none';el.style.fontWeight='600';}
+    else{el.style.background='var(--inset)';el.style.color='var(--text-2)';el.style.border='1px solid var(--bdr)';el.style.fontWeight='400';}
+  });
+}
+function renderQuickFoods(){
+  const c=$('quickFoods');
+  if(!c)return;
+  c.innerHTML=QUICK_FOODS.map((f,i)=>{
+    return `<button onclick="quickAddFood(${i})" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap">${f[0]} <span style="color:var(--text-3);font-size:10px">${f[1]}k</span></button>`;
+  }).join('');
+}
+function quickAddFood(idx){
+  const f=QUICK_FOODS[idx];
+  const t=_quickTarget;
+  const prefix=t==='s'?'':t; // 加餐走单独逻辑
+  if(t==='s'){
+    // 加餐：直接添加一条加餐记录
+    const meals=getMeals();
+    const today=getTodayStr();
+    if(!meals[today])meals[today]={b:[],l:[],d:[],s:[]};
+    meals[today].s.push({cal:f[1],p:f[2],sf:f[3],fr:f[4],c:f[5],desc:f[0].replace(/[\u{1F300}-\u{1FAFF}]/gu,''),time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
+    setMeals(meals);
+    renderMealList('s');
+    updateDietSummary();
+    if(typeof filterDiet==='function')filterDiet();
+    flashHint('已添加到加餐：'+f[0]);
+    return;
+  }
+  // 早/午/晚餐：累加到对应输入框
+  const keys={b:['bCal','bP','bSf','bFr','bC','bDesc'],l:['lCal','lP','lSf','lFr','lC','lDesc'],d:['dCal','dP','dSf','dFr','dC','dDesc']};
+  const ks=keys[t];
+  // 如果已有描述且不包含当前食物名，追加；否则填入
+  const curDesc=$(ks[5]).value;
+  const foodName=f[0].replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim();
+  [ks[0],ks[1],ks[2],ks[3],ks[4]].forEach((k,i)=>{
+    const el=$(k);
+    const cur=parseFloat(el.value)||0;
+    el.value=Math.round((cur+f[i+1])*10)/10;
+  });
+  if(curDesc && !curDesc.includes(foodName)){
+    $(ks[5]).value=curDesc+' + '+foodName;
+  } else if(!curDesc){
+    $(ks[5]).value=foodName;
+  }
+  // 闪一下提示
+  flashHint(foodName+' 已填入'+{b:'早餐',l:'午餐',d:'晚餐'}[t]);
+}
+function flashHint(msg){
+  let el=$('foodHint');
+  if(!el){
+    el=document.createElement('div');
+    el.id='foodHint';
+    el.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;z-index:9999;pointer-events:none;transition:opacity 0.3s';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.opacity='1';
+  clearTimeout(el._timer);
+  el._timer=setTimeout(()=>{el.style.opacity='0';},1200);
+}
 function getMeals(){
   try{return JSON.parse(localStorage.getItem('health_meals')||'{}');}catch(e){return{};}
 }
@@ -1014,6 +1122,7 @@ function initNav(){
   $('headerDate').textContent=todayStr;
 
   // Render diet meals and summary
+  renderQuickFoods();
   renderAllMeals();
   updateDietSummary();
   // Init training record info
