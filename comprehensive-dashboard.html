@@ -945,7 +945,7 @@ function renderPZInfo() {
 }
 
 // ========== TRAINING: V8 训练计划 ==========
-// 0=休息 1=推日 2=拉日 3=下肢 4=肩臂
+// 0=休息 1=推日 2=拉日 3=下肢 4=主动恢复 5=Zone2
 const V8_WEEK = [
   {day:'周一',type:1,label:'推力量+持续输出+核心+功能性HIIT',dur:75,energy:'中等',color:'#ff6b6b',
     activation:'弹力带肩外旋 1×15/侧 + 面拉 1×15',
@@ -973,7 +973,16 @@ const V8_WEEK = [
     hiit:'功能性HIIT(15min,5轮): 快速俯卧撑40s→哑铃摇摆40s→哑铃推举40s→动作间休20s/轮间休60s',
     extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
     cool:'冷身拉伸(10min): 背阔肌侧向幼犬式30s/侧 + 直臂二头拉伸20s/侧 + 跨胸后束拉伸20s/侧 + 踝画圈'},
-  {day:'周三',type:0,label:'休息',dur:0,energy:'最低',color:'#aeaeb2'},
+  {day:'周三',type:4,label:'主动恢复日',dur:25,energy:'低',color:'#af52de',
+    core:[
+      {n:'死虫式',s:'3×6',w:'自重',note:'腰椎全程贴地，腹直肌+深层核心收紧'},
+      {n:'麦吉尔卷腹',s:'3×8/侧',w:'自重',note:'一腿屈膝踩地一腿伸直，双手垫腰下保护腰椎'},
+      {n:'Pallof Press',s:'3×10/侧',w:'弹力带10磅',note:'弹力带固定侧面，双手从胸口推出保持3秒，腹斜肌对抗旋转'}
+    ],
+    extra:'轻量肩胛维护(10min): 地板天使2×8 + 弹力带面拉2×12 + 缩下巴2×15',
+    hiit:'',
+    cool:'',
+    note:'核心训练10min + 肩胛维护10min + 关节康复5min（髋关节画圈+左踝绕圈）。预计消耗~120kcal'},
   {day:'周四',type:2,label:'拉力量+旋转+功能性HIIT',dur:70,energy:'低',color:'#1e90ff',
     activation:'弹力带外旋+内旋 各1×15/侧',
     main:[
@@ -1019,7 +1028,12 @@ const V8_WEEK = [
     extra:'肩胛协议(20min): 胸小肌拉伸30s/侧 + 地板天使2×10 + 前锯拳冲3×15/侧 + T字抬起2×15 + 弹力带外旋2×15/侧 + 内旋2×15/侧',
     hiit:'功能性长HIIT(21min,7轮): 壶铃摆荡40s(2.5kg)→波比退阶无俯卧撑版40s→登山者40s→休60s',
     cool:'冷身拉伸(10min): 大腿前侧站姿拉伸30s/侧 + 大腿后侧坐姿体前屈30s + 臀部坐姿4字拉伸30s/侧 + 比目鱼肌弓步拉伸30s/侧 + 核心侧方跪姿侧伸展20s/侧 + 踝关节绕圈左45s右30s'},
-  {day:'周日',type:0,label:'休息',dur:0,energy:'-',color:'#aeaeb2'}
+  {day:'周日',type:5,label:'Zone2骑行',dur:105,energy:'中低',color:'#ff9500',
+    main:[
+      {n:'Zone2稳态骑行',s:'90-120min',w:'—',note:'心率110-128bpm，能说话但不能唱歌，呼吸平稳可控'}
+    ],
+    core:[],extra:'',hiit:'',cool:'',
+    note:'心肺底座训练。最大心率183bpm的60-70%。预计消耗~500-700kcal'}
 ];
 
 const V8_LIB = [
@@ -1180,8 +1194,8 @@ function renderTrWeek() {
         <div style="font-size:11px;color:var(--t3)">肩胛协议</div>
       </div>
       <div style="background:var(--inset);border-radius:8px;padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:var(--purple)">~450min</div>
-        <div style="font-size:11px;color:var(--t3)">周训练总时长</div>
+        <div style="font-size:20px;font-weight:700;color:var(--purple)">~540min</div>
+        <div style="font-size:11px;color:var(--t3)">周训练总时长(含主动恢复+Zone2)</div>
       </div>
     </div>
     <div style="margin-top:12px;font-size:11px;color:var(--t3);line-height:1.8">
