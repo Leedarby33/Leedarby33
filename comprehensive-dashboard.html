@@ -944,9 +944,9 @@ function renderPZInfo() {
   document.getElementById('sub-pz-info').innerHTML = html;
 }
 
-// ========== TRAINING: V7 训练计划 ==========
+// ========== TRAINING: V8 训练计划 ==========
 // 0=休息 1=推日 2=拉日 3=下肢 4=肩臂
-const V7_WEEK = [
+const V8_WEEK = [
   {day:'周一',type:1,label:'推力量+代谢收尾+短HIIT',dur:77,energy:'中等',color:'#ff6b6b',
     activation:'弹力带肩外旋 1×15/侧 + 面拉 1×15',
     main:[
@@ -1014,7 +1014,7 @@ const V7_WEEK = [
   {day:'周日',type:0,label:'休息',dur:0,energy:'-',color:'#aeaeb2'}
 ];
 
-const V7_LIB = [
+const V8_LIB = [
   {name:'弹力带肩外旋',cat:'肩袖激活',desc:'手肘夹毛巾贴体侧，弹力带从腹部方向向外旋转至手臂外旋位，3秒离心回放。10磅窄带。'},
   {name:'面拉 Face Pull',cat:'肩袖激活',desc:'弹力带固定面部高度，双手拉向面部两侧，外旋至Y字，顶峰挤压后束1-2秒。'},
   {name:'Pallof Press',cat:'核心·抗旋转',desc:'弹力带固定在身体一侧(胸口高度)，双手从胸口推出，对抗弹力带的旋转力矩，保持3秒后收回。每侧10次。'},
@@ -1035,7 +1035,7 @@ function renderTrToday() {
   const now = new Date();
   const jsDay = now.getDay(); // 0=Sun
   const idx = jsDay === 0 ? 6 : jsDay - 1; // convert to 0=Mon
-  const d = V7_WEEK[idx];
+  const d = V8_WEEK[idx];
   let h = '';
   if (d.type === 0) {
     h = `<div class="card" style="text-align:center;padding:60px 20px">
@@ -1133,7 +1133,7 @@ function renderTrToday() {
 }
 
 function renderTrWeek() {
-  let h = `<div class="card"><div class="card-title">📅 V7 周训练计划</div>`;
+  let h = `<div class="card"><div class="card-title">📅 V8 周训练计划</div>`;
   h += `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
     <tr style="color:var(--t3);border-bottom:1px solid var(--bdr)">
       <th style="text-align:left;padding:8px 6px">日</th>
@@ -1143,7 +1143,7 @@ function renderTrWeek() {
     </tr>`;
   const now = new Date();
   const todayIdx = now.getDay() === 0 ? 6 : now.getDay() - 1;
-  V7_WEEK.forEach((d,i) => {
+  V8_WEEK.forEach((d,i) => {
     const isToday = i === todayIdx;
     const isRest = d.type === 0;
     const bg = isToday ? 'background:rgba(0,122,255,0.06);' : '';
@@ -1188,7 +1188,7 @@ function renderTrWeek() {
 
 function renderTrLib() {
   const cats = {};
-  V7_LIB.forEach(ex => {
+  V8_LIB.forEach(ex => {
     if (!cats[ex.cat]) cats[ex.cat] = [];
     cats[ex.cat].push(ex);
   });
