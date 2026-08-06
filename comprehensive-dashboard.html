@@ -787,7 +787,54 @@ function getTianpan(dp,hg,hz,isYang){const x=getXun(hg,hz);const dg=DUN[x];let z
 function getBamen(zg,hg,hz,isYang){const x=getXun(hg,hz);const MO={1:'休',8:'生',3:'伤',4:'杜',9:'景',2:'死',7:'惊',6:'开'};const zm=MO[zg]||'休';const xc=XUN.indexOf(x)+1;const MR={};for(const[k,v]of Object.entries(MO))MR[v]=parseInt(k);const zog=MR[zm];const f8=[1,2,3,4,6,7,8,9];const oi=f8.indexOf(zog);let zsg=oi>=0?(isYang?f8[(oi+xc)%8]:f8[((oi-xc)%8+8)%8]):(isYang?f8[xc%8]:f8[((-xc)%8+8)%8]);const MS=['休','生','伤','杜','景','死','惊','开'];const mp={};const ti=f8.indexOf(zsg);for(let i=0;i<MS.length;i++){mp[isYang?f8[(ti+i)%8]:f8[((ti-i)%8+8)%8]]=MS[i];}return mp;}
 function getBashen(zg,isYang){const f8=[1,2,3,4,6,7,8,9];const sp={};const ti=f8.indexOf(zg);for(let i=0;i<SHEN.length;i++){sp[isYang?f8[(ti+i)%8]:f8[((ti-i)%8+8)%8]]=SHEN[i];}return sp;}
 // 格局判断
-function checkGeju(dp,tp,mp,sp,hg,hz){const tags=[];let f=false;const fr=[];const x=getXun(hg,hz);const dg=DUN[x];let sg=null;for(const[g,gn]of Object.entries(dp))if(gn===hg){sg=parseInt(g);break;}if(hg==='甲')for(const[g,gn]of Object.entries(dp))if(gn===dg){sg=parseInt(g);break;}if(sg===5)sg=2;if(sg&&mp[sg]){const m=mp[sg];if(WX_KE[MEN_WX[m]]===GONG_WX[sg]){f=true;fr.push('门迫');}}const kw=getKongWang(hg,hz);const kg=kw.map(z=>{let g=ZHI_GONG[z];return g===5?2:g;});if(sg&&kg.includes(sg)){f=true;fr.push('空亡');}if(sg){const tg=tp[sg];if(XING_MAP[tg]===sg){f=true;fr.push('击刑');}}for(const g of Object.keys(tp)){const gi=parseInt(g);if(gi===5)continue;const tg=tp[g],dgn=dp[g];if(['乙','丙','丁'].includes(tg)&&dgn===dg)tags.push('三奇得使★('+tg+')');if(tg==='丁'&&mp[g]==='开')tags.push('玉女守门★');if(tg==='丁'&&mp[g]==='休'&&sp[g]==='太阴')tags.push('人遁★');if(tg==='乙'&&mp[g]==='开'&&sp[g]==='九地')tags.push('地遁★');if(tg==='丙'&&mp[g]==='开'&&sp[g]==='九天')tags.push('天遁★');}return{tags,isFiltered:f,filterReason:fr,shiganGong:sg};}
+function checkGeju(dp,tp,mp,sp,hg,hz){
+  const tags=[];let f=false;const fr=[];
+  const x=getXun(hg,hz);const dg=DUN[x];
+  let sg=null;for(const[g,gn]of Object.entries(dp))if(gn===hg){sg=parseInt(g);break;}
+  if(hg==='甲')for(const[g,gn]of Object.entries(dp))if(gn===dg){sg=parseInt(g);break;}
+  if(sg===5)sg=2;
+  // 凶格过滤
+  if(sg&&mp[sg]){const m=mp[sg];if(WX_KE[MEN_WX[m]]===GONG_WX[sg]){f=true;fr.push('门迫');}}
+  const kw=getKongWang(hg,hz);const kg=kw.map(z=>{let g=ZHI_GONG[z];return g===5?2:g;});
+  if(sg&&kg.includes(sg)){f=true;fr.push('空亡');}
+  if(sg){const tg=tp[sg];if(XING_MAP[tg]===sg){f=true;fr.push('击刑');}}
+  // 吉格判定——遍历九宫
+  for(const g of Object.keys(tp)){
+    const gi=parseInt(g);if(gi===5)continue;
+    const tg=tp[g],dgn=dp[g],m=mp[g],sh=sp[g];
+    // 三奇得使：天盘乙丙丁+地盘旬首遁干
+    if(['乙','丙','丁'].includes(tg)&&dgn===dg)tags.push('三奇得使('+tg+')');
+    // 玉女守门：丁+开门
+    if(tg==='丁'&&m==='开')tags.push('玉女守门');
+    // 人遁：丁+休门+太阴
+    if(tg==='丁'&&m==='休'&&sh==='太阴')tags.push('人遁');
+    // 天遁：丙+生门+地盘丁
+    if(tg==='丙'&&m==='生'&&dgn==='丁')tags.push('天遁');
+    // 地遁：乙+开门+地盘己
+    if(tg==='乙'&&m==='开'&&dgn==='己')tags.push('地遁');
+    // 神遁：丙+生门+九天
+    if(tg==='丙'&&m==='生'&&sh==='九天')tags.push('神遁');
+    // 鬼遁：丁+杜门+九地 或 丁+开门+九地
+    if(tg==='丁'&&(m==='杜'||m==='开')&&sh==='九地')tags.push('鬼遁');
+    // 龙遁：乙+开/休/生+地盘癸或坎宫
+    if(tg==='乙'&&(m==='开'||m==='休'||m==='生')&&(dgn==='癸'||gi===1))tags.push('龙遁');
+    // 虎遁：乙+休/生+地盘辛+艮宫
+    if(tg==='乙'&&(m==='休'||m==='生')&&dgn==='辛'&&gi===8)tags.push('虎遁');
+    // 三诈：三吉门(开/休/生)+三奇(乙/丙/丁)+八神
+    if((m==='开'||m==='休'||m==='生')&&['乙','丙','丁'].includes(tg)){
+      if(sh==='太阴')tags.push('真诈');
+      else if(sh==='九地')tags.push('重诈');
+      else if(sh==='六合')tags.push('休诈');
+    }
+    // 三奇升殿：乙临震3宫/丙临离9宫/丁临兑7宫
+    if(tg==='乙'&&gi===3)tags.push('乙奇升殿');
+    if(tg==='丙'&&gi===9)tags.push('丙奇升殿');
+    if(tg==='丁'&&gi===7)tags.push('丁奇升殿');
+  }
+  // 去重
+  const ut=[...new Set(tags)];
+  return{tags:ut,isFiltered:f,filterReason:fr,shiganGong:sg};
+}
 // 主排盘
 function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',tags,isFiltered,filterReason};}
 function getAccountRg(cs){return getDayGZ(cs.slice(0,10)).gan;}
@@ -875,9 +922,10 @@ function renderJigeChips(tagStr){
   return parts.map(p => {
     const t = p.trim();
     let cls = 'normal';
-    if(t.includes('三奇得使')) cls = 'sanqi';
+    if(t.includes('三奇得使')||t.includes('升殿')) cls = 'sanqi';
     else if(t.includes('遁')) cls = 'dun';
     else if(t.includes('玉女守门')) cls = 'yunu';
+    else if(t.includes('诈')) cls = 'yunu';
     return '<span class="jige-chip '+cls+'">'+t.replace(/★/g,'')+'</span>';
   }).join('');
 }
@@ -1107,7 +1155,7 @@ function renderPZInfo() {
       <div>• 英语课日(周一/三/四)亥时(21-23)已避开</div>
       <div>• 子时(23-01)采用23:00换日约定</div>
       <div style="margin-top:8px;color:var(--text-3)">凶格过滤：门迫+空亡+击刑，满足任一即剔除</div>
-      <div style="color:var(--text-3)">吉格标注：三奇得使/玉女守门/天遁/地遁/人遁</div>
+      <div style="color:var(--text-3)">吉格标注：三奇得使/玉女守门/天遁/地遁/人遁/神遁/鬼遁/龙遁/虎遁/三诈(真诈/重诈/休诈)/三奇升殿</div>
       <div style="margin-top:8px;color:var(--text-3)">翻牌建议：根据首选时辰八神位置推荐</div>
       <div style="color:var(--text-3)">三奇得使⚡：账号日干为乙丙丁且时辰排盘匹配</div>
       <div style="margin-top:8px;color:var(--text-3);font-style:italic">动态排盘引擎·基于当日干支节气自动计算 | 仅供游戏娱乐参考</div>
