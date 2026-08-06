@@ -550,7 +550,7 @@ cd:[],note:"轻量核心+肩胛协议完整版+关节康复，预计消耗~180kc
 ],hiit:[
 {n:"壶铃摆荡",s:"40秒",w:"2.5kg",t:"髋部爆发前顶，臀+大腿后侧发力"},
 {n:"哑铃推举蹲(Thruster)",s:"40秒",t:"深蹲站起同时推举，全身协调"},
-{n:"交替弓步（不跳）",s:"40秒",t:"步幅小一点（左踝保护），前腿大腿前侧+臀发力"},
+{n:"快速俯卧撑",s:"40秒",t:"保持节奏，核心收紧，膝盖可触地降阶，无冲击护膝"},
 {n:"休息",s:"60秒",t:"走动呼吸恢复，共3轮"}
 ],
 warmup:UPPER_WARMUP,cd:[
@@ -594,7 +594,7 @@ warmup:UPPER_WARMUP,cd:[
 ],hiit:[
 {n:"壶铃摆荡",s:"40秒",w:"2.5kg",t:"髋部爆发前顶，臀+大腿后侧发力"},
 {n:"哑铃推举蹲(Thruster)",s:"40秒",t:"深蹲站起同时推举，全身协调"},
-{n:"交替弓步（不跳）",s:"40秒",t:"步幅小一点（左踝保护）"},
+{n:"快速俯卧撑",s:"40秒",t:"保持节奏，核心收紧，膝盖可触地降阶，无冲击护膝"},
 {n:"休息",s:"60秒",t:"走动呼吸恢复，共4轮"}
 ],
 warmup:LOWER_WARMUP,cd:[
@@ -1643,20 +1643,24 @@ function renderBodyPartDistance(){
 
 // ===== TAB MEMO: 备忘 =====
 function initMemo(){
-  // 体检关键指标（重点监测）
+  // 体检关键指标（重点监测）——2026-06-06 最新抽血
   const indicators=[
-    {name:'Lp(a) 脂蛋白(a)',val:'666',unit:'mg/L',ref:'<300',status:'high',icon:'🔴',impact:'心血管独立风险因子，遗传性，饮食运动难降',note:'需LDL-C<2.4补偿风险'},
-    {name:'LDL-C 低密度脂蛋白',val:'3.47',unit:'mmol/L',ref:'<3.4',status:'high',icon:'🔴',impact:'坏胆固醇，直接致血管斑块',note:'年度目标<2.4'},
-    {name:'TG 甘油三酯',val:'1.85',unit:'mmol/L',ref:'<1.7',status:'high',icon:'🔴',impact:'果糖→肝脏合成TG→脂肪肝',note:'严控果糖<25g/天'},
-    {name:'TC 总胆固醇',val:'5.34',unit:'mmol/L',ref:'<5.2',status:'high',icon:'🟡',impact:'综合胆固醇水平',note:'辅助参考'},
-    {name:'HDL-C 高密度脂蛋白',val:'1.14',unit:'mmol/L',ref:'≥1.04',status:'low',icon:'🟡',impact:'好胆固醇，保护血管',note:'增不饱和脂肪+运动提升'},
-    {name:'ALT 谷丙转氨酶',val:'54',unit:'U/L',ref:'<40',status:'high',icon:'🔴',impact:'肝损伤标志，脂肪肝导致',note:'减脂后恢复'},
-    {name:'Hcy 同型半胱氨酸',val:'9.37',unit:'μmol/L',ref:'<10',status:'ok',icon:'🟢',impact:'高则损伤血管内皮',note:'补叶酸/B族可降'},
-    {name:'尿酸',val:'370',unit:'μmol/L',ref:'<420',status:'ok',icon:'🟢',impact:'高则痛风+肾损伤',note:'已恢复正常(前418)'},
-    {name:'空腹血糖',val:'4.79',unit:'mmol/L',ref:'3.9-6.1',status:'ok',icon:'🟢',impact:'糖代谢状态',note:'好转(前5.10)'},
-    {name:'血小板',val:'394',unit:'×10⁹/L',ref:'125-350',status:'high',icon:'🟡',impact:'血液偏稠，血栓风险↑',note:'配合血粘度一起看'},
-    {name:'全血粘度(高切)',val:'6.52',unit:'mPa·s',ref:'4.2-5.7',status:'high',icon:'🟡',impact:'血液粘稠度',note:'多喝水≥2000ml/天'},
-    {name:'脂肪肝',val:'中度',unit:'',ref:'正常',status:'high',icon:'🔴',impact:'肝损伤+脂代谢障碍',note:'减脂可逆转'},
+    {name:'Lp(a) 脂蛋白(a)',val:'656',unit:'mg/L',ref:'<300',status:'high',icon:'🔴',impact:'心血管独立风险因子，遗传性，饮食运动难降',note:'较2025年666略降，需LDL-C<2.4补偿风险'},
+    {name:'LDL-C 低密度脂蛋白',val:'3.47',unit:'mmol/L',ref:'<3.4',status:'high',icon:'🔴',impact:'坏胆固醇，直接致血管斑块',note:'年度目标<2.4（12月1日体检前达标）'},
+    {name:'TG 甘油三酯',val:'1.37',unit:'mmol/L',ref:'<1.7',status:'ok',icon:'🟢',impact:'果糖→肝脏合成TG→脂肪肝',note:'✅已恢复正常（2025年1.85）'},
+    {name:'TC 总胆固醇',val:'5.34',unit:'mmol/L',ref:'<5.2',status:'high',icon:'🟡',impact:'综合胆固醇水平',note:'辅助参考，随LDL下降会改善'},
+    {name:'HDL-C 高密度脂蛋白',val:'1.14',unit:'mmol/L',ref:'≥1.04',status:'ok',icon:'🟢',impact:'好胆固醇，保护血管',note:'✅已恢复正常（2024年1.00）'},
+    {name:'ALT 谷丙转氨酶',val:'63',unit:'U/L',ref:'<50',status:'high',icon:'🔴',impact:'肝损伤标志，脂肪肝导致',note:'较2025年54.4升高，减脂后可恢复'},
+    {name:'AST 天门冬氨酸氨基转移酶',val:'85',unit:'U/L',ref:'<40',status:'high',icon:'🔴',impact:'肝/肌肉损伤标志',note:'偏高，需关注；CK 5625提示近期有运动肌肉损伤'},
+    {name:'Hcy 同型半胱氨酸',val:'9.37',unit:'μmol/L',ref:'<15',status:'ok',icon:'🟢',impact:'高则损伤血管内皮',note:'正常范围，B族充足'},
+    {name:'尿酸',val:'360',unit:'μmol/L',ref:'<420',status:'ok',icon:'🟢',impact:'高则痛风+肾损伤',note:'✅持续正常（2024年418）'},
+    {name:'空腹血糖',val:'4.85',unit:'mmol/L',ref:'3.9-6.1',status:'ok',icon:'🟢',impact:'糖代谢状态',note:'✅正常'},
+    {name:'HbA1c 糖化血红蛋白',val:'5.12',unit:'%',ref:'<6.0',status:'ok',icon:'🟢',impact:'近3个月平均血糖',note:'✅正常'},
+    {name:'血小板',val:'360',unit:'×10⁹/L',ref:'125-350',status:'high',icon:'🟡',impact:'血液偏稠，血栓风险↑',note:'略高，多喝水+鱼油'},
+    {name:'骨钙素',val:'11.4',unit:'ng/mL',ref:'14-42',status:'low',icon:'🟡',impact:'骨形成活性',note:'偏低，钙+D3+K2继续，胶原蛋白肽15g'},
+    {name:'25-OH VD',val:'79.4',unit:'nmol/L',ref:'≥50',status:'ok',icon:'🟢',impact:'维生素D水平',note:'✅充足'},
+    {name:'Ca 血钙',val:'2.42',unit:'mmol/L',ref:'2.11-2.52',status:'ok',icon:'🟢',impact:'血钙水平',note:'正常低值，钙片继续'},
+    {name:'eGFR',val:'105',unit:'mL/min',ref:'>90',status:'ok',icon:'🟢',impact:'肾小球滤过率',note:'✅肾功能正常'}
   ];
   let h='';
   indicators.forEach(ind=>{
@@ -1670,7 +1674,7 @@ function initMemo(){
     if(ind.note) h+='<div style="font-size:11px;color:var(--text-3);margin-left:22px">💡 '+ind.note+' | 参照: '+ind.ref+'</div>';
     h+='</div>';
   });
-  h+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">体检日期: 2025-11 | 🔴需重点关注 🟡需关注 🟢正常</div>';
+  h+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">体检日期: 2026-06-06 | 🔴需重点关注 🟡需关注 🟢正常 | 12月1日复查</div>';
   $('healthIndicators').innerHTML=h;
 
   // 器材清单
