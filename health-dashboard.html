@@ -471,17 +471,17 @@ async function loadData(){
       timeout
     ]);
     WD=data[0];DD=data[1];TD=data[2];DIM=data[3];
-    mergeWeightLS();mergeDimLS();
+    mergeWeightLS();mergeDimLS();mergeTrainingLS();mergeDietLS();
   }catch(e){
     console.warn('数据加载降级:',e.message);
-    mergeWeightLS();mergeDimLS();
+    mergeWeightLS();mergeDimLS();mergeTrainingLS();mergeDietLS();
   }
   // 每个初始化函数独立try-catch，防止一个崩溃影响其他
   const initFns=[initNav,initOverview,filterTraining,filterDiet,filterBody,initMemo,renderReviewSection];
   initFns.forEach(fn=>{try{fn();}catch(e){console.warn(fn.name+'初始化失败:',e.message);}});
 }
 loadData();
-const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "鱼油(海力生2+BM2) 4粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽 10-15g/天"];
+const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "海力生EPA鱼油 2粒/天", "Blackmores鱼油 2粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽(VP) 15g/天"];
 
 const ACTIONS={
 "周一":{name:"推力量 + 持续输出 + 核心 + 功能性HIIT",dur:"~70min",w:[
@@ -649,6 +649,45 @@ function mergeDimLS(){
   DIM.sort(function(a,b){return a.date.localeCompare(b.date);});
 }
 mergeDimLS();
+// ===== 训练+饮食 localStorage 合并到 TD/DD =====
+function mergeTrainingLS(){
+  var ls={};
+  try{ls=JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){}
+  Object.keys(ls).forEach(function(dt){
+    var items=ls[dt]||[];
+    var totalDur=items.reduce(function(s,i){return s+(i.dur||0);},0);
+    var totalCal=items.reduce(function(s,i){return s+(i.total||0);},0);
+    var dynCal=items.reduce(function(s,i){return s+(i.dyn||0);},0);
+    var types=items.map(function(i){return i.type||'训练';}).join('+');
+    var idx=TD.findIndex(function(d){return d.date===dt;});
+    if(idx>=0){
+      TD[idx].dur=totalDur;TD[idx].total=totalCal;TD[idx].dyn=dynCal;TD[idx].type=types;
+    }else{
+      TD.push({date:dt,dur:totalDur,total:totalCal,dyn:dynCal,type:types});
+    }
+  });
+  TD.sort(function(a,b){return a.date.localeCompare(b.date);});
+}
+function mergeDietLS(){
+  var ls={};
+  try{ls=JSON.parse(localStorage.getItem('health_meals')||'{}');}catch(e){}
+  Object.keys(ls).forEach(function(dt){
+    var meals=ls[dt]||{};
+    var cal=0,p=0,sf=0,fr=0,c=0;
+    ['b','l','d','s'].forEach(function(k){
+      (meals[k]||[]).forEach(function(item){
+        cal+=item.cal||0;p+=item.p||0;sf+=item.sf||0;fr+=item.fr||0;c+=item.c||0;
+      });
+    });
+    var idx=DD.findIndex(function(d){return d.date===dt;});
+    if(idx>=0){
+      DD[idx].t={cal:cal,p:p,sf:sf,fr:fr,c:c};
+    }else{
+      DD.push({date:dt,t:{cal:cal,p:p,sf:sf,fr:fr,c:c}});
+    }
+  });
+  DD.sort(function(a,b){return a.date.localeCompare(b.date);});
+}
 function saveDimRecord(){
   var w=parseFloat(document.getElementById('dimWaist').value);
   var hp=parseFloat(document.getElementById('dimHip').value);
@@ -758,6 +797,7 @@ function quickAddFood(idx){
     renderMealList('s');
     updateDietSummary();
     if(typeof filterDiet==='function')filterDiet();
+  if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
     flashHint('已添加到加餐：'+f[0]);
     return;
   }
@@ -846,6 +886,7 @@ function saveMealItem(key,label){
   renderMealList(actualKey);
   updateDietSummary();
   if(typeof filterDiet==='function')filterDiet();
+  if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
 }
 function deleteMealItem(key,idx){
   const meals=getMeals();
@@ -856,6 +897,7 @@ function deleteMealItem(key,idx){
     renderMealList(key);
     updateDietSummary();
     if(typeof filterDiet==='function')filterDiet();
+  if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
   }
 }
 function renderMealList(key){
@@ -934,10 +976,12 @@ function saveTrainingItem(){
   if(!records[todayStr])records[todayStr]=[];
   records[todayStr].push({type:type,dur:dur,dyn:dyn,total:total,hr:hr,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
   setTrainingRecords(records);
+  mergeTrainingLS();
   ['trDur','trDyn','trTotal','trHr'].forEach(id=>$(id).value='');
   renderTrainingList();
   updateTrainDailySummary();
   if(typeof filterTraining==='function')filterTraining();
+  if(typeof renderReviewSection==='function')renderReviewSection();
 }
 function deleteTrainingRecord(idx){
   const records=getTrainingRecords();
@@ -1700,14 +1744,15 @@ function initMemo(){
     {name:'肌酸',dose:'5g',note:'空腹',time:'19:00',stock:'库存充足',price:0},
     {name:'蛋白粉(普通乳清)',dose:'1勺',note:'空腹',time:'19:00',stock:'5kg',price:1088},
     {name:'ADAM男士多维',dose:'2粒',note:'晚餐随餐',time:'19:15',stock:'90粒×2',price:456.8},
-    {name:'海力生EPA鱼油',dose:'4粒',note:'晚餐随餐',time:'19:15',stock:'690粒',price:912.65},
+    {name:'海力生EPA鱼油',dose:'2粒',note:'晚餐随餐 EPA1800mg+DHA20mg',time:'19:15',stock:'690粒',price:912.65},
+    {name:'Blackmores鱼油1000',dose:'2粒',note:'晚餐随餐 EPA360mg+DHA240mg',time:'19:15',stock:'',price:0},
     {name:'CoQ10',dose:'1粒',note:'晚餐随餐',time:'19:15',stock:'第二盒刚拆',price:150},
     {name:'D3+K2复合(NatureWise)',dose:'1粒',note:'晚餐随餐',time:'19:15',stock:'90粒/90天',price:358.15},
     {name:'UC-II(NOW Foods)',dose:'1粒',note:'睡前空腹',time:'22:30',stock:'120粒/120天',price:262.09},
     {name:'柠檬酸钙(GNC)',dose:'2粒',note:'睡前空腹',time:'22:30',stock:'180片/90天',price:55.05},
     {name:'甘氨酸镁',dose:'2粒',note:'睡前空腹',time:'22:30',stock:'',price:0},
     {name:'KSM-66',dose:'1粒',note:'睡前空腹',time:'22:30',stock:'2盒',price:286.94},
-    {name:'胶原蛋白肽(VP)',dose:'10-15g',note:'睡前空腹',time:'22:30',stock:'567g/120天',price:307.05},
+    {name:'胶原蛋白肽(VP)',dose:'15g',note:'睡前空腹 常温水冲服',time:'22:30',stock:'567g/38天',price:307.05},
     {name:'他达拉非',dose:'5mg',note:'任意时间',time:'任意',stock:'3盒',price:251}
   ];
   // 按时间分组渲染补剂清单
