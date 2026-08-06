@@ -460,7 +460,9 @@ async function loadData(){
     console.warn('数据加载降级:',e.message);
     mergeWeightLS();mergeDimLS();
   }
-  initNav();initOverview();filterTraining();filterDiet();filterBody();initMemo();renderReviewSection();
+  // 每个初始化函数独立try-catch，防止一个崩溃影响其他
+  const initFns=[initNav,initOverview,filterTraining,filterDiet,filterBody,initMemo,renderReviewSection];
+  initFns.forEach(fn=>{try{fn();}catch(e){console.warn(fn.name+'初始化失败:',e.message);}});
 }
 loadData();
 const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "鱼油(海力生2+BM2) 4粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽 10-15g/天"];
@@ -1016,7 +1018,7 @@ function initNav(){
 }
 function initWeightCompare(todayStr){
   const todayEntry=WD.find(d=>d.date===todayStr);
-  const curW=todayEntry?todayEntry.weight:WD[WD.length-1].weight;
+  const curW=todayEntry?todayEntry.weight:(WD.length>0?WD[WD.length-1].weight:0);
   const startW=89.85;
   // Current week: find Monday of current week
   const now=new Date();const dow=now.getDay()||7;
@@ -1121,6 +1123,7 @@ function makePieChart(slices,w,h){
 
 
 function drawWeightProgressChart(containerId, data, targetKg, targetDate, height174){
+  if(!data||data.length===0){document.getElementById(containerId).innerHTML='<div style="font-size:13px;color:var(--text-3);text-align:center;padding:40px">暂无体重数据</div>';return;}
   const w=450, h=280;
   const pad={l:44,r:16,t:20,b:32};
   const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
@@ -1225,7 +1228,7 @@ function initOverview(){
   const total=Math.floor((end-start)/86400000);
   const timePct=Math.min(100,passed/total*100);
   // Weight: use latest entry
-  const latestW=WD[WD.length-1].weight;
+  const latestW=WD.length>0?WD[WD.length-1].weight:0;
   const startW=89.85,targetW=75,needLose=startW-targetW;
   const curW=latestW,lost=startW-curW;
   const fatPct=Math.min(100,lost/needLose*100);
@@ -1386,14 +1389,15 @@ function filterBody(){
   renderBodyPartDistance();
   
   // Reference comparison
-  const baseline=WD.find(d=>d.date==='2026-06-07');
-  const latest=WD.filter(d=>d.bf!=null).pop();
-  const latestDim=DIM[DIM.length-1];
+  const baseline=WD.find(d=>d.date==='2026-06-07')||{};
+  const latest=WD.filter(d=>d.bf!=null).pop()||{};
+  const latestDim=DIM[DIM.length-1]||{};
+  const dimFirst=DIM[0]||{};
   const refs=[
     {name:'体重',icon:'⚖️',cur:latest.weight,unit:'kg',ref:'≤70',target:70,base:baseline.weight,lower:true},
     {name:'体脂率',icon:'📉',cur:latest.bf,unit:'%',ref:'13-15%',target:14,base:baseline.bf,lower:true},
     {name:'内脏脂肪',icon:'🫀',cur:latest.vf,unit:'级',ref:'≤7',target:7,base:baseline.vf,lower:true},
-    {name:'腰围',icon:'📏',cur:latestDim?latestDim.waist:null,unit:'cm',ref:'76-80',target:78,base:DIM[0].waist,lower:true},
+    {name:'腰围',icon:'📏',cur:latestDim?latestDim.waist:null,unit:'cm',ref:'76-80',target:78,base:dimFirst.waist,lower:true},
     {name:'肌肉量',icon:'💪',cur:latest.muscle,unit:'kg',ref:'维持>55',target:55,base:baseline.muscle,lower:false},
     {name:'去脂体重',icon:'🏃',cur:latest.ffm,unit:'kg',ref:'保持',target:58,base:baseline.ffm,lower:false}
   ];
