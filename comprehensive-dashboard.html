@@ -64,6 +64,14 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 .section-title{font-size:13px;font-weight:600;color:var(--blue);margin:16px 0 10px;padding-left:2px}
 .empty-state{text-align:center;padding:40px 20px;color:var(--text-3);font-size:13px}
 .empty-state .icon{font-size:40px;margin-bottom:12px;opacity:0.5}
+/* 吉格标签 */
+.jige-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.jige-chip{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;white-space:nowrap;line-height:1.5}
+.jige-chip.sanqi{background:rgba(251,191,36,0.18);color:var(--yellow);border:1px solid rgba(251,191,36,0.35)}
+.jige-chip.dun{background:rgba(74,158,255,0.15);color:var(--blue);border:1px solid rgba(74,158,255,0.3)}
+.jige-chip.yunu{background:rgba(167,139,250,0.15);color:var(--purple);border:1px solid rgba(167,139,250,0.3)}
+.jige-chip.normal{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.25)}
+.jige-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(251,191,36,0.2);color:var(--yellow);margin-left:4px}
 .date-filter{display:flex;gap:8px;align-items:center;margin-bottom:14px}
 .date-filter input{background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;flex:1}
 .date-filter span{color:var(--text-3);font-size:12px;flex-shrink:0}
@@ -138,6 +146,10 @@ input::placeholder{color:var(--text-3)}
     <div class="card" id="add-card" style="display:none;margin-top:12px;padding:18px">
       <div class="card-title" style="margin-bottom:14px">✏️ 快速记账</div>
       <div id="add-form" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:8px">
+          <button type="button" id="type-expense-btn" onclick="switchTxType('expense')" style="flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--red);color:#fff">💸 支出</button>
+          <button type="button" id="type-income-btn" onclick="switchTxType('income')" style="flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text-2)">💰 收入</button>
+        </div>
         <div style="display:flex;gap:10px">
           <div style="flex:1">
             <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">日期</label>
@@ -151,22 +163,11 @@ input::placeholder{color:var(--text-3)}
         <div style="display:flex;gap:10px">
           <div style="flex:1">
             <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">项目名称</label>
-            <input type="text" id="add-item" placeholder="消费项目" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
+            <input type="text" id="add-item" placeholder="项目名称" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
           </div>
           <div style="flex:1">
             <label style="display:block;font-size:13px;color:var(--text-2);margin-bottom:4px">分类</label>
-            <select id="add-category" style="width:100%;padding:10px;border-radius:8px;font-size:14px">
-              <option value="">请选择</option>
-              <option value="餐饮">餐饮</option>
-              <option value="交通">交通</option>
-              <option value="娱乐">娱乐</option>
-              <option value="固定支出">固定支出</option>
-              <option value="补剂">补剂</option>
-              <option value="训练">训练</option>
-              <option value="个人护理">个人护理</option>
-              <option value="个人生活">个人生活</option>
-              <option value="数码产品">数码产品</option>
-            </select>
+            <select id="add-category" style="width:100%;padding:10px;border-radius:8px;font-size:14px"></select>
           </div>
         </div>
         <button onclick="previewTransaction()" style="margin-top:4px;padding:12px;background:var(--blue);color:white;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer">保存</button>
@@ -242,9 +243,23 @@ const catConfig = {
 
 const allCatOrder = ['固定支出','餐饮','补剂','训练','个人护理','交通','娱乐','医疗','穿戴','个人生活','数码产品'];
 
+// 收入分类配置
+const incomeCatConfig = {
+  '工资': {emoji:'💼',color:'#34D399'},
+  '退款': {emoji:'↩️',color:'#4A9EFF'},
+  '初始余额': {emoji:'🏦',color:'#a78bfa'},
+  '红包': {emoji:'🧧',color:'#EF4444'},
+  '投资收益': {emoji:'📈',color:'#F59E0B'},
+  '其他收入': {emoji:'💰',color:'#34D399'}
+};
+const incomeCatOrder = ['工资','退款','初始余额','红包','投资收益','其他收入'];
+
 // ========== HELPERS ==========
 function fmt(n) { return n.toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 function fmtWan(n) { if(Math.abs(n)>=10000) return (n/10000).toFixed(2)+'万'; return fmt(n); }
+
+// 判断交易类型：没有type字段的旧数据默认为支出
+function isIncome(t) { return t.type === 'income'; }
 
 function formatDate(d) {
   const parts = d.split('-');
@@ -264,12 +279,18 @@ function filterByDate(items, start, end) {
   return items.filter(t => t.date >= start && t.date <= end);
 }
 
-function calcExpense(list) { return list.reduce((s,t) => s + t.amount, 0); }
-function calcIncome(list) { return list.reduce((s,t) => s + t.amount, 0); }
+// 统一获取所有交易（transactions + incomeRecords 初始数据）
+function getAllTx() {
+  const incMapped = incomeRecords.map(r => ({date:r.date, category:r.item.includes('工资')?'工资':(r.item.includes('退货')||r.item.includes('退'))?'退款':(r.item.includes('初始')?'初始余额':'其他收入'), item:r.item, amount:r.amount, type:'income', isInitial:true}));
+  return [...transactions, ...incMapped];
+}
+
+function calcExpense(list) { return list.filter(t=>!isIncome(t)).reduce((s,t) => s + (t.amount||0), 0); }
+function calcIncome(list) { return list.filter(t=>isIncome(t)).reduce((s,t) => s + (t.amount||0), 0); }
 
 function groupByCategory(list) {
   const g = {};
-  list.forEach(t => { g[t.category] = (g[t.category]||0) + t.amount; });
+  list.forEach(t => { const c = t.category || '未分类'; g[c] = (g[c]||0) + t.amount; });
   return g;
 }
 
@@ -283,7 +304,16 @@ function daysSinceStart() {
 function renderOverview() {
   const days = daysSinceStart();
   const dailyAvg = totalExpense / days;
-  const catOrder = allCatOrder.filter(c => catTotals[c] && catTotals[c] > 0).sort((a,b) => catTotals[b] - catTotals[a]);
+  const allTx = getAllTx();
+  const expenses = allTx.filter(t=>!isIncome(t));
+  const incomes = allTx.filter(t=>isIncome(t));
+
+  // 支出分类
+  const expGrouped = groupByCategory(expenses);
+  const catOrder = allCatOrder.filter(c => expGrouped[c] && expGrouped[c] > 0).sort((a,b) => expGrouped[b] - expGrouped[a]);
+  // 收入分类
+  const incGrouped = groupByCategory(incomes);
+  const incCatOrder = incomeCatOrder.filter(c => incGrouped[c] && incGrouped[c] > 0).sort((a,b) => incGrouped[b] - incGrouped[a]);
 
   let html = `
     <div class="card">
@@ -313,7 +343,7 @@ function renderOverview() {
 
   catOrder.forEach(cat => {
     const cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
-    const amt = catTotals[cat] || 0;
+    const amt = expGrouped[cat] || 0;
     const pct = totalExpense > 0 ? (amt / totalExpense * 100).toFixed(1) : 0;
     html += `
         <div class="cat-item" style="--cat-color:${cfg.color}">
@@ -328,27 +358,38 @@ function renderOverview() {
 
   html += `</div></div>`;
 
-  // Income section
-  html += `
+  // 收入分类汇总
+  if(incCatOrder.length > 0){
+    html += `
     <div class="card">
-      <div class="card-title">💰 收入明细</div>
-      <div class="income-section">`;
-  incomeRecords.forEach(r => {
-    html += `<div class="income-row"><span class="name">${formatDate(r.date)} ${r.item}</span><span class="amt">+¥${fmt(r.amount)}</span></div>`;
-  });
-  html += `
-        <div class="income-total"><span class="name">累计收入</span><span class="amt">+¥${fmt(totalIncome)}</span></div>
-      </div>
-    </div>`;
+      <div class="card-title">💰 收入分类</div>
+      <div class="cat-grid">`;
+    incCatOrder.forEach(cat => {
+      const cfg = incomeCatConfig[cat] || {emoji:'💰',color:'#34D399'};
+      const amt = incGrouped[cat] || 0;
+      const pct = totalIncome > 0 ? (amt / totalIncome * 100).toFixed(1) : 0;
+      html += `
+        <div class="cat-item" style="--cat-color:${cfg.color}">
+          <div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:${cfg.color}"></div>
+          <div class="cat-icon">${cfg.emoji}</div>
+          <div class="cat-name">${cat}</div>
+          <div class="cat-amount">+¥${fmt(amt)}</div>
+          <div class="cat-pct">${pct}%</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${cfg.color}"></div></div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  }
 
-  // 最近明细
-  const recent = [...transactions].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 15);
+  // 最近明细（收入+支出混合）
+  const recent = allTx.slice().sort((a,b) => b.date.localeCompare(a.date)).slice(0, 15);
   html += `
     <div class="card">
       <div class="card-title">📋 最近明细</div>
       <div class="tx-list">`;
   recent.forEach(tx => {
-    const cfg = catConfig[tx.category] || {emoji:'📦',color:'#888'};
+    const inc = isIncome(tx);
+    const cfg = inc ? (incomeCatConfig[tx.category] || {emoji:'💰',color:'#34D399'}) : (catConfig[tx.category] || {emoji:'📦',color:'#888'});
     html += `
         <div class="tx-item">
           <div class="tx-emoji">${cfg.emoji}</div>
@@ -356,7 +397,7 @@ function renderOverview() {
             <div class="tx-name">${tx.item}</div>
             <div class="tx-meta">${formatDate(tx.date)} · ${tx.category}</div>
           </div>
-          <div class="tx-amount expense">-¥${fmt(tx.amount)}</div>
+          <div class="tx-amount ${inc?'income':'expense'}">${inc?'+':'-'}¥${fmt(tx.amount)}</div>
         </div>`;
   });
   html += `</div></div>`;
@@ -367,22 +408,17 @@ function renderOverview() {
 // ========== RENDER: 月度 ==========
 function renderMonth() {
   const panel = document.getElementById('sub-month');
+  const allTx = getAllTx();
 
-  // Dynamically extract all months from transactions
+  // Dynamically extract all months from all transactions
   var monthSet = {};
-  transactions.forEach(function(t) {
-    var ym = t.date.slice(0, 7); // YYYY-MM
+  allTx.forEach(function(t) {
+    var ym = t.date.slice(0, 7);
     if (!monthSet[ym]) monthSet[ym] = ym;
   });
-  var months = Object.keys(monthSet).sort().reverse(); // most recent first
+  var months = Object.keys(monthSet).sort().reverse();
 
-  // Also include income months
-  incomeRecords.forEach(function(r) {
-    var ym = r.date.slice(0, 7);
-    if (!monthSet[ym]) { monthSet[ym] = ym; months = Object.keys(monthSet).sort().reverse(); }
-  });
-
-  // Take last 2 months (most recent first → already sorted desc)
+  // Take last 2 months (most recent first)
   var recentMonths = months.slice(0, 2);
 
   // Build month comparison cards
@@ -390,10 +426,9 @@ function renderMonth() {
   recentMonths.forEach(function(ym) {
     var parts = ym.split('-');
     var monthLabel = parseInt(parts[1]) + '月';
-    var mTxs = transactions.filter(function(t) { return t.date.slice(0,7) === ym; });
-    var mIncs = incomeRecords.filter(function(r) { return r.date.slice(0,7) === ym; });
+    var mTxs = allTx.filter(function(t) { return t.date.slice(0,7) === ym; });
     var mExp = calcExpense(mTxs);
-    var mInc = calcIncome(mIncs);
+    var mInc = calcIncome(mTxs);
     compareHtml += '<div class="month-card">' +
       '<div class="month-name">' + monthLabel + '</div>' +
       '<div class="month-exp">¥' + fmt(mExp) + '</div>' +
@@ -404,7 +439,7 @@ function renderMonth() {
   compareHtml += '</div>';
 
   // Build current month detail (most recent month)
-  var curMonth = months[0]; // most recent month with data
+  var curMonth = months[0];
   var curStart = curMonth + '-01';
   var curParts = curMonth.split('-');
   var curYear = parseInt(curParts[0]);
@@ -413,26 +448,30 @@ function renderMonth() {
   var curEnd = curMonth + '-' + String(lastDay).padStart(2,'0');
   var label = curMonth === getMonthRange()[0].slice(0,7) ? '本月' : (curMo + '月');
 
-  var txs = filterByDate(transactions, curStart, curEnd);
-  var incs = filterByDate(incomeRecords.map(function(r) { return {date:r.date, category:'收入', item:r.item, amount:r.amount}; }), curStart, curEnd);
+  var monthTx = filterByDate(allTx, curStart, curEnd);
+  var expTx = monthTx.filter(function(t){return !isIncome(t);});
+  var incTx = monthTx.filter(function(t){return isIncome(t);});
 
   var detailHtml = '';
-  if (txs.length === 0 && incs.length === 0) {
+  if (monthTx.length === 0) {
     detailHtml = '<div class="empty-state"><div class="icon">📭</div><div>' + label + '暂无记录</div></div>';
   } else {
-    var expTotal = calcExpense(txs);
-    var incTotal = calcIncome(incs);
-    var grouped = groupByCategory(txs);
+    var expTotal = calcExpense(monthTx);
+    var incTotal = calcIncome(monthTx);
+    var grouped = groupByCategory(expTx);
+    var incGrouped = groupByCategory(incTx);
     var catOrder = Object.keys(grouped).sort(function(a,b) { return grouped[b] - grouped[a]; });
+    var incCatOrder = Object.keys(incGrouped).sort(function(a,b) { return incGrouped[b] - incGrouped[a]; });
 
     detailHtml = '<div class="day-summary">' +
       '<div class="row"><span class="label">' + label + '支出</span><span class="val exp">¥' + fmt(expTotal) + '</span></div>' +
       '<div class="row"><span class="label">' + label + '收入</span><span class="val inc">¥' + fmt(incTotal) + '</span></div>' +
-      '<div class="row"><span class="label">' + label + '笔数</span><span class="val" style="color:var(--text)">' + txs.length + ' 笔</span></div>' +
+      '<div class="row"><span class="label">' + label + '笔数</span><span class="val" style="color:var(--text)">' + monthTx.length + ' 笔</span></div>' +
     '</div>';
 
+    // 支出分类
     if (catOrder.length > 0) {
-      detailHtml += '<div class="card"><div class="card-title">分类汇总</div><div class="cat-grid">';
+      detailHtml += '<div class="card"><div class="card-title">📂 支出分类</div><div class="cat-grid">';
       catOrder.forEach(function(cat) {
         var cfg = catConfig[cat] || {emoji:'📦',color:'#888'};
         var amt = grouped[cat];
@@ -448,19 +487,40 @@ function renderMonth() {
       detailHtml += '</div></div>';
     }
 
-    if (txs.length > 0) {
+    // 收入分类
+    if (incCatOrder.length > 0) {
+      detailHtml += '<div class="card"><div class="card-title">💰 收入分类</div><div class="cat-grid">';
+      incCatOrder.forEach(function(cat) {
+        var cfg = incomeCatConfig[cat] || {emoji:'💰',color:'#34D399'};
+        var amt = incGrouped[cat];
+        var pct = incTotal > 0 ? (amt/incTotal*100).toFixed(1) : 0;
+        detailHtml += '<div class="cat-item">' +
+          '<div style="position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;background:' + cfg.color + '"></div>' +
+          '<div class="cat-icon">' + cfg.emoji + '</div>' +
+          '<div class="cat-name">' + cat + '</div>' +
+          '<div class="cat-amount">+¥' + fmt(amt) + '</div>' +
+          '<div class="cat-pct">' + pct + '%</div>' +
+        '</div>';
+      });
+      detailHtml += '</div></div>';
+    }
+
+    // 支出明细
+    if (expTx.length > 0) {
       detailHtml += '<div class="card"><div class="card-title">支出明细</div><div class="tx-list">';
-      txs.slice().reverse().forEach(function(t) {
+      expTx.slice().reverse().forEach(function(t) {
         var cfg = catConfig[t.category] || {emoji:'📦',color:'#888'};
         detailHtml += '<div class="tx-item"><div class="tx-emoji">' + cfg.emoji + '</div><div class="tx-left"><div class="tx-name">' + t.item + '</div><div class="tx-meta">' + formatDate(t.date) + ' · ' + t.category + '</div></div><div class="tx-amount expense">-¥' + fmt(t.amount) + '</div></div>';
       });
       detailHtml += '</div></div>';
     }
 
-    if (incs.length > 0) {
-      detailHtml += '<div class="card"><div class="card-title">💰 收入</div><div class="tx-list">';
-      incs.slice().reverse().forEach(function(r) {
-        detailHtml += '<div class="tx-item"><div class="tx-emoji">💰</div><div class="tx-left"><div class="tx-name">' + r.item + '</div><div class="tx-meta">' + formatDate(r.date) + '</div></div><div class="tx-amount income">+¥' + fmt(r.amount) + '</div></div>';
+    // 收入明细
+    if (incTx.length > 0) {
+      detailHtml += '<div class="card"><div class="card-title">💰 收入明细</div><div class="tx-list">';
+      incTx.slice().reverse().forEach(function(r) {
+        var cfg = incomeCatConfig[r.category] || {emoji:'💰',color:'#34D399'};
+        detailHtml += '<div class="tx-item"><div class="tx-emoji">' + cfg.emoji + '</div><div class="tx-left"><div class="tx-name">' + r.item + '</div><div class="tx-meta">' + formatDate(r.date) + ' · ' + r.category + '</div></div><div class="tx-amount income">+¥' + fmt(r.amount) + '</div></div>';
       });
       detailHtml += '</div></div>';
     }
@@ -478,6 +538,7 @@ function renderDetail() {
         <option value="all">全部</option>
         <option value="jun">6月</option>
         <option value="jul">7月</option>
+        <option value="aug">8月</option>
         <option value="custom">自定义</option>
       </select>
       <input type="date" id="filterStart" style="display:none" onchange="applyFilter()">
@@ -500,7 +561,7 @@ function onPresetChange() {
     e.style.display = '';
     sep.style.display = '';
     s.value = '2026-06-01';
-    e.value = '2026-07-31';
+    e.value = '2026-08-31';
     applyFilter();
   } else {
     s.style.display = 'none';
@@ -516,22 +577,18 @@ function applyFilter() {
 
   if (preset === 'jun') { start = '2026-06-01'; end = '2026-06-30'; }
   else if (preset === 'jul') { start = '2026-07-01'; end = '2026-07-31'; }
+  else if (preset === 'aug') { start = '2026-08-01'; end = '2026-08-31'; }
   else if (preset === 'custom') {
     start = document.getElementById('filterStart').value || '2026-06-01';
-    end = document.getElementById('filterEnd').value || '2026-07-31';
+    end = document.getElementById('filterEnd').value || '2026-08-31';
   }
 
-  const txs = filterByDate(transactions, start || '0000-01-01', end);
-  const incs = filterByDate(incomeRecords, start || '0000-01-01', end);
+  const allTx = filterByDate(getAllTx(), start || '0000-01-01', end);
+  const expTotal = calcExpense(allTx);
+  const incTotal = calcIncome(allTx);
 
   // Combine and sort
-  const all = [
-    ...txs.map(t => ({...t, type:'expense'})),
-    ...incs.map(r => ({date:r.date, item:r.item, amount:r.amount, category:'收入', type:'income'}))
-  ].sort((a,b) => b.date.localeCompare(a.date) || (a.type === 'income' ? -1 : 1));
-
-  const expTotal = calcExpense(txs);
-  const incTotal = calcIncome(incs.map(r => ({amount:r.amount})));
+  const all = allTx.slice().sort((a,b) => b.date.localeCompare(a.date) || (isIncome(a) ? -1 : 1));
 
   let html = `
     <div class="day-summary">
@@ -542,13 +599,14 @@ function applyFilter() {
     <div class="card"><div class="tx-list">`;
 
   all.forEach(t => {
-    if (t.type === 'income') {
+    if (isIncome(t)) {
+      const cfg = incomeCatConfig[t.category] || {emoji:'💰',color:'#34D399'};
       html += `
         <div class="tx-item">
-          <div class="tx-emoji">💰</div>
+          <div class="tx-emoji">${cfg.emoji}</div>
           <div class="tx-left">
             <div class="tx-name">${t.item}</div>
-            <div class="tx-meta">${formatDate(t.date)} · 收入</div>
+            <div class="tx-meta">${formatDate(t.date)} · ${t.category}</div>
           </div>
           <div class="tx-amount income">+¥${fmt(t.amount)}</div>
         </div>`;
@@ -806,6 +864,27 @@ function getPZSchedule(){
   return _pzSchedule;
 }
 
+// 吉格标签渲染：把 tag 字符串拆成多个 chip
+function renderJigeChips(tagStr){
+  if(!tagStr) return '<span class="jige-chip normal">★吉门</span>';
+  const parts = tagStr.split('+').filter(s => s.trim());
+  if(parts.length === 0) return '<span class="jige-chip normal">★吉门</span>';
+  return parts.map(p => {
+    const t = p.trim();
+    let cls = 'normal';
+    if(t.includes('三奇得使')) cls = 'sanqi';
+    else if(t.includes('遁')) cls = 'dun';
+    else if(t.includes('玉女守门')) cls = 'yunu';
+    return '<span class="jige-chip '+cls+'">'+t.replace(/★/g,'')+'</span>';
+  }).join('');
+}
+
+// 吉格数量统计（用于排序）
+function jigeCount(tagStr){
+  if(!tagStr) return 0;
+  return tagStr.split('+').filter(s => s.trim()).length;
+}
+
 function renderPZRecommend() {
   const sch = getPZSchedule();
   const flipAdvice = generateFlipAdvice(sch);
@@ -860,34 +939,53 @@ function renderPZRecommend() {
   sch.accounts.forEach(acc => {
     const recs = sch.recommend[acc.name] || [];
     const future = recs.filter(isFutureEntry);
-    const best = future.find(r => r.sanqiMatch) || future.find(r => r.pri === 'A') || future[0] ||
-                 recs.find(r => r.sanqiMatch) || recs.find(r => r.pri === 'A') || recs[0];
+    // 按吉格数量降序排序，多重buff优先
+    const sortByJige = (a,b) => {
+      const ja = jigeCount(a.tag), jb = jigeCount(b.tag);
+      if(jb !== ja) return jb - ja;
+      if(a.sanqiMatch && !b.sanqiMatch) return -1;
+      if(!a.sanqiMatch && b.sanqiMatch) return 1;
+      return 0;
+    };
+    const sortedFuture = future.slice().sort(sortByJige);
+    const sortedAll = recs.slice().sort(sortByJige);
+    const best = sortedFuture[0] || sortedAll[0];
     const sqTag = acc.isSanqi ? '<span style="color:var(--yellow);font-size:11px;margin-left:6px">⚡三奇</span>' : '';
     html += `<div class="card">
       <div class="card-title">${acc.icon} ${acc.name}（${acc.school}·日干${acc.rg}）${sqTag}</div>`;
     if (best) {
       const isPast = !isFutureEntry(best);
-      const isTop = best.tag.includes('三奇得使');
+      const jc = jigeCount(best.tag);
       const isSqMatch = best.sanqiMatch;
-      const borderColor = isSqMatch ? 'var(--yellow)' : (isTop ? 'var(--yellow)' : 'var(--green)');
+      const borderColor = isSqMatch ? 'var(--yellow)' : (jc >= 2 ? 'var(--yellow)' : 'var(--green)');
       const label = isPast ? '🕓 最近可用' : '🎯 首选';
+      const buffBadge = jc >= 2 ? '<span class="jige-count">'+jc+'重buff</span>' : '';
       html += `<div style="background:var(--inset);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;border-left:4px solid ${borderColor}">
-        <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">${label}${isSqMatch?' ⚡三奇得使':''}${isPast?' <span style="color:var(--red)">(已过期)</span>':''}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-bottom:4px">${label}${isSqMatch?' ⚡三奇得使':''}${buffBadge}${isPast?' <span style="color:var(--red)">(已过期)</span>':''}</div>
         <div style="font-size:16px;font-weight:700;color:var(--text)">${best.dt} ${best.t}</div>
-        <div style="font-size:13px;color:${borderColor};margin-top:4px">${best.gong} ${best.men} ${best.tag || '★吉门'} · ${best.shen}</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px">${best.gong} ${best.men} · ${best.shen}</div>
+        <div class="jige-chips">${renderJigeChips(best.tag)}</div>
       </div>`;
     }
-    const displayRecs = future.length > 0 ? future : recs;
+    const displayRecs = sortedFuture.length > 0 ? sortedFuture : sortedAll;
     if (displayRecs.length > 0) {
-      html += `<div style="font-size:12px;color:var(--text-2);margin-bottom:6px">${future.length > 0 ? '未来可用' : '全部可用'} ${displayRecs.length} 个时段：</div>`;
-      displayRecs.slice(0, 4).forEach(r => {
+      const showAll = displayRecs.length <= 8;
+      html += `<div style="font-size:12px;color:var(--text-2);margin-bottom:6px">${sortedFuture.length > 0 ? '未来可用' : '全部可用'} ${displayRecs.length} 个时段（按吉格数量排序）：</div>`;
+      displayRecs.forEach((r, idx) => {
+        if(!showAll && idx >= 6){
+          return;
+        }
         const c = r.sanqiMatch ? 'var(--yellow)' : (r.pri === 'A' ? 'var(--yellow)' : 'var(--text-2)');
         const sqIcon = r.sanqiMatch ? '⚡' : '';
-        html += `<div style="font-size:12px;color:var(--text-3);padding:4px 0;border-bottom:1px solid var(--bdr)">
-          <span style="color:${c};font-weight:600">${sqIcon}${r.dt}</span> ${r.t} · ${r.gong}${r.men} ${r.tag || '★'}</div>`;
+        const jc = jigeCount(r.tag);
+        const buffBadge = jc >= 2 ? '<span class="jige-count">'+jc+'重</span>' : '';
+        html += `<div style="font-size:12px;color:var(--text-3);padding:6px 0;border-bottom:1px solid var(--bdr)">
+          <div style="display:flex;align-items:center;gap:4px"><span style="color:${c};font-weight:600">${sqIcon}${r.dt}</span> ${r.t} · ${r.gong}${r.men} · ${r.shen}${buffBadge}</div>
+          <div class="jige-chips">${renderJigeChips(r.tag)}</div>
+        </div>`;
       });
-      if (displayRecs.length > 4) {
-        html += `<div style="font-size:11px;color:var(--text-3);margin-top:4px">等 ${displayRecs.length - 4} 个更多时段...</div>`;
+      if(!showAll){
+        html += `<div style="font-size:11px;color:var(--text-3);margin-top:4px">等 ${displayRecs.length - 6} 个更多时段，详见吉时表...</div>`;
       }
     } else {
       html += `<div style="font-size:13px;color:var(--red);padding:10px 0">⚠️ 本周无可用吉时</div>`;
@@ -919,30 +1017,32 @@ function renderPZDetail() {
   const sch = getPZSchedule();
   let html = '';
   sch.accounts.forEach(acc => {
-    const recs = sch.recommend[acc.name] || [];
+    const recs = (sch.recommend[acc.name] || []).slice().sort((a,b) => {
+      const ja = jigeCount(a.tag), jb = jigeCount(b.tag);
+      if(jb !== ja) return jb - ja;
+      if(a.sanqiMatch && !b.sanqiMatch) return -1;
+      if(!a.sanqiMatch && b.sanqiMatch) return 1;
+      return 0;
+    });
     html += `<div class="card">
       <div class="card-title">${acc.icon} ${acc.name} · 吉时表</div>
-      <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <tr style="color:var(--text-3);border-bottom:1px solid var(--bdr)">
-          <th style="text-align:left;padding:6px 4px">日期</th>
-          <th style="text-align:left;padding:6px 4px">时段</th>
-          <th style="text-align:left;padding:6px 4px">宫·门</th>
-          <th style="text-align:left;padding:6px 4px">八神</th>
-          <th style="text-align:left;padding:6px 4px">吉格</th>
-        </tr>`;
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">按吉格数量降序排列，多重buff优先</div>`;
     recs.forEach(r => {
       const isA = r.pri === 'A';
       const sqIcon = r.sanqiMatch ? '⚡' : '';
-      html += `<tr style="border-bottom:1px solid var(--bdr)">
-          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--text-2)'};font-weight:${isA ? 600 : 400}">${sqIcon}${r.dt}</td>
-          <td style="padding:8px 4px;color:var(--text)">${r.t}</td>
-          <td style="padding:8px 4px;color:var(--text)">${r.gong} ${r.men}</td>
-          <td style="padding:8px 4px;color:var(--text-2)">${r.shen}</td>
-          <td style="padding:8px 4px;color:${isA ? 'var(--yellow)' : 'var(--green)'}">${r.tag || '★吉门'}</td>
-        </tr>`;
+      const jc = jigeCount(r.tag);
+      const buffBadge = jc >= 2 ? '<span class="jige-count">'+jc+'重buff</span>' : '';
+      const borderHighlight = jc >= 2 ? 'border-left:3px solid var(--yellow)' : '';
+      html += `<div style="background:var(--inset);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;${borderHighlight}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:600;color:${isA ? 'var(--yellow)' : 'var(--text)'}">${sqIcon}${r.dt} ${r.t}</div>
+          ${buffBadge}
+        </div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:4px">${r.gong} ${r.men} · ${r.shen}</div>
+        <div class="jige-chips">${renderJigeChips(r.tag)}</div>
+      </div>`;
     });
-    html += `</table></div></div>`;
+    html += `</div>`;
   });
   document.getElementById('sub-pz-detail').innerHTML = html;
 }
@@ -1021,28 +1121,51 @@ function saveTransactions() {
 }
 
 function recalcTotals() {
-  // 重新计算 catTotals
-  catTotals = {};
-  transactions.forEach(t => {
-    if (t.category && t.amount > 0) {
-      catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
-    }
-  });
-  
-  // 重新计算 totalExpense
-  totalExpense = transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
-  
-  // 重新计算 totalIncome（如果有 incomeRecords）
-  if (typeof incomeRecords !== 'undefined') {
-    totalIncome = incomeRecords.reduce((sum, r) => sum + (r.amount || 0), 0);
-  }
-  
-  // 重新计算 balance
+  const allTx = getAllTx();
+  totalExpense = allTx.filter(t=>!isIncome(t)).reduce((sum, t) => sum + (t.amount||0), 0);
+  totalIncome = allTx.filter(t=>isIncome(t)).reduce((sum, t) => sum + (t.amount||0), 0);
   balance = totalIncome - totalExpense;
+  // catTotals 兼容（仅支出）
+  catTotals = {};
+  allTx.filter(t=>!isIncome(t)).forEach(t => {
+    if (t.category && t.amount > 0) catTotals[t.category] = (catTotals[t.category] || 0) + t.amount;
+  });
+}
+
+// 当前记账类型（expense/income）
+let currentTxType = 'expense';
+
+function fillCategoryOptions(type) {
+  const sel = document.getElementById('add-category');
+  sel.innerHTML = '<option value="">请选择</option>';
+  const cats = type === 'income' ? incomeCatOrder : allCatOrder;
+  cats.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    sel.appendChild(opt);
+  });
+}
+
+function switchTxType(type) {
+  currentTxType = type;
+  const expBtn = document.getElementById('type-expense-btn');
+  const incBtn = document.getElementById('type-income-btn');
+  if(type === 'expense'){
+    expBtn.style.background = 'var(--red)';
+    expBtn.style.color = '#fff';
+    incBtn.style.background = 'var(--inset)';
+    incBtn.style.color = 'var(--text-2)';
+  } else {
+    incBtn.style.background = 'var(--green)';
+    incBtn.style.color = '#0f1115';
+    expBtn.style.background = 'var(--inset)';
+    expBtn.style.color = 'var(--text-2)';
+  }
+  fillCategoryOptions(type);
 }
 
 function refreshAllViews() {
-  // 重新计算汇总数据
   recalcTotals();
   renderOverview();
   renderMonth();
@@ -1057,7 +1180,7 @@ function confirmTransaction() {
   
   if (!date || !amount || amount <= 0 || !item || !category) return;
   
-  transactions.push({date: date, category: category, item: item, amount: amount});
+  transactions.push({date: date, category: category, item: item, amount: amount, type: currentTxType});
   saveTransactions();
   
   // Reset form
@@ -1094,6 +1217,8 @@ function init() {
   document.getElementById('headerDate').textContent = now.toISOString().slice(0,10);
   // Set default date for add form
   document.getElementById('add-date').value = now.toISOString().slice(0,10);
+  // Initialize category options
+  switchTxType('expense');
 
   renderOverview();
   renderMonth();
@@ -1127,7 +1252,9 @@ function previewTransaction() {
     return;
   }
   
-  document.getElementById('confirm-detail').innerHTML = '📅 日期：' + date + '<br>💰 金额：¥' + amount.toFixed(2) + '<br>📂 分类：' + category + '<br>📝 备注：' + item;
+  const typeLabel = currentTxType === 'income' ? '💰 收入' : '💸 支出';
+  const amountPrefix = currentTxType === 'income' ? '+' : '-';
+  document.getElementById('confirm-detail').innerHTML = '📅 日期：' + date + '<br>' + typeLabel + '：' + amountPrefix + '¥' + amount.toFixed(2) + '<br>📂 分类：' + category + '<br>📝 备注：' + item;
   document.getElementById('add-form').style.display = 'none';
   document.getElementById('add-confirm').style.display = 'block';
 }
