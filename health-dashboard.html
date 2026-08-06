@@ -439,21 +439,28 @@ const SCAP_PROTOCOL=[
 let WD=[],DD=[],TD=[],DIM=[];
 async function loadData(){
   try{
-    const [w,d,t,dim] = await Promise.all([
-      fetch('data/weight.json').then(r=>r.json()),
-      fetch('data/diet.json').then(r=>r.json()),
-      fetch('data/training.json').then(r=>r.json()),
-      fetch('data/dimensions.json').then(r=>r.json())
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+    const fetchJson=async(url)=>{
+      const r=await fetch(url);
+      if(!r.ok)throw new Error(url+' '+r.status);
+      return r.json();
+    };
+    const data=await Promise.race([
+      Promise.all([
+        fetchJson('data/weight.json'),
+        fetchJson('data/diet.json'),
+        fetchJson('data/training.json'),
+        fetchJson('data/dimensions.json')
+      ]),
+      timeout
     ]);
-    WD=w;DD=d;TD=t;DIM=dim;
+    WD=data[0];DD=data[1];TD=data[2];DIM=data[3];
     mergeWeightLS();mergeDimLS();
-    initNav();initOverview();filterTraining();filterDiet();filterBody();initMemo();renderReviewSection();
   }catch(e){
-    console.error('数据加载失败',e);
-    // 降级：仍然用空数据初始化
+    console.warn('数据加载降级:',e.message);
     mergeWeightLS();mergeDimLS();
-    initNav();initOverview();filterTraining();filterDiet();filterBody();initMemo();renderReviewSection();
   }
+  initNav();initOverview();filterTraining();filterDiet();filterBody();initMemo();renderReviewSection();
 }
 loadData();
 const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "鱼油(海力生2+BM2) 4粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽 10-15g/天"];
@@ -1734,23 +1741,43 @@ const _today=getTodayStr();
 ['trainEnd','dietEnd','bodyEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
 </script>
 <script>
+// PWA Service Worker - 网络优先模式（修复v1 SW缓存优先导致的加载失败）
 if('serviceWorker' in navigator){
+  // 先注销所有旧SW
+  navigator.serviceWorker.getRegistrations().then(regs=>{
+    regs.forEach(r=>r.unregister());
+  }).catch(()=>{});
+  // 注册新的网络优先SW
   const swCode = `
-    const CACHE='health-dashboard-v1';
+    const CACHE='health-v2';
     self.addEventListener('install',e=>{self.skipWaiting();});
-    self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});
+    self.addEventListener('activate',e=>{e.waitUntil(
+      self.clients.claim().then(()=>{
+        return Promise.all([
+          caches.delete('health-dashboard-v1'),
+          caches.delete('health-v1'),
+          caches.delete('health-v2')
+        ]);
+      })
+    );});
     self.addEventListener('fetch',e=>{
+      if(e.request.method!=='GET')return;
       e.respondWith(
-        caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
-          const copy=resp.clone();
-          caches.open(CACHE).then(c=>c.put(e.request,copy));
+        fetch(e.request).then(resp=>{
+          if(resp.ok){
+            const copy=resp.clone();
+            caches.open(CACHE).then(c=>c.put(e.request,copy));
+          }
           return resp;
-        }).catch(()=>caches.match(e.request)))
+        }).catch(()=>caches.match(e.request).then(r=>r||new Response('offline',{status:503})))
       );
     });
   `;
   const blob=new Blob([swCode],{type:'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  // 延迟注册SW，确保页面先加载完
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+  });
 }
 </script>
 </body>
