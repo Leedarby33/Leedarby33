@@ -9,6 +9,17 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<script>
+// 强制缓存刷新：版本号变更时自动重载
+(function(){
+  var VER='20260807a';
+  try{
+    var s=sessionStorage.getItem('_cd_ver');
+    if(s&&s!==VER){sessionStorage.removeItem('_cd_ver');location.reload(true);return;}
+    sessionStorage.setItem('_cd_ver',VER);
+  }catch(e){}
+})();
+</script>
 <title>综合工作台</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
