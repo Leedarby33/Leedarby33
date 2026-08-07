@@ -853,8 +853,25 @@ function checkGeju(dp,tp,mp,sp,hg,hz){
   const ut=[...new Set(tags)];
   return{tags:ut,isFiltered:f,filterReason:fr,shiganGong:sg};
 }
-// 主排盘
+// 主排盘（原始——基于当前日期日干）
 function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,tags,isFiltered,filterReason};}
+// 账号独立排盘——用账号建号日的日干替代当前日期日干，实现每账号独立排盘
+// 节气/局数仍基于当前日期 ds（局数按节气走），但日干/时干基于账号建号日
+function paiPanForAccount(ds,hz,accountDayGan){
+  // 用账号日干计算时干（五鼠遁日起时）
+  const hg=getHourGZ(accountDayGan,hz);
+  // 节气/局数基于当前日期
+  const{jq,yuan}=getJieqiYuan(ds);
+  const ju=getJu(jq,yuan);
+  const isYang=YANG_DUN.has(jq);
+  const dp=flyGong(ju,isYang);
+  // 天盘旋转基于账号时干
+  const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);
+  const mp=getBamen(zhifuGong,hg.gan,hz,isYang);
+  const sp=getBashen(zhifuGong,isYang);
+  const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);
+  return{date:ds,hourZhi:hz,dayGz:accountDayGan,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,tags,isFiltered,filterReason};
+}
 function getAccountRg(cs){return getDayGZ(cs.slice(0,10)).gan;}
 // 周排盘
 function getWeekDates(){const t=new Date();const dow=t.getDay()||7;const m=new Date(t);m.setDate(t.getDate()-dow+1);const dates=[];for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);dates.push(d.toISOString().slice(0,10));}return dates;}
@@ -879,7 +896,8 @@ function generateWeekSchedule(){
       const ganWx=GAN_WX[a.rg]||'土';
       hours.forEach(hz=>{
         if([1,3,4].includes(wd)&&hz==='亥')return;
-        const r=paiPan(dateStr,hz);
+        // 关键改动：每个账号用自己的建号日干独立排盘
+        const r=paiPanForAccount(dateStr,hz,a.rg);
         const entry={dateStr,dt:dateStr.slice(5).replace('-','/')+'('+wdN[wd-1]+')',t:HOUR_LABELS[hz],gong:GONG_NM[r.shiganGong]||'?',men:r.menAtGong+'门',tag:r.tags.join('+'),pri:r.tags.length>0?'A':'B',shiganGan:r.tpanGan,shen:r.shenAtGong};
         // 计算该账号日干与时干落宫的生克分（差异化关键）
         const sg=r.shiganGong;
@@ -913,7 +931,7 @@ function isFutureEntry(entry){
   // 跨子时条目（23-01），结束小时为25；只要当前小时<结束小时即可
   return curH<he;
 }
-// 翻牌建议——基于当前时辰实时排盘，结合账号日干差异化推荐
+// 翻牌建议——基于当前时辰实时排盘，每个账号独立排盘+差异化推荐
 function generateFlipAdvice(schedule){
   const advice={};
   const PN=['左一','左二','中','右二','右一'];
@@ -925,8 +943,9 @@ function generateFlipAdvice(schedule){
   const curHz=hzMap[h]||'子';
   const todayStr=now.toISOString().slice(0,10);
   const curLabel=HOUR_LABELS[curHz]||curHz;
-  const r=paiPan(todayStr,curHz); // 排盘只需一次，三个账号共享
+  // 关键改动：每个账号独立排盘，不再共享
   schedule.accounts.forEach(a=>{
+    const r=paiPanForAccount(todayStr,curHz,a.rg); // 每个账号用自己的建号日干排盘
     const entry={dateStr:todayStr,dt:todayStr.slice(5).replace('-','/'),t:curLabel,gong:GONG_NM[r.shiganGong]||'?',men:r.menAtGong+'门',tag:r.tags.join('+'),shen:r.shenAtGong};
     // 当前时辰是否被过滤（凶格）
     if(r.isFiltered){
@@ -1226,6 +1245,9 @@ function renderPZInfo() {
       <div style="margin-top:8px;color:var(--text-3)">翻牌建议：根据当前时辰八神位置实时推荐</div>
       <div style="color:var(--text-3)">三奇得使⚡：账号日干为乙丙丁且时辰排盘匹配</div>
       <div style="margin-top:8px;color:var(--text-3);font-style:italic">动态排盘引擎·基于当日干支节气自动计算 | 仅供游戏娱乐参考</div>
+      <div style="margin-top:8px;color:var(--blue)">⚡ 每个账号基于建号日期独立排盘，日干不同则排盘结果完全不同</div>
+      <div style="color:var(--text-3)">日干来源：建号当日的天干（李大笔=庚, 凌波=丁, 龙醒=甲）</div>
+      <div style="color:var(--text-3)">日干不同 → 时干不同 → 旬首不同 → 天盘旋转不同 → 九宫飞布/八门/八神落宫完全不同</div>
     </div>
   </div>`;
   document.getElementById('sub-pz-info').innerHTML = html;
