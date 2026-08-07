@@ -1544,33 +1544,21 @@ function initOverview(){
 // ===== TAB 3: TRAINING =====
 function filterTraining(){
   const s=$('trainStart').value,e=$('trainEnd').value;
-  // Merge localStorage training data with TD
-  const lsRecords=getTrainingRecords();
-  const lsEntries=[];
-  Object.keys(lsRecords).forEach(function(dt){
-    if(dt>=s&&dt<=e){
-      (lsRecords[dt]||[]).forEach(function(r){
-        lsEntries.push({date:dt,type:r.type,dur:r.dur,dyn:r.dyn,total:r.total||r.dyn,hr:r.hr||''});
-      });
-    }
-  });
-  var tdFiltered=TD.filter(function(t){return t.date>=s&&t.date<=e;});
-  var combined=tdFiltered.concat(lsEntries);
+  // TD already contains both training.json and localStorage data (merged by mergeTrainingLS)
+  var combined=TD.filter(function(t){return t.date>=s&&t.date<=e;});
   combined.sort(function(a,b){return a.date.localeCompare(b.date);});
   const totalDays=combined.length;
   const totalMin=combined.reduce(function(s,t){return s+t.dur;},0);
   const totalDyn=combined.reduce(function(s,t){return s+t.dyn;},0);
   const totalAll=combined.reduce(function(s,t){return s+t.total;},0);
-  // Full-caliber total = BMR + NEAT + all training (TD + all LS)
+  // Full-caliber total = BMR + NEAT + all training (TD already includes LS)
   const dietDays=DD.filter(function(d){return d.t.cal>0;}).length;
   const bmrTotal=1672*dietDays;
   const neeTotal=300*dietDays;
-  var lsAllTotal=0;
-  Object.values(lsRecords).forEach(function(arr){(arr||[]).forEach(function(r){lsAllTotal+=(r.total||r.dyn);});});
   const tdAllTotal=TD.reduce(function(s,t){return s+t.total;},0);
-  const fullTotal=bmrTotal+neeTotal+tdAllTotal+lsAllTotal;
+  const fullTotal=bmrTotal+neeTotal+tdAllTotal;
   $('totalExpBig').innerHTML=fullTotal.toLocaleString()+'<span class="unit"> kcal</span>';
-  $('totalExpSub').textContent='BMR '+bmrTotal.toLocaleString()+' + NEAT '+neeTotal.toLocaleString()+' + 训练 '+(tdAllTotal+lsAllTotal).toLocaleString();
+  $('totalExpSub').textContent='BMR '+bmrTotal.toLocaleString()+' + NEAT '+neeTotal.toLocaleString()+' + 训练 '+tdAllTotal.toLocaleString();
   $('totalTrainDays').innerHTML=totalDays;
   $('totalTrainHours').innerHTML=fmt(totalMin/60,1)+'<span class="unit">h</span>';
   $('totalDynCal').innerHTML=totalDyn.toLocaleString()+'<span class="unit"> kcal</span>';
