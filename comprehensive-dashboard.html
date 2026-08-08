@@ -12,7 +12,7 @@
 <script>
 // 强制缓存刷新：版本号变更时自动重载
 (function(){
-  var VER='20260807a';
+  var VER='20260808a';
   try{
     var s=sessionStorage.getItem('_cd_ver');
     if(s&&s!==VER){sessionStorage.removeItem('_cd_ver');location.reload(true);return;}
@@ -647,13 +647,17 @@ function renderDaigou() {
   const wishlist = [
     {
       icon: '👓',
-      name: '林德伯格 Blok 眼镜框',
+      name: '林德伯格眼镜框（5选1）',
       status: '待购入',
       priority: '高',
       price: '2000-3000',
       notes: [
-        '等减到70kg后去专柜试框',
-        '丹麦设计，5.5g超轻，含镜片整副17-19g',
+        'Strip Titanium 9859 眉线框·首选（硬朗眉条平衡颧骨最佳）',
+        'Strip Titanium 9851 眉线框·备选（眉条略圆润，日常感强）',
+        'Blok Titanium 4256 方框·首选（锐利棱角，一体切割结构强度高）',
+        'Blok Titanium 4254 方框·备选（简洁几何方框，锐利边缘）',
+        'Blok Titanium 4251 小方框·第三选（边缘柔和，更日常秀气）',
+        '颜色：U9哑光黑或深枪灰，避开银色/浅金。镜框选中号50mm',
         '南京/上海试框记型号 → 香港买框+内地配镜片'
       ],
       timing: '2026年双11前后'
