@@ -1045,7 +1045,7 @@ function updateDietSummary(){
   // Update remaining quota if on nav tab
   if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
     const isTrainDay=today>='2026-05-31';
-    const targetCal=isTrainDay?1900:1300;
+    const targetCal=isTrainDay?1600:1200;
     const remain=targetCal-totalCal;
     const remainP=130-totalP;
     $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
@@ -1150,7 +1150,7 @@ function initNav(){
   const todayDiet=DD.find(d=>d.date===todayStr);
   const isTrainDay=todayStr>='2026-05-31';
   const bmr=1672;const nee=300;
-  const targetCal=isTrainDay?1900:1300;
+  const targetCal=isTrainDay?1600:1200;
   const consumed=todayDiet?todayDiet.t.cal:0;
   const consumedP=todayDiet?todayDiet.t.p:0;
   const remain=targetCal-consumed;
@@ -1309,7 +1309,7 @@ function initWeightCompare(todayStr){
   const mon=new Date(now);mon.setDate(now.getDate()-(dow-1));
   const monStr=mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0');
   const sunStr=(()=>{const s=new Date(mon);s.setDate(mon.getDate()+6);return s.getFullYear()+'-'+String(s.getMonth()+1).padStart(2,'0')+'-'+String(s.getDate()).padStart(2,'0')})();
-  const thisWeekData=WD.filter(d=>d.date>=monStr&&d.date<=todayStr);
+  const thisWeekData=WD.filter(d=>d.date>=monStr&&d.date<=sunStr);
   const thisWeekAvg=thisWeekData.length>0?(thisWeekData.reduce((s,d)=>s+d.weight,0)/thisWeekData.length):curW;
   // Last week
   const prevMon=new Date(mon);prevMon.setDate(mon.getDate()-7);
@@ -1323,7 +1323,7 @@ function initWeightCompare(todayStr){
   h+='<div class="kpi-item"><div class="kpi-value" style="color:var(--orange)">'+curW+'<span class="unit"> kg</span></div><div class="kpi-label">今日体重</div></div>';
   h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(curW<=startW?'var(--green)':'var(--red)')+'">'+(curW-startW>0?'+':'')+(curW-startW).toFixed(1)+'<span class="unit"> kg</span></div><div class="kpi-label">较起始(89.85)</div></div>';
   h+='<div class="kpi-item"><div class="kpi-value">'+thisWeekAvg.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">本周均值('+thisWeekData.length+'次)</div></div>';
-  h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(weekChange<=0?'var(--green)':'var(--red)')+'">'+(weekChange>0?'+':'')+weekChange.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">较上周'+(lastWeekAvg>0?'('+lastWeekAvg.toFixed(2)+')':'')+'</div></div>';
+  h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(weekChange<=0?'var(--green)':'var(--red)')+'">'+(weekChange>0?'+':'')+weekChange.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">周均较上周'+(lastWeekAvg>0?'('+lastWeekAvg.toFixed(2)+')':'')+(thisWeekData.length<7?' 仅'+thisWeekData.length+'天':'')+'</div></div>';
   h+='</div>';
   $('weightCompare').innerHTML=h;
 }
@@ -1927,15 +1927,24 @@ function renderReviewSection(){
     var we=new Date(ws);we.setDate(ws.getDate()+6);
     var wsStr=ws.getFullYear()+'-'+String(ws.getMonth()+1).padStart(2,'0')+'-'+String(ws.getDate()).padStart(2,'0');
     var weStr=we.getFullYear()+'-'+String(we.getMonth()+1).padStart(2,'0')+'-'+String(we.getDate()).padStart(2,'0');
-    // Weight change: first and last entry in range
+    // Weight change: weekly average comparison (this week avg vs previous week avg)
     var wdInRange=WD.filter(function(d){return d.date>=wsStr&&d.date<=weStr;});
+    // Previous week range for comparison
+    var pws=new Date(ws);pws.setDate(pws.getDate()-7);
+    var pwe=new Date(we);pwe.setDate(pwe.getDate()-7);
+    var pwsStr=pws.getFullYear()+'-'+String(pws.getMonth()+1).padStart(2,'0')+'-'+String(pws.getDate()).padStart(2,'0');
+    var pweStr=pwe.getFullYear()+'-'+String(pwe.getMonth()+1).padStart(2,'0')+'-'+String(pwe.getDate()).padStart(2,'0');
+    var wdPrevRange=WD.filter(function(d){return d.date>=pwsStr&&d.date<=pweStr;});
     var wChange='—',wRange='';
-    if(wdInRange.length>=2){
-      var wStart=wdInRange[0].weight,wEnd=wdInRange[wdInRange.length-1].weight;
-      wChange=(wEnd-wStart).toFixed(1);
-      wRange=wStart.toFixed(1)+'→'+wEnd.toFixed(1);
-    }else if(wdInRange.length===1){
-      wChange='0.0';wRange=wdInRange[0].weight.toFixed(1);
+    if(wdInRange.length>0){
+      var wAvg=wdInRange.reduce(function(s,d){return s+d.weight;},0)/wdInRange.length;
+      if(wdPrevRange.length>0){
+        var wPrevAvg=wdPrevRange.reduce(function(s,d){return s+d.weight;},0)/wdPrevRange.length;
+        wChange=(wAvg-wPrevAvg).toFixed(1);
+        wRange='均'+wAvg.toFixed(1)+' vs '+wPrevAvg.toFixed(1);
+      }else{
+        wChange='0.0';wRange='均'+wAvg.toFixed(1);
+      }
     }
     // Training
     var tdInRange=TD.filter(function(d){return d.date>=wsStr&&d.date<=weStr;});
@@ -1975,8 +1984,8 @@ function renderReviewSection(){
     // Diet
     var ddInMonth=DD.filter(function(d){return d.date>=msStr&&d.date<=meStr;});
     var mAvgCal=ddInMonth.length>0?Math.round(ddInMonth.reduce(function(s,d){return s+d.t.cal;},0)/ddInMonth.length):0;
-    // Diet compliance rate: days where cal is within target range (1300-1900)
-    var compliantDays=ddInMonth.filter(function(d){return d.t.cal>=1300&&d.t.cal<=1900;}).length;
+    // Diet compliance rate: days where cal is within target range (1200-1600)
+    var compliantDays=ddInMonth.filter(function(d){return d.t.cal>=1200&&d.t.cal<=1600;}).length;
     var complianceRate=ddInMonth.length>0?Math.round(compliantDays/ddInMonth.length*100):0;
     months.push({label:monthName,wChange:mwChange,wRange:mwRange,trainDays:mTrainDays,trainHours:mTrainHours.toFixed(1),avgCal:mAvgCal,complianceRate:complianceRate});
   }
