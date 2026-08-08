@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260808e';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260808f';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -230,6 +230,15 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="mealListS" style="margin-top:6px"></div>
 </div>
 </div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div class="card-title" style="margin-bottom:0">📋 历史饮食编辑</div>
+<div style="display:flex;gap:6px;align-items:center">
+<input type="date" id="editMealDate" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none" onchange="loadEditMeals()">
+</div>
+</div>
+<div id="editMealList" style="font-size:12px;color:var(--text-3)">选择日期查看当日饮食记录，点击数值可直接修改</div>
 </div>
 <div class="card">
 <div class="card-title">💪 今日训练计划</div>
@@ -1093,6 +1102,91 @@ ${item.desc?'<span style="color:var(--text);margin-left:4px">'+item.desc+'</span
 }
 function renderAllMeals(){
   ['b','l','d','s'].forEach(k=>renderMealList(k));
+}
+// ===== 历史饮食编辑 =====
+function loadEditMeals(){
+  const dt=$('editMealDate').value;
+  const el=$('editMealList');
+  if(!dt){el.innerHTML='请选择日期';return;}
+  const meals=getMeals();
+  const day=meals[dt];
+  if(!day||(['b','l','d','s'].every(k=>!day[k]||day[k].length===0))){
+    el.innerHTML='<span style="color:var(--text-3)">该日无饮食记录</span>';
+    return;
+  }
+  const labels={b:'🌅早餐',l:'☀️午餐',d:'🌙晚餐',s:'🍎加餐'};
+  let h='';
+  let dayCal=0,dayP=0,daySf=0,dayFr=0,dayC=0;
+  ['b','l','d','s'].forEach(k=>{
+    const items=day[k]||[];
+    if(items.length===0)return;
+    h+='<div style="margin-bottom:10px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:4px">'+labels[k]+'</div>';
+    items.forEach((item,i)=>{
+      dayCal+=item.cal||0;dayP+=item.p||0;daySf+=item.sf||0;dayFr+=item.fr||0;dayC+=item.c||0;
+      h+='<div style="background:var(--inset);border-radius:8px;padding:8px;margin-bottom:4px">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h+='<span style="font-size:11px;color:var(--text)">'+(item.desc||'未备注')+' <span style="color:var(--text-3);font-size:10px">'+(item.time||'')+'</span></span>';
+      h+='<span onclick="deleteEditMeal(\''+dt+'\',\''+k+'\','+i+')" style="color:var(--red);font-size:14px;cursor:pointer;padding:0 4px">×</span>';
+      h+='</div>';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">';
+      const fields=[['cal','热量',item.cal],['p','蛋白',item.p],['sf','饱和脂',item.sf],['fr','果糖',item.fr],['c','碳水',item.c]];
+      fields.forEach(f=>{
+        h+='<div><div style="font-size:9px;color:var(--text-3);margin-bottom:2px">'+f[1]+'</div>';
+        h+='<input type="number" step="0.1" value="'+f[2]+'" id="edit_'+k+'_'+i+'_'+f[0]+'" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:4px;padding:4px;font-size:11px;width:100%;text-align:center;outline:none"></div>';
+      });
+      h+='</div>';
+      h+='<div style="margin-top:4px;text-align:right">';
+      h+='<button onclick="saveEditMeal(\''+dt+'\',\''+k+'\','+i+')" style="background:var(--blue);color:#fff;border:none;border-radius:4px;padding:3px 10px;font-size:10px;font-weight:600;cursor:pointer">保存</button>';
+      h+='</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  // 日合计
+  h+='<div style="margin-top:8px;padding:8px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;text-align:center">';
+  h+='<span style="font-size:11px;color:var(--text-3)">日合计：</span>';
+  h+='<span style="color:var(--orange);font-weight:600;font-size:12px">'+Math.round(dayCal)+'kcal</span>';
+  h+='<span style="color:var(--green);margin-left:6px;font-size:11px">P'+Math.round(dayP)+'g</span>';
+  h+='<span style="color:var(--text-2);margin-left:6px;font-size:11px">脂'+daySf.toFixed(1)+'g</span>';
+  h+='<span style="color:var(--text-2);margin-left:4px;font-size:11px">果'+dayFr.toFixed(1)+'g</span>';
+  h+='<span style="color:var(--text-2);margin-left:4px;font-size:11px">碳'+dayC.toFixed(1)+'g</span>';
+  h+='</div>';
+  el.innerHTML=h;
+}
+function saveEditMeal(dt,key,idx){
+  const meals=getMeals();
+  if(!meals[dt]||!meals[dt][key]||!meals[dt][key][idx])return;
+  const item=meals[dt][key][idx];
+  ['cal','p','sf','fr','c'].forEach(f=>{
+    const el=$('edit_'+key+'_'+idx+'_'+f);
+    if(el){item[f]=parseFloat(el.value)||0;}
+  });
+  setMeals(meals);
+  // 刷新
+  mergeDietLS();
+  loadEditMeals();
+  if(typeof filterDiet==='function')filterDiet();
+  if(typeof renderReviewSection==='function')renderReviewSection();
+  if(dt===getTodayStr()){
+    renderAllMeals();
+    updateDietSummary();
+  }
+  flashHint('已修改'+dt+' '+key.toUpperCase()+'#'+(idx+1));
+}
+function deleteEditMeal(dt,key,idx){
+  const meals=getMeals();
+  if(!meals[dt]||!meals[dt][key])return;
+  meals[dt][key].splice(idx,1);
+  setMeals(meals);
+  mergeDietLS();
+  loadEditMeals();
+  if(typeof filterDiet==='function')filterDiet();
+  if(typeof renderReviewSection==='function')renderReviewSection();
+  if(dt===getTodayStr()){
+    renderAllMeals();
+    updateDietSummary();
+  }
 }
 function updateDietSummary(){
   const meals=getMeals();
@@ -2110,6 +2204,7 @@ function renderReviewSection(){
 // ===== INIT =====
 const _today=getTodayStr();
 ['trainEnd','dietEnd','bodyEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
+const _editDateEl=$('editMealDate');if(_editDateEl)_editDateEl.value=_today;
 </script>
 <script>
 // PWA Service Worker - 网络优先模式（修复v1 SW缓存优先导致的加载失败）
