@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260808b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260808c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1397,7 +1397,7 @@ function initWeightCompare(todayStr){
   const lastWeekAvg=lastWeekData.length>0?(lastWeekData.reduce((s,d)=>s+d.weight,0)/lastWeekData.length):0;
   // Always compare this week (Mon-Sun) vs last week (Mon-Sun)
   const weekChange=lastWeekAvg>0?(thisWeekAvg-lastWeekAvg):0;
-  const weekNote=lastWeekAvg>0?'('+lastWeekAvg.toFixed(2)+')':'';
+  let weekNote=lastWeekAvg>0?'('+lastWeekAvg.toFixed(2)+')':'';
   if(thisWeekData.length<7)weekNote+=' 目前'+thisWeekData.length+'天';
   let h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
   h+='<div class="kpi-item"><div class="kpi-value" style="color:var(--orange)">'+curW.toFixed(1)+'<span class="unit"> kg</span></div><div class="kpi-label">今日体重</div></div>';
