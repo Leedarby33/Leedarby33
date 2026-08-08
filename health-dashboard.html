@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260808c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260808d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -923,27 +923,15 @@ const QUICK_FOODS=[
   ['🥩盐水卤牛腱(切片)',120,30,1.5,0,0,'1份≈100g'],
   ['🫛盐水卤毛豆',147,13,0.6,0.8,11,'1份≈100g带壳'],
   ['🥬青菜炒黑木耳(不喝汤)',45,3.5,0.2,0.8,6,'青菜200g+木耳50g'],
-  ['🥗核桃油拌青菜',50,2,0.5,0.6,5,'1份≈200g'],
   // 主食
   ['🍚藜麦白米饭(1:1)',160,4,0.3,0.1,32,'1碗≈150g'],
   ['🍚白米饭(熟)',116,2.6,0.3,0,26,'1碗≈150g'],
   ['🍚杂粮饭(混合)',140,3.5,0.3,0.1,28,'1碗≈150g'],
-  ['🥣燕麦仁粥(熟)',105,3.7,0.3,0,19,'1碗≈200g'],
   // 蛋白质
   ['💊蛋白粉(微Protein)',113,22,0.5,0,1.5,'1勺≈30g'],
   ['🥚水煮蛋',78,6.3,1.6,0,0.6,'1个≈50g'],
   ['🐟三文鱼刺身',139,17.2,1.5,0,0,'1份≈80g'],
-  ['🍗鸡胸肉(无酱)',133,31,0.4,0,0,'1份≈120g'],
-  ['🥩牛排(瘦)',175,26,3,0,0,'1份≈120g'],
-  // 轻食外卖
-  ['🥗轻食蔬菜底(无酱)',65,3,0.2,1.5,12,'生菜+南瓜+玉米仁+蔬果'],
-  ['🥗轻食-鸡胸肉单倍(无酱)',175,28,0.4,1.5,13,'蔬菜底+鸡胸80g'],
-  ['🥗轻食-双倍鸡胸(无酱)',270,49,0.6,1.5,13,'蔬菜底+鸡胸150g'],
-  ['🥗轻食-牛排(无酱)',280,37,3.2,1.5,13,'蔬菜底+牛排120g'],
-  ['🥗轻食-三文鱼(无酱)',180,17,1.7,1.5,13,'蔬菜底+三文鱼80g'],
-  // 其他
-  ['🎃蒸南瓜',22,0.7,0.1,0.3,5.3,'1份≈150g'],
-  ['🌽煮玉米(可食)',86,3.2,0.2,0.4,19,'1根≈150g可食']
+  ['🥩牛排(瘦)',175,26,3,0,0,'1份≈120g']
 ];
 let _quickTarget='b'; // 当前快捷食物填入的餐次
 function setQuickTarget(t){
