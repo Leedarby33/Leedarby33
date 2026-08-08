@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260808d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260808e';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2037,16 +2037,26 @@ function renderReviewSection(){
     var msStr=mStart.getFullYear()+'-'+String(mStart.getMonth()+1).padStart(2,'0')+'-'+String(mStart.getDate()).padStart(2,'0');
     var meStr=mEnd.getFullYear()+'-'+String(mEnd.getMonth()+1).padStart(2,'0')+'-'+String(mEnd.getDate()).padStart(2,'0');
     var monthName=(mDate.getMonth()+1)+'月';
-    // Weight change
+    // Weight change: 月均 vs 上月均值
     var wdInMonth=WD.filter(function(d){return d.date>=msStr&&d.date<=meStr&&d.weight!=null;});
     wdInMonth.forEach(function(d){d.weight=parseFloat(d.weight)||0;});
+    // 上月范围
+    var pms=new Date(mStart);pms.setMonth(pms.getMonth()-1);
+    var pme=new Date(mEnd);pme.setMonth(pme.getMonth()-1);
+    var pmsStr=pms.getFullYear()+'-'+String(pms.getMonth()+1).padStart(2,'0')+'-'+String(pms.getDate()).padStart(2,'0');
+    var pmeStr=pme.getFullYear()+'-'+String(pme.getMonth()+1).padStart(2,'0')+'-'+String(pme.getDate()).padStart(2,'0');
+    var wdInPrevMonth=WD.filter(function(d){return d.date>=pmsStr&&d.date<=pmeStr&&d.weight!=null;});
+    wdInPrevMonth.forEach(function(d){d.weight=parseFloat(d.weight)||0;});
     var mwChange='—',mwRange='';
-    if(wdInMonth.length>=2){
-      var mwStart=wdInMonth[0].weight,mwEnd=wdInMonth[wdInMonth.length-1].weight;
-      mwChange=(mwEnd-mwStart).toFixed(1);
-      mwRange=mwStart.toFixed(1)+'→'+mwEnd.toFixed(1);
-    }else if(wdInMonth.length===1){
-      mwChange='0.0';mwRange=wdInMonth[0].weight.toFixed(1);
+    if(wdInMonth.length>0){
+      var mAvg=wdInMonth.reduce(function(s,d){return s+d.weight;},0)/wdInMonth.length;
+      if(wdInPrevMonth.length>0){
+        var mPrevAvg=wdInPrevMonth.reduce(function(s,d){return s+d.weight;},0)/wdInPrevMonth.length;
+        mwChange=(mAvg-mPrevAvg).toFixed(1);
+        mwRange='均'+mAvg.toFixed(1)+' vs '+mPrevAvg.toFixed(1);
+      }else{
+        mwChange='0.0';mwRange='均'+mAvg.toFixed(1);
+      }
     }
     // Training
     var tdInMonth=TD.filter(function(d){return d.date>=msStr&&d.date<=meStr;});
