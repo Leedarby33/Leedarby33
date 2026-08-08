@@ -1045,7 +1045,7 @@ function updateDietSummary(){
   // Update remaining quota if on nav tab
   if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
     const isTrainDay=today>='2026-05-31';
-    const targetCal=isTrainDay?1600:1200;
+    const targetCal=isTrainDay?1400:1000;
     const remain=targetCal-totalCal;
     const remainP=130-totalP;
     $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
@@ -1150,7 +1150,7 @@ function initNav(){
   const todayDiet=DD.find(d=>d.date===todayStr);
   const isTrainDay=todayStr>='2026-05-31';
   const bmr=1672;const nee=300;
-  const targetCal=isTrainDay?1600:1200;
+  const targetCal=isTrainDay?1400:1000;
   const consumed=todayDiet?todayDiet.t.cal:0;
   const consumedP=todayDiet?todayDiet.t.p:0;
   const remain=targetCal-consumed;
@@ -1984,8 +1984,8 @@ function renderReviewSection(){
     // Diet
     var ddInMonth=DD.filter(function(d){return d.date>=msStr&&d.date<=meStr;});
     var mAvgCal=ddInMonth.length>0?Math.round(ddInMonth.reduce(function(s,d){return s+d.t.cal;},0)/ddInMonth.length):0;
-    // Diet compliance rate: days where cal is within target range (1200-1600)
-    var compliantDays=ddInMonth.filter(function(d){return d.t.cal>=1200&&d.t.cal<=1600;}).length;
+    // Diet compliance rate: days where cal is within target range (1000-1400)
+    var compliantDays=ddInMonth.filter(function(d){return d.t.cal>=1000&&d.t.cal<=1400;}).length;
     var complianceRate=ddInMonth.length>0?Math.round(compliantDays/ddInMonth.length*100):0;
     months.push({label:monthName,wChange:mwChange,wRange:mwRange,trainDays:mTrainDays,trainHours:mTrainHours.toFixed(1),avgCal:mAvgCal,complianceRate:complianceRate});
   }
