@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260808f';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260808g';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -447,6 +447,10 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 备忘 -->
 <div class="tab-content" id="tab-memo">
+<div class="card">
+<div class="card-title">📌 待加入动作（体重达标后系统纠正体态）</div>
+<div id="futureActions"></div>
+</div>
 <div class="card">
 <div class="card-title">🏥 体检关键指标（最新 8/2）</div>
 <div id="healthIndicators"></div>
@@ -1965,6 +1969,28 @@ function renderBodyPartDistance(){
 
 // ===== TAB MEMO: 备忘 =====
 function initMemo(){
+  // 待加入动作（体重达标后系统纠正体态）
+  const futureActions=[
+    {cat:'膝盖稳定 + 弹响纠正',items:[
+      {n:'弹力带绑膝深蹲',d:'薄弹力带套膝盖上方，慢速深蹲3×10次，离心3-4秒。对抗弹力带→激活臀中肌+股内侧肌(VMO)，直接改善髌骨轨迹。可替换现有深蹲热身组'},
+      {n:'靠墙静蹲夹球',d:'背靠墙静蹲90度，大腿间夹瑜伽砖，保持30秒×3组。强化股四头肌等长收缩+内收肌参与，改善下肢力线'},
+      {n:'胫骨前肌激活',d:'光脚坐地，脚跟并拢，整个脚背向上勾起（非脚趾），感受小腿前侧收缩。保持3秒，15次×2组。改善胫骨与踝关节对位，减少外翻代偿'}
+    ]},
+    {cat:'外八字 + 踝关节立线',items:[
+      {n:'踝关节正位走',d:'光脚，脚尖朝正前方（第二脚趾正对前方），慢走10步+倒退10步，2-3组/天。训练大脑对正位的本体感觉，负重状态下转化率高'},
+      {n:'短足运动(Short Foot)',d:'光脚站立脚不移动，主动缩短脚掌（第一跖骨头向脚跟拉近），抬起足弓保持5秒，10次/脚。足弓主动控制的基础动作'}
+    ]}
+  ];
+  let fa='';
+  fa+='<div style="font-size:11px;color:var(--text-3);margin-bottom:12px;line-height:1.6">🎯 目标：75kg达成后，在维持体重不变的情况下系统纠正体态、降低体脂率。<br>📋 当前优先级：减重第一，肩胛协议已在做，以下动作待体重达标后加入</div>';
+  futureActions.forEach(g=>{
+    fa+='<div style="font-size:12px;font-weight:700;color:var(--orange);padding:8px 0 4px;border-top:1px solid var(--bdr)">'+g.cat+'</div>';
+    g.items.forEach(a=>{
+      fa+='<div style="padding:6px 0 6px 12px;border-bottom:1px solid var(--bdr)"><div style="font-size:13px;color:var(--text);font-weight:500">'+a.n+'</div><div style="font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.5">'+a.d+'</div></div>';
+    });
+  });
+  $('futureActions').innerHTML=fa;
+
   // 体检关键指标（重点监测）——2026-06-06 最新抽血
   const indicators=[
     {name:'Lp(a) 脂蛋白(a)',val:'656',unit:'mg/L',ref:'<300',status:'high',icon:'🔴',impact:'心血管独立风险因子，遗传性，饮食运动难降',note:'较2025年666略降，需LDL-C<2.4补偿风险'},
