@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260808i';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260809a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1208,7 +1208,8 @@ function updateDietSummary(){
   $('dietDailySummary').textContent=totalCal>0?`今日合计 ${totalCal}kcal | P${totalP}g`:'点击+展开录入';
   // Update remaining quota if on nav tab
   if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
-    const isTrainDay=today>='2026-05-31';
+    const _dow=new Date().getDay();
+    const isTrainDay=_dow!==0&&_dow!==3; // 周日(0)和周三(3)为休息日
     const targetCal=isTrainDay?1400:1000;
     const remain=targetCal-totalCal;
     const remainP=130-totalP;
@@ -1312,7 +1313,8 @@ function initTrainingRecordInfo(){
 function initNav(){
   const todayStr=getTodayStr();
   const todayDiet=DD.find(d=>d.date===todayStr);
-  const isTrainDay=todayStr>='2026-05-31';
+  const _dowNav=new Date().getDay();
+  const isTrainDay=_dowNav!==0&&_dowNav!==3; // 周日(0)和周三(3)为休息日
   const bmr=1672;const nee=300;
   const targetCal=isTrainDay?1400:1000;
   const consumed=todayDiet?todayDiet.t.cal:0;
