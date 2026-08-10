@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260809a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260810a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -122,7 +122,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="tab-content active" id="tab-nav">
 <div class="card" style="background:linear-gradient(135deg,#e8f5e9,#f5f5f7)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:8px">📊 今日剩余额度</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center">
 <div>
 <div class="big-num" id="remainCal">—<span class="unit"> kcal</span></div>
 <div class="big-sub">热量剩余</div>
@@ -131,7 +131,16 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="big-num" id="remainProtein">—<span class="unit"> g</span></div>
 <div class="big-sub">蛋白剩余</div>
 </div>
+<div>
+<div class="big-num" id="remainCarb" style="font-size:22px">—<span class="unit"> g</span></div>
+<div class="big-sub">碳水剩余</div>
 </div>
+<div>
+<div class="big-num" id="remainSF" style="font-size:22px">—<span class="unit"> g</span></div>
+<div class="big-sub">饱和脂肪剩余</div>
+</div>
+</div>
+<div id="macroHint" style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center"></div>
 </div>
 <div class="card">
 <div class="card-title">⚖️ 今日体重</div>
@@ -1205,16 +1214,37 @@ function updateDietSummary(){
       });
     });
   }
-  $('dietDailySummary').textContent=totalCal>0?`今日合计 ${totalCal}kcal | P${totalP}g`:'点击+展开录入';
+  $('dietDailySummary').textContent=totalCal>0?`今日合计 ${totalCal}kcal | P${totalP}g | C${totalC}g`:'点击+展开录入';
   // Update remaining quota if on nav tab
   if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
     const _dow=new Date().getDay();
     const isTrainDay=_dow!==0&&_dow!==3; // 周日(0)和周三(3)为休息日
     const targetCal=isTrainDay?1400:1000;
+    const targetC=isTrainDay?130:80;
+    const targetSF=20;
     const remain=targetCal-totalCal;
     const remainP=130-totalP;
-    $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
-    $('remainProtein').innerHTML=Math.round(remainP)+'<span class="unit"> g</span>';
+    const remainC=targetC-totalC;
+    const remainSF=targetSF-totalSf;
+    const calEl=$('remainCal');
+    if(calEl){
+      calEl.innerHTML=Math.round(remain)+'<span class="unit"> kcal</span>';
+      calEl.style.color=remain<0?'var(--red)':'';
+    }
+    const rpEl=$('remainProtein');
+    if(rpEl) rpEl.innerHTML=Math.round(remainP)+'<span class="unit"> g</span>';
+    const rcEl=$('remainCarb');
+    if(rcEl){
+      rcEl.innerHTML=Math.round(remainC)+'<span class="unit"> g</span>';
+      rcEl.style.color=remainC<0?'var(--red)':'';
+    }
+    const rsfEl=$('remainSF');
+    if(rsfEl){
+      rsfEl.innerHTML=Math.round(remainSF)+'<span class="unit"> g</span>';
+      rsfEl.style.color=remainSF<0?'var(--red)':'';
+    }
+    const hintEl=$('macroHint');
+    if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥130g | 碳水'+targetC+'g（训练日120-150g/休息日80g） | 饱和脂肪≤20g';
   }
 }
 
@@ -1317,12 +1347,35 @@ function initNav(){
   const isTrainDay=_dowNav!==0&&_dowNav!==3; // 周日(0)和周三(3)为休息日
   const bmr=1672;const nee=300;
   const targetCal=isTrainDay?1400:1000;
+  const targetC=isTrainDay?130:80;
+  const targetSF=20;
   const consumed=todayDiet?todayDiet.t.cal:0;
   const consumedP=todayDiet?todayDiet.t.p:0;
+  const consumedC=todayDiet?(todayDiet.t.c||0):0;
+  const consumedSF=todayDiet?(todayDiet.t.sf||0):0;
   const remain=targetCal-consumed;
   const remainP=130-consumedP;
-  $('remainCal').innerHTML=Math.max(0,Math.round(remain))+'<span class="unit"> kcal</span>';
-  $('remainProtein').innerHTML=Math.round(remainP)+'<span class="unit"> g</span>';
+  const remainC=targetC-consumedC;
+  const remainSF=targetSF-consumedSF;
+  const calEl=$('remainCal');
+  if(calEl){
+    calEl.innerHTML=Math.round(remain)+'<span class="unit"> kcal</span>';
+    calEl.style.color=remain<0?'var(--red)':'';
+  }
+  const rpEl=$('remainProtein');
+  if(rpEl) rpEl.innerHTML=Math.round(remainP)+'<span class="unit"> g</span>';
+  const rcEl=$('remainCarb');
+  if(rcEl){
+    rcEl.innerHTML=Math.round(remainC)+'<span class="unit"> g</span>';
+    rcEl.style.color=remainC<0?'var(--red)':'';
+  }
+  const rsfEl=$('remainSF');
+  if(rsfEl){
+    rsfEl.innerHTML=Math.round(remainSF)+'<span class="unit"> g</span>';
+    rsfEl.style.color=remainSF<0?'var(--red)':'';
+  }
+  const hintEl=$('macroHint');
+  if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥130g | 碳水'+targetC+'g（训练日120-150g/休息日80g） | 饱和脂肪≤20g';
 
   // Weight comparison
   initWeightCompare(todayStr);
