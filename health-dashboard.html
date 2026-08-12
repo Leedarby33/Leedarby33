@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260810a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260812a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -538,7 +538,7 @@ async function loadData(){
   initFns.forEach(fn=>{try{fn();}catch(e){console.warn(fn.name+'初始化失败:',e.message);}});
 }
 loadData();
-const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "海力生EPA鱼油 2粒/天", "Blackmores鱼油 2粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 2粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 2粒/天", "UC-II 1粒/天", "胶原蛋白肽(VP) 15g/天"];
+const SUP=["ADAM多维 2粒/天", "D3+K2复合 1粒/天", "海力生EPA鱼油 2粒/天", "Blackmores鱼油 2粒/天", "CoQ10 1粒/天", "他达拉非 5mg/天", "柠檬酸钙(GNC) 3粒/天", "精氨酸+瓜氨酸 12g/天", "肌酸 5g/天", "KSM-66 1粒/天", "甘氨酸镁 4粒/天", "UC-II 1粒/天", "胶原蛋白肽(VP) 15g/天"];
 
 const ACTIONS={
 "周一":{name:"推力量 + 肩胛协议 + 核心 + HIIT",dur:"~72min",w:[
@@ -2100,24 +2100,24 @@ function initMemo(){
 
   // 补剂清单（含京东参考价，按服用时间排序）
   const supps=[
-    {name:'精氨酸+瓜氨酸',dose:'12g',note:'空腹',time:'19:00',stock:'',price:0},
-    {name:'肌酸',dose:'5g',note:'空腹',time:'19:00',stock:'库存充足',price:0},
-    {name:'蛋白粉(普通乳清)',dose:'1勺',note:'空腹',time:'19:00',stock:'5kg',price:1088},
-    {name:'ADAM男士多维',dose:'2粒',note:'晚餐随餐',time:'19:15',stock:'90粒×2',price:456.8},
-    {name:'海力生EPA鱼油',dose:'2粒',note:'晚餐随餐 EPA1800mg+DHA20mg',time:'19:15',stock:'690粒',price:912.65},
-    {name:'Blackmores鱼油1000',dose:'2粒',note:'晚餐随餐 EPA360mg+DHA240mg',time:'19:15',stock:'',price:0},
-    {name:'CoQ10',dose:'1粒',note:'晚餐随餐',time:'19:15',stock:'第二盒刚拆',price:150},
-    {name:'D3+K2复合(NatureWise)',dose:'1粒',note:'晚餐随餐',time:'19:15',stock:'90粒/90天',price:358.15},
-    {name:'UC-II(NOW Foods)',dose:'1粒',note:'睡前空腹',time:'22:30',stock:'120粒/120天',price:262.09},
-    {name:'柠檬酸钙(GNC)',dose:'2粒',note:'睡前空腹',time:'22:30',stock:'180片/90天',price:55.05},
-    {name:'甘氨酸镁',dose:'2粒',note:'睡前空腹',time:'22:30',stock:'',price:0},
-    {name:'KSM-66',dose:'1粒',note:'睡前空腹',time:'22:30',stock:'2盒',price:286.94},
-    {name:'胶原蛋白肽(VP)',dose:'15g',note:'睡前空腹 常温水冲服',time:'22:30',stock:'567g/38天',price:307.05},
-    {name:'他达拉非',dose:'5mg',note:'任意时间',time:'任意',stock:'3盒',price:251}
+    {name:'UC-II(NOW Foods)',dose:'1粒(40mg)',note:'空腹·口服免疫耐受',time:'19:00',stock:'120粒/120天',price:262.09},
+    {name:'精氨酸+瓜氨酸',dose:'12g',note:'空腹·NO合成峰值',time:'19:00',stock:'',price:0},
+    {name:'肌酸',dose:'5g',note:'空腹·维持肌肉储备',time:'19:00',stock:'库存充足',price:0},
+    {name:'蛋白粉(普通乳清)',dose:'1勺(~25g蛋白)',note:'训后·触发肌肉蛋白合成',time:'21:45',stock:'5kg',price:1088},
+    {name:'胶原蛋白肽(VP)',dose:'15g',note:'训后·关节/皮肤/结缔组织修复',time:'21:45',stock:'567g/38天',price:307.05},
+    {name:'ADAM男士多维',dose:'2粒',note:'随餐·覆盖微量营养素',time:'22:00',stock:'90粒×2',price:456.8},
+    {name:'海力生EPA鱼油',dose:'2粒',note:'随餐 EPA1800mg·高EPA抗炎',time:'22:00',stock:'690粒',price:912.65},
+    {name:'Blackmores鱼油1000',dose:'2粒',note:'随餐 EPA360mg+DHA240mg·补充DHA',time:'22:00',stock:'',price:0},
+    {name:'CoQ10',dose:'1粒(~100mg)',note:'随餐·抗氧化+线粒体能量代谢',time:'22:00',stock:'第二盒刚拆',price:150},
+    {name:'D3+K2复合(NatureWise)',dose:'1粒',note:'随餐 D3 2000IU+K2 100mcg·K2引导钙入骨',time:'22:00',stock:'90粒/90天',price:358.15},
+    {name:'柠檬酸钙(GNC)',dose:'3粒(~750mg)',note:'睡前·钙镁比1.9:1接近理想2:1',time:'22:50',stock:'180片/60天',price:55.05},
+    {name:'甘氨酸镁',dose:'4粒(~400mg)',note:'睡前·大运动量需400-600mg·助眠+肌肉放松',time:'22:50',stock:'',price:0},
+    {name:'KSM-66',dose:'1粒(600mg)',note:'睡前·降皮质醇+促恢复',time:'22:50',stock:'2盒',price:286.94},
+    {name:'他达拉非',dose:'5mg',note:'任意时间·血管健康+前列腺',time:'任意',stock:'3盒',price:251}
   ];
   // 按时间分组渲染补剂清单
   let sp='',totalPrice=0,lastTime='';
-  const timeLabels={'19:00':'🏠 19:00 空腹','19:15':'🍽 19:15 晚餐随餐','22:30':'🌙 22:30 睡前空腹','任意':'⏰ 任意时间'};
+  const timeLabels={'19:00':'🏠 19:00 空腹（训练前）','21:45':'💪 21:45 训后','22:00':'🍽 22:00 晚餐随餐','22:50':'🌙 22:50 睡前','任意':'⏰ 任意时间'};
   supps.forEach(s=>{
     if(s.price>0)totalPrice+=s.price;
     if(s.time!==lastTime){
