@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -317,36 +317,102 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="trainRecordList" style="margin-top:6px"></div>
 </div>
 </div>
+<!-- 记录中心：体成分/围度/心率 统一录入 -->
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div class="card-title" style="margin-bottom:0">📝 记录中心</div>
+<select id="recordType" onchange="switchRecordType()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
+<option value="bodycomp">📊 体成分（周称重）</option>
+<option value="dim">📏 围度记录</option>
+<option value="rhr">💓 静息心率</option>
+</select>
+</div>
+<div id="bodycompRecordBox">
+<div id="bodyCompFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="compWeight" step="0.1" min="50" max="150" placeholder="体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compBF" step="0.1" min="3" max="60" placeholder="体脂率(%)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compMuscle" step="0.1" min="20" max="100" placeholder="肌肉量(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<input type="number" id="compFFM" step="0.1" min="20" max="120" placeholder="去脂体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compVF" step="1" min="1" max="30" placeholder="内脏脂肪(级)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compBMR" step="1" min="1000" max="3000" placeholder="BMR(kcal)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+<input type="date" id="compDate" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveBodyComp()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存体成分</button>
+</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.5">
+💡 体重必填，其余按体脂秤显示填写。BMI自动计算。已记录的日期再次保存会覆盖。<br>
+📋 常见体脂秤指标：体脂率/肌肉量/去脂体重/内脏脂肪等级/基础代谢BMR
+</div>
+</div>
+</div>
+<div id="dimRecordBox" style="display:none">
+<div id="dimFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
+</div>
+</div>
+</div>
+<div id="rhrRecordBox" style="display:none">
+<div id="rhrFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;display:flex;gap:6px;align-items:center">
+<input type="number" id="rhrVal" min="40" max="120" placeholder="晨起静息心率(bpm)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="date" id="rhrDate" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveRhrRecord()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存</button>
+</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px">📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）</div>
+</div>
+</div>
 </div>
 
 
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
 <!-- ===== 周目标跟踪（核心）===== -->
-<div class="dark-card">
+<div class="card" style="background:linear-gradient(135deg,#fff3e0,#ffe8e6)">
 <div class="week-toolbar">
-<div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:0.5px">🔥 每周减脂目标</div>
+<div style="font-size:13px;font-weight:800;color:var(--orange);letter-spacing:0.5px">🔥 每周减脂目标</div>
 <div class="week-nav">
-<button class="week-nav-btn" onclick="shiftWeek(-1)" style="background:rgba(255,255,255,0.15);color:#fff">‹</button>
-<div class="week-label" id="weekLabel" style="color:#fff">—</div>
-<button class="week-nav-btn" onclick="shiftWeek(1)" style="background:rgba(255,255,255,0.15);color:#fff">›</button>
+<button class="week-nav-btn" onclick="shiftWeek(-1)">‹</button>
+<div class="week-label" id="weekLabel">—</div>
+<button class="week-nav-btn" onclick="shiftWeek(1)">›</button>
 </div>
 </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center">
 <div class="big-ring-wrap">
-<div id="weekDeficitRing" style="width:130px;height:130px"></div>
-<div style="margin-top:6px;font-size:15px;font-weight:900;color:#fff"><span id="weekDeficitBig" class="flame-text">—</span><span style="font-size:11px;color:rgba(255,255,255,0.6)"> / <span id="weekDeficitTarget">—</span> kcal</span></div>
+<div id="weekDeficitRing" style="width:120px;height:120px"></div>
+<div style="margin-top:6px;font-size:14px;font-weight:900;color:var(--text)"><span id="weekDeficitBig" class="flame-text">—</span><span style="font-size:11px;color:var(--text-3)"> / <span id="weekDeficitTarget">—</span> kcal</span></div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
-<div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center">
-<div style="font-size:24px;font-weight:900;color:#FFD28C" id="weekFatEst">—</div>
-<div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">本周预计已减脂肪</div>
+<div>
+<div style="display:grid;grid-template-columns:1fr;gap:8px">
+<div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+<div style="font-size:20px;font-weight:900;color:var(--orange)" id="actualFatLoss">—</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:2px">实际已减脂肪</div>
 </div>
-<div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center">
-<div style="font-size:24px;font-weight:900;color:#A8E6C8" id="weekWeightEst">—</div>
-<div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">预计体重(含水分)</div>
+<div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+<div style="font-size:20px;font-weight:900;color:var(--green)" id="actualWeightLoss">—</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:2px">实际已减体重</div>
 </div>
 </div>
-<div id="weekRemainHint" style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.6;background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 12px"></div>
+</div>
+</div>
+<div id="weekRemainHint" style="margin-top:12px;font-size:12px;color:var(--text-2);line-height:1.7;background:var(--card);border-radius:10px;padding:10px 12px;border-left:3px solid var(--orange)"></div>
 </div>
 <div class="card">
 <div class="card-title">📊 本周缺口 & 周内调节</div>
@@ -409,16 +475,23 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="trainTypePie"></div>
 </div>
 <div class="card">
-<div class="card-title">📅 日期范围</div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="card-title" style="margin-bottom:0">📋 训练明细</div>
+<div onclick="toggleTrainDetail()" id="trainDetailToggle" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px">▸</div>
+</div>
+<div id="trainDetailContent" style="display:none">
 <div class="date-range">
 <input type="date" id="trainStart" value="2026-05-31" onchange="filterTraining()">
 <span>至</span>
 <input type="date" id="trainEnd" value="2026-08-04" onchange="filterTraining()">
 </div>
+<div style="margin:8px 0 4px;font-size:11px;color:var(--text-3)">💡 也可直接输入单日查询：</div>
+<div style="display:flex;gap:6px;margin-bottom:8px">
+<input type="date" id="trainDetailDate" onchange="showTrainDetailByDate()" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="showTrainDetailByDate()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">🔍 查询</button>
 </div>
-<div class="card">
-<div class="card-title">📋 训练明细</div>
 <div style="overflow-x:auto"><table id="trainTable"><thead><tr><th>日期</th><th>类型</th><th>时长</th><th>动态</th><th>总消耗</th></tr></thead><tbody></tbody></table></div>
+</div>
 </div>
 </div>
 
@@ -447,8 +520,18 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="dietWeeklySummary"></div>
 </div>
 <div class="card">
-<div class="card-title">📋 每日饮食明细</div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="card-title" style="margin-bottom:0">📋 每日饮食明细</div>
+<div onclick="toggleDietDetail()" id="dietDetailToggle" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px">▸</div>
+</div>
+<div id="dietDetailContent" style="display:none">
+<div style="display:flex;gap:6px;margin:8px 0">
+<input type="date" id="dietDetailDate" onchange="showDietDetailByDate()" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="showDietDetailByDate()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">🔍 查询当天</button>
+</div>
+<div style="font-size:10px;color:var(--text-3);margin-bottom:6px">选择日期后点查询，只显示该天记录；不选则显示上方日期范围内的全部明细</div>
 <div id="dietDetail"></div>
+</div>
 </div>
 </div>
 
@@ -459,99 +542,52 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">🎯 减脂达成率</div>
 <div id="achievementArea"></div>
 </div>
-<!-- 卡片2: 体重趋势+体脂趋势合并 -->
+<!-- 卡片2: 体重·体脂·腰围统一趋势图 -->
 <div class="card">
-<div class="card-title">⚖️ 体重 & 体脂趋势 <span class="energy-badge green">7日均线</span></div>
-<div id="bodyWeightChart"></div>
-<div id="bfChartZone" style="margin-top:12px"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div class="card-title" style="margin-bottom:0">⚖️ 体重·体脂·腰围趋势 <span class="energy-badge green">7日均线</span></div>
+<div style="display:flex;gap:6px;align-items:center">
+<select id="bodyRecordSelect" onchange="showBodyRecord()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none;max-width:160px">
+<option value="">📋 查看历史记录</option>
+</select>
+</div>
+</div>
+<div id="bodyTrendChart"></div>
+<div id="bodyRecordDetail" style="display:none;margin-top:10px;background:var(--inset);border-radius:10px;padding:12px"></div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px">📌 左轴=体重(kg) · 右轴=体脂率(%)/腰围(cm) · 横轴延伸至目标终点2027/2/1，虚线为当前趋势外推，可判断能否按此曲率达标</div>
 </div>
 <!-- 静息心率 -->
 <div class="card">
 <div class="card-title">💓 静息心率（周均）</div>
 <div id="rhrChart"></div>
 <div style="font-size:11px;color:var(--text-3);margin-top:8px;line-height:1.6">
-📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）。当前每周在「今日-心率记录」录入。
+📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）。当前每周在「今日-记录中心」录入。
 </div>
 </div>
-<!-- 腰围趋势 -->
+<!-- 各围度距目标差距 -->
 <div class="card">
-<div class="card-title">📏 腰围 & 腰高比趋势</div>
-<div id="waistChart"></div>
-<div style="font-size:11px;color:var(--text-3);margin-top:8px">腰高比(腰围/身高)目标 &lt;0.5（男），你身高174cm → 腰围目标 &lt;87cm</div>
-</div>
-<!-- 卡片2b: 体成分录入 -->
-<div class="card">
-<div class="card-title">📊 体成分录入 <span style="font-size:11px;color:var(--text-3);font-weight:400">每周称重时一次性记录</span></div>
-<div id="bodyCompFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="compWeight" step="0.1" min="50" max="150" placeholder="体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compBF" step="0.1" min="3" max="60" placeholder="体脂率(%)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compMuscle" step="0.1" min="20" max="100" placeholder="肌肉量(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
-<input type="number" id="compFFM" step="0.1" min="20" max="120" placeholder="去脂体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compVF" step="1" min="1" max="30" placeholder="内脏脂肪(级)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compBMR" step="1" min="1000" max="3000" placeholder="BMR(kcal)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px;align-items:center">
-<input type="date" id="compDate" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveBodyComp()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存体成分</button>
-</div>
-<div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.5">
-💡 体重必填，其余按体脂秤显示填写。BMI自动计算。已记录的日期再次保存会覆盖。<br>
-📋 常见体脂秤指标：体脂率/肌肉量/去脂体重/内脏脂肪等级/基础代谢BMR
-</div>
-</div>
-</div>
-<!-- 卡片3: 围度录入+围度目标 -->
-<div class="card">
-<div class="card-title">📏 围度记录</div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0;font-size:14px">📝 今日围度录入</div>
-</div>
-<div id="dimFeedback" style="font-size:12px;color:var(--text-2);margin-top:4px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-top:8px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
-<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
-</div>
-</div>
-<div class="card-title" style="font-size:14px;margin-top:16px;margin-bottom:8px">🎯 各围度距目标差距</div>
+<div class="card-title">🎯 各围度距目标差距</div>
 <div id="bodyPartDistance"></div>
-</div>
-<!-- 日期范围 -->
-<div class="card">
-<div class="card-title">📅 日期范围</div>
-<div class="date-range">
-<input type="date" id="bodyStart" value="2026-05-26" onchange="filterBody()">
-<span>至</span>
-<input type="date" id="bodyEnd" value="2026-08-04" onchange="filterBody()">
-</div>
 </div>
 <!-- 卡片4: 体检风险 -->
 <div class="card">
 <div class="card-title">🎯 体检指标追踪</div>
 <div id="refCompareArea"></div>
 </div>
-<!-- 卡片5: 体测历史 -->
+<!-- 卡片5: 体测历史（折叠） -->
 <div class="card">
-<div class="card-title">📋 体测数据历史</div>
-<div id="bodyHistoryCards" style="display:flex;overflow-x:auto;gap:12px;padding-bottom:4px"></div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="card-title" style="margin-bottom:0">📋 体测数据历史</div>
+<div onclick="toggleBodyHistory()" id="bodyHistoryToggle" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px">▸</div>
+</div>
+<div id="bodyHistoryCards" style="display:none;overflow-x:auto;gap:12px;padding-bottom:4px;margin-top:8px"></div>
 </div>
 <div class="card">
-<div class="card-title">📐 围度记录历史</div>
-<div id="dimHistoryCards" style="display:flex;overflow-x:auto;gap:12px;padding-bottom:4px"></div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="card-title" style="margin-bottom:0">📐 围度记录历史</div>
+<div onclick="toggleDimHistory()" id="dimHistoryToggle" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px">▸</div>
+</div>
+<div id="dimHistoryCards" style="display:none;overflow-x:auto;gap:12px;padding-bottom:4px;margin-top:8px"></div>
 </div>
 </div>
 
@@ -572,10 +608,6 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card">
 <div class="card-title">💊 补剂清单</div>
 <div id="supplementMemo"></div>
-</div>
-<div class="card">
-<div class="card-title">🔥 减脂部位与体脂率对应区间</div>
-<div id="fatLossZones"></div>
 </div>
 
 </div>
@@ -943,6 +975,31 @@ function saveBodyComp(){
 function initBodyCompDate(){
   var d=document.getElementById('compDate');
   if(d)d.value=getTodayStr();
+}
+
+// 记录中心：切换录入类型
+function switchRecordType(){
+  const t=$('recordType').value;
+  $('bodycompRecordBox').style.display=(t==='bodycomp')?'block':'none';
+  $('dimRecordBox').style.display=(t==='dim')?'block':'none';
+  $('rhrRecordBox').style.display=(t==='rhr')?'block':'none';
+}
+
+// 静息心率记录
+function saveRhrRecord(){
+  const fb=$('rhrFeedback');
+  const dt=$('rhrDate').value||getTodayStr();
+  const hr=parseInt($('rhrVal').value);
+  if(!hr||hr<35||hr>120){fb.innerHTML='<span style="color:var(--red)">请输入有效心率(35-120 bpm)</span>';return;}
+  let list=[];
+  try{list=JSON.parse(localStorage.getItem('health_rhr')||'[]');}catch(e){}
+  const i=list.findIndex(r=>r.date===dt);
+  if(i>=0)list[i]={date:dt,hr};else list.push({date:dt,hr});
+  list.sort((a,b)=>a.date.localeCompare(b.date));
+  localStorage.setItem('health_rhr',JSON.stringify(list));
+  fb.innerHTML='<span style="color:var(--green)">✓ '+dt+' 静息心率 '+hr+' bpm 已记录</span>';
+  $('rhrVal').value='';
+  if(typeof renderRhrChart==='function'){try{renderRhrChart();}catch(e){}}
 }
 
 function saveDailyWeight(){
@@ -2095,27 +2152,26 @@ function renderWeekTracker(){
   $('weekDeficitBig').textContent=wd.deficit.toLocaleString();
   // 环形图
   $('weekDeficitRing').innerHTML=makeRing(pct,wd.deficit,target);
-  // 预计减脂/体重
-  const fatEst=wd.deficit/GOAL_CFG.coef;
-  $('weekFatEst').textContent=fatEst.toFixed(2)+' kg';
-  $('weekWeightEst').textContent=(fatEst/GOAL_CFG.fatRatio).toFixed(2)+' kg';
-  // 剩余提示
+  // 实际减脂/减重：起始89.85kg/31.5%，最新体重(取最新记录) × 最新体脂率(取最近有bf的记录)
+  const START_W=89.85,START_BF=31.5;
+  const latestWrec=WD.length?WD[WD.length-1]:null;
+  const latestBfRec=WD.filter(d=>d.bf!=null).pop();
+  const curW=latestWrec?latestWrec.weight:0;
+  const curBF=latestBfRec&&latestBfRec.bf!=null?latestBfRec.bf:START_BF;
+  const fatStart=START_W*START_BF/100;
+  const fatNow=curW*curBF/100;
+  const actualFat=Math.max(0,fatStart-fatNow);
+  const actualW=START_W-curW;
+  $('actualFatLoss').textContent=actualFat.toFixed(1)+' kg';
+  $('actualWeightLoss').textContent=actualW.toFixed(1)+' kg';
+  // 阶段提示（简洁，具体缺口细节在下方"本周缺口&周内调节"）
   const phase=currentPhase();
   if(wd.isCurrent){
-    const remain=target-wd.deficit;
-    const daysLeft=7-(new Date().getDay()||7);
-    if(remain>0){
-      const perDay=Math.ceil(remain/Math.max(1,daysLeft));
-      $('weekRemainHint').innerHTML='🎯 阶段目标 <b style="color:#FFD28C">'+phase.weekFat.toFixed(2)+'kg脂肪/周</b><br>'+
-        '距本周目标还差 <b style="color:#FFD28C">'+remain.toLocaleString()+' kcal</b><br>'+
-        '剩余 <b>'+daysLeft+'天</b>，每天需再多补约 <b style="color:#FFD28C">'+perDay.toLocaleString()+' kcal</b> 缺口'+
-        '<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,0.55)">依据个人化系数 ~'+GOAL_CFG.coef.toLocaleString()+' kcal/kg 脂肪（自动校准）</div>';
-    }else{
-      $('weekRemainHint').innerHTML='✅ 本周缺口已达成目标！已超出 <b style="color:#A8E6C8">'+(wd.deficit-target).toLocaleString()+' kcal</b><br>'+
-        '<div style="font-size:11px;color:rgba(255,255,255,0.55)">本周阶段目标：'+phase.weekFat.toFixed(2)+'kg脂肪</div>';
-    }
+    $('weekRemainHint').innerHTML=
+      '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b>（'+phase.weekFat.toFixed(2)+'kg脂肪/周）<br>'+
+      '💡 本周具体还差多少、每天需补多少缺口，请看下方「本周缺口 & 周内调节」';
   }else{
-    $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 '+wd.deficit.toLocaleString()+' kcal，目标 '+target.toLocaleString()+' kcal';
+    $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 <b style="color:var(--orange)">'+wd.deficit.toLocaleString()+' kcal</b>，目标 '+target.toLocaleString()+' kcal';
   }
 }
 function shiftWeek(d){
@@ -2130,10 +2186,10 @@ function makeRing(pct,val,target){
   const isComplete=pct>=100;
   const color=isComplete?'#00B368':'#FF5A00';
   return '<svg viewBox="0 0 120 120" style="width:100%;height:100%">'+
-    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12"/>'+
+    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="rgba(255,90,0,0.12)" stroke-width="12"/>'+
     '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 0.6s"/>'+
-    '<text x="60" y="56" text-anchor="middle" fill="#fff" font-size="20" font-weight="900">'+Math.round(pct)+'%</text>'+
-    '<text x="60" y="72" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="9">完成</text>'+
+    '<text x="60" y="56" text-anchor="middle" fill="var(--text)" font-size="20" font-weight="900">'+Math.round(pct)+'%</text>'+
+    '<text x="60" y="72" text-anchor="middle" fill="var(--text-3)" font-size="9">完成</text>'+
     '</svg>';
 }
 
@@ -2174,8 +2230,13 @@ function renderWeeklyAdjust(){
   const totalRow='<div style="margin-top:12px;padding:12px;background:var(--inset);border-radius:12px">'+
     '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-2)">本周累计缺口</span><span style="font-weight:800;color:var(--orange)">'+wd.deficit.toLocaleString()+' / '+target.toLocaleString()+' kcal</span></div>'+
     '<div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+Math.min(100,wd.deficit/target*100).toFixed(1)+'%"></div></div>'+
-    '<div style="font-size:11px;color:var(--text-2);margin-top:6px">'+
-      (remain>0?'还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余'+daysLeft+'天 · 每天需补 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b>缺口' : '✅ 已达成本周目标')+
+    '<div style="font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.6">'+
+      (remain>0
+        ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，目前已达成 <b>'+wd.deficit.toLocaleString()+'</b>，<br>'+
+         '还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>。<br>'+
+         '把还差的量均摊到剩余 '+daysLeft+' 天：每天需把当天缺口再做大约 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b>。'
+        :'✅ 已达成周缺口目标，超出 <b style="color:var(--green)">'+(wd.deficit-target).toLocaleString()+' kcal</b>')+
+    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：这是从"当前已达成缺口"反推的差额，不是在你日常缺口基础上额外叠加。</div>'+
     '</div></div>';
   $('weekAdjustBox').innerHTML=totalRow+rows;
 }
@@ -2246,6 +2307,30 @@ function filterTraining(){
   }
 }
 
+// 训练明细折叠切换
+function toggleTrainDetail(){
+  const c=$('trainDetailContent'),t=$('trainDetailToggle');
+  if(!c)return;
+  if(c.style.display==='none'){c.style.display='block';t.textContent='▾';}
+  else{c.style.display='none';t.textContent='▸';}
+}
+// 训练单日查询
+function showTrainDetailByDate(){
+  const date=$('trainDetailDate').value;
+  const tbody=document.querySelector('#trainTable tbody');
+  if(!tbody)return;
+  if(!date){
+    filterTraining();
+    return;
+  }
+  const recs=TD.filter(t=>t.date===date);
+  if(recs.length===0){
+    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:14px">'+date.slice(5)+' 当天无训练记录</td></tr>';
+    return;
+  }
+  tbody.innerHTML=recs.map(t=>'<tr><td>'+t.date.slice(5)+'</td><td>'+t.type+'</td><td>'+t.dur+'min</td><td>'+t.dyn+'kcal</td><td>'+t.total+'kcal</td></tr>').join('');
+}
+
 // 通用柱状图
 function makeBarChart(data,xKey,yKey,color,label){
   const w=450,h=180,pad={l:34,r:12,t:16,b:26};
@@ -2275,8 +2360,7 @@ function makeBarChart(data,xKey,yKey,color,label){
 }
 
 // ===== TAB 4: DIET =====
-function filterDiet(){
-  const s=$('dietStart').value,e=$('dietEnd').value;
+function filterDiet(){  const s=$('dietStart').value,e=$('dietEnd').value;
   const filtered=DD.filter(d=>d.date>=s&&d.date<=e);
   
   // Merge localStorage meal data
@@ -2316,6 +2400,10 @@ function filterDiet(){
   try{ renderDietCalChart(combined,s,e); }catch(err){}
   try{ renderDietWeekly(combined); }catch(err){}
   
+  $('dietDetail').innerHTML=buildDietDetailHTML(combined);
+}
+// 构建每日饮食明细HTML
+function buildDietDetailHTML(combined){
   let html='';
   combined.slice().reverse().forEach(d=>{
     if(d.t.cal===0)return;
@@ -2347,7 +2435,41 @@ function filterDiet(){
     html+='<div style="font-size:10px;color:var(--text-3);margin-top:4px">饱和脂肪:'+d.t.sf+'g | 果糖:'+d.t.fr+'g | 碳水:'+d.t.c+'g</div>';
     html+='</div>';
   });
-  $('dietDetail').innerHTML=html;
+  return html;
+}
+// 饮食明细折叠切换
+function toggleDietDetail(){
+  const c=$('dietDetailContent'),t=$('dietDetailToggle');
+  if(!c)return;
+  if(c.style.display==='none'){c.style.display='block';t.textContent='▾';}
+  else{c.style.display='none';t.textContent='▸';}
+}
+// 饮食单日查询
+function showDietDetailByDate(){
+  const date=$('dietDetailDate').value;
+  if(!date){filterDiet();return;}
+  const meals=getMeals();
+  // 构建单日combined
+  const ddEntry=DD.find(d=>d.date===date);
+  const combined=[];
+  if(ddEntry){
+    if(meals[date]){
+      const m=meals[date];
+      let cal=0,p=0,sf=0,fr=0,c=0;
+      ['b','l','d','s'].forEach(k=>{(m[k]||[]).forEach(item=>{cal+=item.cal;p+=item.p;sf+=item.sf;fr+=item.fr;c+=item.c;});});
+      combined.push({date:date,t:{cal,p,sf,fr,c},_meals:m,_fromLS:true});
+    }else{combined.push(ddEntry);}
+  }else if(meals[date]){
+    const m=meals[date];
+    let cal=0,p=0,sf=0,fr=0,c=0;
+    ['b','l','d','s'].forEach(k=>{(m[k]||[]).forEach(item=>{cal+=item.cal;p+=item.p;sf+=item.sf;fr+=item.fr;c+=item.c;});});
+    combined.push({date:date,t:{cal,p,sf,fr,c},_meals:m,_fromLS:true});
+  }
+  if(combined.length===0||combined[0].t.cal===0){
+    $('dietDetail').innerHTML='<div style="color:var(--text-3);text-align:center;padding:18px">'+date.slice(5)+' 当天无饮食记录</div>';
+    return;
+  }
+  $('dietDetail').innerHTML=buildDietDetailHTML(combined);
 }
 // 饮食每日摄入柱状图（带训练日/休息日上限线）
 function renderDietCalChart(data,s,e){
@@ -2398,30 +2520,35 @@ function renderDietWeekly(data){
   const days=data.filter(d=>d.t.cal>0);
   if(days.length===0){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:12px">暂无数据</div>';return;}
   // 按周分组（周一为一周起点）
+  const WEEKBUDGET=1400*5+1000*2; // 训练日1400×5 + 休息日1000×2 = 9000
+  const GRACE=300; // 宽松额度(kcal)：超出≤300 可接受，通过多运动弥补
   const weeks={};
   days.forEach(d=>{
     const dt=new Date(d.date+'T00:00:00');
     const dow=dt.getDay()||7;
     const monday=new Date(dt);monday.setDate(dt.getDate()-(dow-1));
     const key=monday.toISOString().slice(0,10);
-    if(!weeks[key])weeks[key]={cal:0,p:0,days:0,over:0};
+    if(!weeks[key])weeks[key]={cal:0,p:0,days:0,isCurrent:false};
     weeks[key].cal+=d.t.cal;weeks[key].p+=d.t.p;weeks[key].days++;
-    const isRest=(dt.getDay()===0||dt.getDay()===3);
-    const limit=isRest?1000:1400;
-    if(d.t.cal>limit)weeks[key].over++;
+    weeks[key].isCurrent=weeks[key].isCurrent||(key===mondayOfDate(new Date()).toISOString().slice(0,10));
   });
   const keys=Object.keys(weeks).sort().reverse().slice(0,6);
-  let h='';
+  let h='<div style="font-size:10px;color:var(--text-3);margin-bottom:6px">📌 周预算 = 训练日1400×5 + 休息日1000×2 = <b style="color:var(--text-2)">9000 kcal</b>，给 <b style="color:var(--orange)">300kcal</b> 宽松额度（超一点点可通过多运动弥补，不必苛求每日不超）</div>';
   keys.forEach(k=>{
     const w=weeks[k];
     const avg=Math.round(w.cal/w.days);
     const avgP=Math.round(w.p/w.days);
-    const ok=w.days-w.over;
+    const over=w.cal-WEEKBUDGET;
+    const within=over<=GRACE;
+    let status,color;
+    if(over<=0){status='✅ 达标 · 结余 '+Math.abs(over).toLocaleString()+'kcal';color='var(--green)';}
+    else if(within){status='🟡 轻微超出 '+over.toLocaleString()+'kcal（≤300，多动即可补回）';color='var(--gold)';}
+    else{status='🔴 超 '+over.toLocaleString()+'kcal · 需多运动'+Math.ceil((over-GRACE)/7)+'~'+Math.ceil(over/7)+'kcal/天补回';color='var(--red)';}
     h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">'+
-      '<div><div style="font-size:12px;font-weight:700;color:var(--text)">'+k.slice(5).replace('-','/')+' 周</div>'+
+      '<div><div style="font-size:12px;font-weight:700;color:var(--text)">'+k.slice(5).replace('-','/')+' 周'+(w.isCurrent?' <span class="energy-badge orange">本周</span>':'')+'</div>'+
       '<div style="font-size:10px;color:var(--text-3)">'+w.days+'天记录 · 日均'+avg+'kcal / P'+avgP+'g</div></div>'+
-      '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:var(--orange)">'+Math.round(w.cal)+' kcal</div>'+
-      '<div style="font-size:10px;color:'+(w.over>0?'var(--red)':'var(--green)')+'">'+ok+'/'+w.days+'天达标'+(w.over>0?' · '+w.over+'天超限':'')+'</div></div></div>';
+      '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:var(--orange)">'+Math.round(w.cal)+'<span style="font-size:10px;color:var(--text-3)"> / '+WEEKBUDGET+' kcal</span></div>'+
+      '<div style="font-size:10px;color:'+color+'">'+status+'</div></div></div>';
   });
   el.innerHTML=h||'<div style="color:var(--text-3);text-align:center;padding:12px">暂无周数据</div>';
 }
@@ -2429,23 +2556,15 @@ function renderDietWeekly(data){
 
 // ===== TAB 5: BODY =====
 function filterBody(){
-  const s=$('bodyStart').value,e=$('bodyEnd').value;
+  // 体测趋势图固定显示全量数据（横轴自动延伸至目标终点2/1），无需手动选日期范围
+  const s='2026-05-26',e='2099-12-31';
   const chartW=450,chartH=200;
   
-  const fw=WD.filter(d=>d.date>=s&&d.date<=e);
-  // 体重 + 7日均线
-  const weightSeries=makeLineChartWithMA(fw,'date','weight',chartW,chartH,'#FFB400','体重',7);
-  $('bodyWeightChart').innerHTML=weightSeries;
-  
-  // 体脂率 + 减脂区间带（叠加备忘的29→26/26→23/23→20/20→18）
-  const bfd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null);
-  const bfZoneEl=$('bfChartZone');
-  if(bfZoneEl) bfZoneEl.innerHTML=makeBfZoneChart(bfd,chartW,180);
+  // 统一趋势图：体重·体脂·腰围（共用横轴，延伸到目标终点）
+  try{ renderBodyTrendChart(s,e); }catch(err){console.warn('趋势图失败',err);}
   
   // 静息心率周走势
   try{ renderRhrChart(); }catch(err){}
-  // 腰围 + 腰高比
-  try{ renderWaistChart(s,e); }catch(err){}
   
   renderBodyPartDistance();
   
@@ -2484,7 +2603,7 @@ function filterBody(){
   rc+='</div>';
   $('refCompareArea').innerHTML=rc;
   
-  // Achievement rate
+  // Achievement rate → 序时进度达成率
   const startW=89.85,targetW=70,targetBF=21;
   const curW=latest.weight,curBF=latest.bf;
   const lostW=startW-curW,needLoseW=startW-targetW;
@@ -2492,9 +2611,22 @@ function filterBody(){
   const wPct=Math.min(100,lostW/needLoseW*100);
   const bfPct=Math.min(100,lostBF/needLoseBF*100);
   const overallPct=(wPct+bfPct)/2;
-  let ach='<div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;font-weight:800;color:var(--orange)">'+overallPct.toFixed(1)+'%</div><div style="font-size:13px;color:var(--text-2)">综合达成率</div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--text-2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:13px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
-  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;color:var(--text-2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:13px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
+  // 时间进度：起始5/31 → 目标2/1
+  const startD=new Date('2026-05-31'),endD=new Date('2027-02-01');
+  const nowT=new Date();
+  const totalDays=Math.floor((endD-startD)/86400000);
+  const passedDays=Math.max(0,Math.min(totalDays,Math.floor((nowT-startD)/86400000)));
+  const timePct=totalDays>0?passedDays/totalDays*100:0;
+  // 序时达成率 = 综合达成率 / 时间进度
+  const pacePct=timePct>0?Math.min(150,overallPct/timePct*100):0;
+  const paceStatus=pacePct>=105?'领先进度':(pacePct>=95?'同步达标':(pacePct>=80?'略落后':'明显落后'));
+  const paceColor=pacePct>=95?'var(--green)':(pacePct>=80?'var(--gold)':'var(--red)');
+  let ach='<div style="text-align:center;margin-bottom:4px"><div style="font-size:42px;font-weight:800;color:'+paceColor+'">'+pacePct.toFixed(0)+'%</div><div style="font-size:13px;color:var(--text-2)">序时进度达成率</div><div style="font-size:11px;color:'+paceColor+';margin-top:2px">'+paceStatus+'（已消耗'+timePct.toFixed(1)+'%时间，完成'+overallPct.toFixed(1)+'%目标）</div></div>';
+  // 时间进度条
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">⏱ 时间进度 '+passedDays+'/'+totalDays+'天</span><span style="font-size:12px;font-weight:600;color:var(--blue)">'+timePct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+timePct+'%;background:linear-gradient(90deg,var(--blue),var(--blue))"></div></div></div>';
+  ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:12px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
+  ach+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:12px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
+  ach+='<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 序时达成率=综合达成率÷时间进度。&gt;100%说明跑赢时间线，&lt;100%说明落后，需要追进度。</div>';
   $('achievementArea').innerHTML=ach;
   
   // Body history cards (横向滑动)
@@ -2592,6 +2724,183 @@ function renderBodyPartDistance(){
   $('bodyPartDistance').innerHTML=h;
 }
 // ===== 体测增强图表 =====
+// 统一趋势图：体重(左轴,7日均线) · 体脂率(右轴) · 腰围(右轴)，共用横轴并延伸到目标终点2/1
+function renderBodyTrendChart(s,e){
+  const el=$('bodyTrendChart');
+  if(!el)return;
+  const END='2027-02-01'; // 目标终点
+  const dayN=d=>new Date(d+'T00:00:00').getTime();
+  // 数据（仅在 s~e 内）
+  const wRecs=WD.filter(d=>d.date>=s&&d.date<=e&&d.weight!=null).sort((a,b)=>a.date.localeCompare(b.date));
+  const bfRecs=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null).sort((a,b)=>a.date.localeCompare(b.date));
+  const dimRecs=DIM.filter(d=>d.date>=s&&d.date<=e&&d.waist).sort((a,b)=>a.date.localeCompare(b.date));
+  // 体重7日均线
+  const wMA=[];
+  for(let i=0;i<wRecs.length;i++){
+    if(i<6)continue;
+    let sum=0;for(let j=i-6;j<=i;j++)sum+=wRecs[j].weight;
+    wMA.push({date:wRecs[i].date,v:+(sum/7).toFixed(1)});
+  }
+  const chartW=470,chartH=240,pad={l:44,r:44,t:20,b:30};
+  const cw=chartW-pad.l-pad.r,ch=chartH-pad.t-pad.b;
+  // 横轴范围
+  const t0=dayN(s),t1=dayN(END);
+  const X=date=>pad.l+cw*Math.max(0,Math.min(1,(dayN(date)-t0)/(t1-t0)));
+  // 左轴(体重)范围
+  const wVals=wMA.length?wMA.map(p=>p.v):(wRecs.length?wRecs.map(d=>d.weight):[83]);
+  const wMin=Math.min(...wVals)-2,wMax=Math.max(...wVals)+1;
+  // 右轴(体脂+腰围)范围
+  const rVals=[...bfRecs.map(d=>d.bf),...dimRecs.map(d=>d.waist)];
+  const rMin=Math.min(...rVals,18)-2,rMax=Math.max(...rVals,101)+2;
+  const YW=v=>pad.t+ch*(1-(v-wMin)/(wMax-wMin)); // 体重
+  const YR=v=>pad.t+ch*(1-(v-rMin)/(rMax-rMin)); // 体脂/腰围
+  let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
+  // 网格（左轴）
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4),vw=wMin+(wMax-wMin)*i/4,rv=rMin+(rMax-rMin)*i/4;
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(chartW-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+vw.toFixed(0)+'</text>';
+    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="start">'+rv.toFixed(0)+'</text>';
+  }
+  // 体脂减脂区间带（右侧体脂率轴），与备忘的减脂部位区间对应
+  const bfZones=[
+    {from:29,to:26,label:'四肢',color:'rgba(0,179,104,0.13)'},
+    {from:26,to:23,label:'胸肩',color:'rgba(255,180,0,0.14)'},
+    {from:23,to:20,label:'腹部开始',color:'rgba(255,138,0,0.16)'},
+    {from:20,to:18,label:'下腹',color:'rgba(255,45,85,0.16)'},
+    {from:18,to:12,label:'腹肌',color:'rgba(255,45,85,0.22)'}
+  ];
+  bfZones.forEach(b=>{
+    const yTop=YR(Math.min(b.from,rMax)),yBot=YR(Math.max(b.to,rMin));
+    if(yBot<=yTop)return;
+    svg+='<rect x="'+(chartW-pad.r-70)+'" y="'+yTop+'" width="70" height="'+(yBot-yTop)+'" fill="'+b.color+'"/>';
+    svg+='<text x="'+(chartW-pad.r-6)+'" y="'+(yTop+8)+'" fill="rgba(0,0,0,0.3)" font-size="7" text-anchor="end">'+b.label+' '+b.from+'→'+b.to+'</text>';
+  });
+  // 目标终点标记（2/1）：体重70、体脂21、腰围87
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
+  const todayX=X(todayStr);
+  const targetX=X(END);
+  // 目标垂线
+  svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>';
+  svg+='<text x="'+targetX+'" y="'+(pad.t-6)+'" fill="#FF2D55" font-size="8" font-weight="700" text-anchor="middle">2027/2/1 目标</text>';
+  // 目标点
+  const targetPts=[
+    {y:YW(70),c:'#FFB400',label:'70kg'},
+    {y:YR(21),c:'#00B368',label:'21%'},
+    {y:YR(87),c:'#2F6BFF',label:'87cm'}
+  ];
+  targetPts.forEach(p=>{
+    svg+='<circle cx="'+targetX+'" cy="'+p.y+'" r="4" fill="'+p.c+'" stroke="#fff" stroke-width="1.5"/>';
+    svg+='<text x="'+(targetX-6)+'" y="'+(p.y-5)+'" fill="'+p.c+'" font-size="9" font-weight="700" text-anchor="end">'+p.label+'</text>';
+  });
+  // 体重7日均线（橙色）
+  if(wMA.length>=2){
+    let pth='';
+    wMA.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YW(p.v).toFixed(1);});
+    svg+='<path d="'+pth+'" fill="none" stroke="#FFB400" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+    // 当前点标注
+    const lastW=wMA[wMA.length-1];
+    svg+='<circle cx="'+X(lastW.date)+'" cy="'+YW(lastW.v)+'" r="3.5" fill="#FFB400"/>';
+    svg+='<text x="'+(X(lastW.date)-8)+'" y="'+(YW(lastW.v)-6)+'" fill="#FFB400" font-size="9" font-weight="700" text-anchor="end">'+lastW.v+'kg</text>';
+    // 体重外推投影（从当前点斜率到目标70kg）
+    if(wMA.length>=2){
+      const a=wMA[wMA.length-2],b=wMA[wMA.length-1];
+      const slope=(b.v-a.v)/(dayN(b.date)-dayN(a.date)); // kg/day
+      const daysToEnd=(dayN(END)-dayN(b.date))/86400000;
+      const proj=b.v+slope*daysToEnd;
+      const projY=YW(Math.max(50,Math.min(120,proj)));
+      svg+='<line x1="'+X(b.date)+'" y1="'+YW(b.v)+'" x2="'+targetX+'" y2="'+projY+'" stroke="#FFB400" stroke-width="1.6" stroke-dasharray="5,4" opacity="0.6"/>';
+      svg+='<text x="'+(targetX-6)+'" y="'+(projY-5)+'" fill="#B8860B" font-size="8" text-anchor="end">外推'+(proj.toFixed(1))+'kg</text>';
+    }
+  }
+  // 体脂折线（绿色）
+  if(bfRecs.length>=2){
+    let pth='';
+    bfRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YR(p.bf).toFixed(1);});
+    svg+='<path d="'+pth+'" fill="none" stroke="#00B368" stroke-width="2" stroke-linejoin="round"/>';
+    bfRecs.forEach((p,i)=>{
+      svg+='<circle cx="'+X(p.date)+'" cy="'+YR(p.bf)+'" r="3" fill="#00B368"/>';
+      if(i===bfRecs.length-1) svg+='<text x="'+(X(p.date)-8)+'" y="'+(YR(p.bf)+12)+'" fill="#00B368" font-size="8" font-weight="700" text-anchor="end">'+p.bf+'%</text>';
+    });
+  }
+  // 腰围折线（蓝色）
+  if(dimRecs.length>=2){
+    let pth='';
+    dimRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YR(p.waist).toFixed(1);});
+    svg+='<path d="'+pth+'" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linejoin="round"/>';
+    dimRecs.forEach((p,i)=>{
+      svg+='<circle cx="'+X(p.date)+'" cy="'+YR(p.waist)+'" r="3" fill="#2F6BFF"/>';
+      if(i===dimRecs.length-1){const whr=p.waist/174;svg+='<text x="'+(X(p.date)+8)+'" y="'+(YR(p.waist)-6)+'" fill="#2F6BFF" font-size="8" font-weight="700">'+p.waist+'cm('+whr.toFixed(2)+')</text>';}
+    });
+  }
+  // x轴日期刻度
+  const nTicks=6;
+  for(let i=0;i<=nTicks;i++){
+    const tt=t0+(t1-t0)*i/nTicks;
+    const d=new Date(tt);
+    const label=(d.getMonth()+1)+'/'+d.getDate();
+    svg+='<text x="'+X(d.toISOString().slice(0,10))+'" y="'+(chartH-8)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+label+'</text>';
+  }
+  // 图例
+  svg+='<line x1="'+pad.l+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+16)+'" y2="'+(pad.t+8)+'" stroke="#FFB400" stroke-width="2.5"/><text x="'+(pad.l+20)+'" y="'+(pad.t+11)+'" fill="#B8860B" font-size="9" font-weight="700">体重(7日均线)</text>';
+  svg+='<line x1="'+(pad.l+120)+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+136)+'" y2="'+(pad.t+8)+'" stroke="#00B368" stroke-width="2"/><text x="'+(pad.l+140)+'" y="'+(pad.t+11)+'" fill="#00B368" font-size="9" font-weight="700">体脂%</text>';
+  svg+='<line x1="'+(pad.l+200)+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+216)+'" y2="'+(pad.t+8)+'" stroke="#2F6BFF" stroke-width="2"/><text x="'+(pad.l+220)+'" y="'+(pad.t+11)+'" fill="#2F6BFF" font-size="9" font-weight="700">腰围cm</text>';
+  svg+='</svg>';
+  el.innerHTML=svg;
+  // 填充历史下拉
+  const sel=$('bodyRecordSelect');
+  if(sel){
+    const opts=WD.slice().reverse().map(d=>'<option value="'+d.date+'">'+d.date.slice(5)+' 体重'+d.weight+'kg'+(d.bf!=null?' · 体脂'+d.bf+'%':'')+'</option>').join('');
+    const dimOpts=DIM.slice().reverse().map(d=>'<option value="d'+d.date+'">'+d.date.slice(5)+' 围度 腰'+d.waist+'cm</option>').join('');
+    sel.innerHTML='<option value="">📋 查看历史记录</option>'+opts+dimOpts;
+  }
+}
+// 查看某日历史记录详情
+function showBodyRecord(){
+  const v=$('bodyRecordSelect').value;
+  const detail=$('bodyRecordDetail');
+  if(!v){detail.style.display='none';return;}
+  detail.style.display='block';
+  if(v.charAt(0)==='d'){
+    const date=v.slice(1);
+    const d=DIM.find(x=>x.date===date);
+    if(!d){detail.innerHTML='<div style="color:var(--text-3)">该日无围度记录</div>';return;}
+    detail.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">📏 '+date.slice(5)+' 围度记录</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:12px;color:var(--text-2)">'+
+      '<div>腰围 <b style="color:var(--orange)">'+d.waist+'cm</b></div><div>臀围 '+d.hip+'cm</div><div>胸围 '+d.chest+'cm</div>'+
+      '<div>大腿 '+d.thigh+'cm</div><div>上臂绷紧 '+d.armFlex+'cm</div><div>上臂放松 '+d.armRelax+'cm</div></div>'+
+      (d.note?'<div style="font-size:10px;color:var(--text-3);margin-top:4px">'+d.note+'</div>':'');
+  }else{
+    const d=WD.find(x=>x.date===v);
+    if(!d){detail.innerHTML='<div style="color:var(--text-3)">该日无记录</div>';return;}
+    detail.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">⚖️ '+v.slice(5)+' 体测记录</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:12px;color:var(--text-2)">'+
+      '<div>体重 <b style="color:var(--orange)">'+d.weight+'kg</b></div>'+
+      (d.bf!=null?'<div>体脂 <b style="color:var(--green)">'+d.bf+'%</b></div>':'')+
+      (d.bmi?'<div>BMI '+d.bmi+'</div>':'')+
+      (d.bmr?'<div>BMR '+d.bmr+'</div>':'')+
+      (d.muscle?'<div>肌肉 '+d.muscle+'kg</div>':'')+
+      (d.ffm?'<div>去脂 '+d.ffm+'kg</div>':'')+
+      (d.vf?'<div>内脏 '+d.vf+'级</div>':'')+
+      '</div>';
+  }
+}
+// 体测历史折叠
+function toggleBodyHistory(){
+  const c=$('bodyHistoryCards'),t=$('bodyHistoryToggle');
+  if(!c)return;
+  if(c.style.display==='none'){c.style.display='flex';t.textContent='▾';}
+  else{c.style.display='none';t.textContent='▸';}
+}
+// 围度历史折叠
+function toggleDimHistory(){
+  const c=$('dimHistoryCards'),t=$('dimHistoryToggle');
+  if(!c)return;
+  if(c.style.display==='none'){c.style.display='flex';t.textContent='▾';}
+  else{c.style.display='none';t.textContent='▸';}
+}
+
 // 折线图 + 移动均线
 function makeLineChartWithMA(data,xKey,yKey,w,h,color,label,maN){
   const points=data.map(d=>({date:d[xKey],v:d[yKey]})).filter(p=>p.v!=null);
@@ -2698,14 +3007,54 @@ function renderRhrChart(){
   }catch(e){}
   hist.sort((a,b)=>a.date.localeCompare(b.date));
   if(hist.length<2){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">静息心率数据不足</div>';return;}
-  // 用makeLineChart渲染
-  el.innerHTML=makeLineChart(hist,'date','hr',450,170,'#FF2D55','静息心率',true);
-  // 底部说明当前值
+  // 训练水平参考带（底色）
+  const bands=[
+    {from:120,to:75,color:'rgba(255,45,85,0.16)',label:'>75 无训练痕迹'},
+    {from:75,to:65,color:'rgba(255,138,0,0.16)',label:'65-75 一般'},
+    {from:65,to:60,color:'rgba(255,180,0,0.18)',label:'60-65 有基础'},
+    {from:60,to:50,color:'rgba(0,179,104,0.16)',label:'50-60 训练者'},
+    {from:50,to:40,color:'rgba(0,168,232,0.16)',label:'<50 专业'}
+  ];
+  const w=450,h=180,pad={l:40,r:15,t:20,b:30},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const yMin=40,yMax=90;
+  const Y=v=>pad.t+ch*(1-(v-yMin)/(yMax-yMin));
+  const X=i=>pad.l+cw*(i/(hist.length-1));
+  let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
+  // 底色带
+  bands.forEach(b=>{
+    const yTop=Y(Math.min(b.from,yMax)),yBot=Y(Math.max(b.to,yMin));
+    svg+='<rect x="'+pad.l+'" y="'+yTop+'" width="'+cw+'" height="'+(yBot-yTop)+'" fill="'+b.color+'"/>';
+    svg+='<text x="'+(w-pad.r-4)+'" y="'+(yTop+8)+'" fill="rgba(0,0,0,0.25)" font-size="7" text-anchor="end">'+b.label+'</text>';
+  });
+  // 网格
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4),v=yMin+(yMax-yMin)*i/4;
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+Math.round(v)+'</text>';
+  }
+  // 折线
+  let pth='';
+  hist.forEach((p,i)=>{pth+=(i?'L':'M')+X(i)+','+Y(p.hr);});
+  svg+='<path d="'+pth+'" fill="none" stroke="#FF2D55" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+  hist.forEach((p,i)=>{
+    svg+='<circle cx="'+X(i)+'" cy="'+Y(p.hr)+'" r="3.5" fill="#FF2D55"/>';
+    if(i===hist.length-1) svg+='<text x="'+X(i)+'" y="'+(Y(p.hr)-8)+'" fill="#FF2D55" font-size="10" font-weight="800" text-anchor="middle">'+p.hr+'</text>';
+    svg+='<text x="'+X(i)+'" y="'+(h-8)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+p.date.slice(5).replace('-','/')+'</text>';
+  });
+  svg+='</svg>';
+  el.innerHTML=svg;
+  // 底部说明当前值 + 所处层级
   const latest=hist[hist.length-1];
   const first=hist[0];
   const trend=first.hr-latest.hr;
   const trendColor=trend>0?'var(--green)':'var(--red)';
-  el.insertAdjacentHTML('afterend','<div style="margin-top:8px;font-size:12px;color:var(--text-2)">当前 <b style="color:'+trendColor+'">'+latest.hr+' bpm</b> · 较起始('+first.hr+') '+(trend>0?'↓'+trend:'↑'+Math.abs(trend))+' bpm '+(trend>0?'✅有氧改善':'')+'</div>');
+  let lvLabel,lvColor;
+  if(latest.hr>75){lvLabel='无训练痕迹';lvColor='var(--red)';}
+  else if(latest.hr>65){lvLabel='一般水准';lvColor='var(--orange)';}
+  else if(latest.hr>60){lvLabel='开始有训练基础';lvColor='var(--gold)';}
+  else if(latest.hr>50){lvLabel='训练者水准';lvColor='var(--green)';}
+  else{lvLabel='专业运动员水准';lvColor='#00A8E8';}
+  el.insertAdjacentHTML('afterend','<div style="margin-top:8px;font-size:12px;color:var(--text-2)">当前 <b style="color:'+trendColor+'">'+latest.hr+' bpm</b> · 较起始('+first.hr+') '+(trend>0?'↓'+trend:'↑'+Math.abs(trend))+' bpm '+(trend>0?'✅有氧改善':'')+'<br><span style="font-size:11px">所处层级：<b style="color:'+lvColor+'">'+lvLabel+'</b>（无训练&gt;75 · 一般65-75 · 有基础60-65 · 训练者50-60 · 专业&lt;50）</span></div>');
 }
 // 腰围 + 腰高比趋势
 function renderWaistChart(s,e){
@@ -2866,34 +3215,7 @@ function initMemo(){
   sp+='<div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:8px;border-top:2px solid var(--blue)"><div style="font-size:14px;font-weight:700;color:var(--text)">补剂总花费</div><div style="font-size:16px;font-weight:700;color:var(--blue)">¥'+totalPrice.toFixed(0)+'</div></div>';
   $('supplementMemo').innerHTML=sp;
 
-  // 减脂部位与体脂率对应区间（自动从体测最新体脂率定位）
-  const latestBF=WD.filter(d=>d.bf!=null).pop();
-  const curBF=latestBF?latestBF.bf:28.9;
-  const zones=[
-    {range:'29→26%',parts:'脸、手臂、小腿',icon:'🟢',low:26,high:99,note:'四肢正在变细'},
-    {range:'26→23%',parts:'胸、上背、肩、大腿',icon:'🟡',low:23,high:26,note:'胸开始变紧变薄'},
-    {range:'23→20%',parts:'腹部开始松动，腰线出现',icon:'🟡',low:20,high:23,note:'肚子真正开始变小'},
-    {range:'20→18%',parts:'下腹、腰侧大面积消退',icon:'🟠',low:18,high:20,note:'腹部明显平坦'},
-    {range:'<18%',parts:'腹肌轮廓可见',icon:'🔴',low:0,high:18,note:'完全暴露腹部线条'}
-  ];
-  // 自动定位当前段
-  let currentIdx=0;
-  zones.forEach((zn,i)=>{ if(curBF>=zn.low&&curBF<zn.high) currentIdx=i; });
-  let z='';
-  zones.forEach((zn,i)=>{
-    const isCurrent=(i===currentIdx);
-    const isPast=(i>currentIdx); // 已过阶段
-    const highlight=isCurrent?'background:linear-gradient(135deg,rgba(255,90,0,0.12),rgba(255,45,85,0.08));border-left:4px solid #FF5A00;':(isPast?'background:rgba(0,179,104,0.06);border-left:4px solid #00B368;':'border-left:4px solid transparent;');
-    const statusLabel=isCurrent?'🎯 你在这':(isPast?'✅ 已达成':'待达成');
-    const statusColor=isCurrent?'var(--orange)':(isPast?'var(--green)':'var(--text-3)');
-    z+='<div style="padding:10px 8px;'+highlight+'border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">';
-    z+='<div><div style="font-size:13px;color:var(--text);font-weight:600">'+zn.icon+' 体脂 '+zn.range+'</div>';
-    z+='<div style="font-size:11px;color:var(--text-2);margin-top:3px">'+zn.parts+'</div></div>';
-    z+='<div style="text-align:right"><div style="font-size:11px;color:'+statusColor+';font-weight:700">'+statusLabel+'</div>';
-    z+='<div style="font-size:10px;color:var(--text-3);margin-top:3px">'+zn.note+'</div></div></div>';
-  });
-  z+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">💡 当前体脂率 <b style="color:var(--orange)">'+curBF.toFixed(1)+'%</b>（'+latestBF.date.slice(5)+'），距目标 <b style="color:var(--red)">21%</b> 还需再降 '+(curBF-21).toFixed(1)+' 个点。男性腹部脂肪α受体密度高，天然最后消退。</div>';
-  $('fatLossZones').innerHTML=z;
+  // 减脂部位与体脂率对应区间 已合并至「体测Tab-体重·体脂·腰围趋势图」右侧体脂区间带，此处不再单独展示
 }
 
 // 补剂分组折叠切换
@@ -3040,7 +3362,7 @@ function renderReviewSection(){
 
 // ===== INIT =====
 const _today=getTodayStr();
-['trainEnd','dietEnd','bodyEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
+['trainEnd','dietEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
 const _editDateEl=$('editMealDate');if(_editDateEl)_editDateEl.value=_today;
 </script>
 <script>
