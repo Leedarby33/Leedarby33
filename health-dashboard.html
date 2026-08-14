@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814j';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260815a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -185,194 +185,23 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="macroHint" style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center"></div>
 <div id="todayProgressBars" style="margin-top:10px"></div>
 </div>
-<div class="card">
-<div class="card-title">⚖️ 今日体重</div>
-<div style="display:flex;gap:10px;align-items:center">
-<input type="number" id="dailyWeightInput" step="0.1" min="50" max="150" placeholder="输入体重(kg)" style="flex:1;background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:15px;outline:none">
-<button onclick="saveDailyWeight()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer">确定</button>
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button onclick="openDataEntry()" style="flex:1;background:linear-gradient(135deg,var(--orange),#ff6b35);color:#fff;border:none;border-radius:10px;padding:14px 20px;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(255,90,0,0.25)">📋 数据记录</button>
+<button onclick="exportBackup()" style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px 16px;font-size:14px;font-weight:600;cursor:pointer">📤 备份</button>
 </div>
-<div id="weightFeedback" style="font-size:12px;color:var(--text-2);margin-top:8px"></div>
-</div>
+
 <div class="card">
 <div class="card-title">⚖️ 体重对比</div>
 <div id="weightCompare"></div>
 </div>
-<div class="card">
-<div class="card-title">💾 数据备份</div>
-<div style="font-size:12px;color:var(--text-2);margin-bottom:10px">导出所有本地数据（体重/饮食/训练/体测）为文件，换设备前请点击导出并妥善保存</div>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button onclick="exportBackup()" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer">📤 导出备份</button>
-<label style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer">📥 导入备份<input type="file" accept=".json" onchange="importBackup(event)" style="display:none"></label>
-</div>
-<div id="backupFeedback" style="font-size:12px;margin-top:8px"></div>
-</div>
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-<div class="card-title" style="margin-bottom:0">📋 历史饮食编辑</div>
-<div style="display:flex;gap:6px;align-items:center">
-<input type="date" id="editMealDate" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none" onchange="loadEditMeals()">
-</div>
-</div>
-<div id="editMealList" style="font-size:12px;color:var(--text-3)">选择日期查看当日饮食记录，点击数值可直接修改</div>
-</div>
+
+
 <div class="card">
 <div class="card-title">💪 今日训练计划</div>
 <div id="todayPlan"></div>
 </div>
-<div class="card" style="background:linear-gradient(135deg,#fff8e1,#f5f5f7)">
-<div id="recordHeadRow" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0;cursor:pointer;user-select:none" onclick="toggleRecordCenter()">📝 今日记录中心 <span id="recordToggleArrow" style="display:inline-block;font-size:12px;color:var(--text-3)">▸</span></div>
-<div style="display:flex;gap:6px;align-items:center">
-<select id="recordType" onchange="switchRecordType()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
-<option value="diet">🍽️ 饮食记录</option>
-<option value="train">🏋️ 训练记录</option>
-<option value="bodycomp">📊 体成分</option>
-<option value="dim">📏 围度</option>
-<option value="rhr">💓 静息心率</option>
-</select>
-<button id="recordToggleBtn" onclick="toggleRecordCenter()" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">展开录入</button>
-</div>
-</div>
-<div id="recordPanels" style="display:none">
-<div id="dietRecordBox">
-<div id="dietDailySummary" style="font-size:11px;color:var(--orange);margin-bottom:8px"></div>
-<div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">⚡ 快捷食物 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击填入当前餐次，可点多次累加</span></div>
-<div id="quickFoods" style="display:flex;flex-wrap:wrap;gap:5px"></div>
-<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)">
-<div style="font-size:11px;color:var(--text-3);margin-bottom:4px">当前填入餐次：</div>
-<div style="display:flex;gap:5px">
-<button onclick="setQuickTarget('b')" id="qtB" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer">早餐</button>
-<button onclick="setQuickTarget('l')" id="qtL" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">午餐</button>
-<button onclick="setQuickTarget('d')" id="qtD" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">晚餐</button>
-<button onclick="setQuickTarget('s')" id="qtS" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer">加餐</button>
-</div>
-</div>
-</div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:8px">🌅 早餐</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="bCal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bP" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bSf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bFr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="bC" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="bDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveMealItem('b','早餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
-</div>
-<div id="mealListB" style="margin-top:6px"></div>
-</div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px">☀️ 午餐</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="lCal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lP" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lSf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lFr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="lC" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="lDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveMealItem('l','午餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
-</div>
-<div id="mealListL" style="margin-top:6px"></div>
-</div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:8px">🌙 晚餐</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">
-<input type="number" id="dCal" placeholder="热量" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dP" placeholder="蛋白" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dSf" placeholder="饱和脂" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dFr" placeholder="果糖" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dC" placeholder="碳水" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="dDesc" placeholder="吃了什么（可选）" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveMealItem('d','晚餐')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">添加</button>
-</div>
-<div id="mealListD" style="margin-top:6px"></div>
-</div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<div style="font-size:12px;font-weight:600;color:var(--orange)">🍎 加餐</div>
-<button onclick="addSnackSlot()" style="background:rgba(245,158,11,0.15);color:var(--orange);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">+ 加一条</button>
-</div>
-<div id="snackSlots"></div>
-<div id="mealListS" style="margin-top:6px"></div>
-</div>
-</div>
-<div id="trainRecordBox" style="display:none">
-<div id="trainRecordInfo" style="font-size:12px;color:var(--text-3);margin:0 0 8px"></div>
-<div id="trainDailySummary" style="font-size:11px;color:var(--blue);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="trDyn" placeholder="动态消耗" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="trTotal" placeholder="总消耗(可选)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="trHr" placeholder="心率(可选 如122 (88-169))" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveTrainingItem()" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
-</div>
-</div>
-<div id="trainRecordList" style="margin-top:6px"></div>
-</div>
-<div id="bodycompRecordBox" style="display:none">
-<div id="bodyCompFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="compWeight" step="0.1" min="50" max="150" placeholder="体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compBF" step="0.1" min="3" max="60" placeholder="体脂率(%)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compMuscle" step="0.1" min="20" max="100" placeholder="肌肉量(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
-<input type="number" id="compFFM" step="0.1" min="20" max="120" placeholder="去脂体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compVF" step="1" min="1" max="30" placeholder="内脏脂肪(级)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="compBMR" step="1" min="1000" max="3000" placeholder="BMR(kcal)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px;align-items:center">
-<input type="date" id="compDate" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveBodyComp()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存体成分</button>
-</div>
-<div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.5">
-💡 体重必填，其余按体脂秤显示填写。BMI自动计算。已记录的日期再次保存会覆盖。<br>
-📋 常见体脂秤指标：体脂率/肌肉量/去脂体重/内脏脂肪等级/基础代谢BMR
-</div>
-</div>
-</div>
-<div id="dimRecordBox" style="display:none">
-<div id="dimFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
-<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
-</div>
-<div style="display:flex;gap:6px;margin-top:6px">
-<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
-</div>
-</div>
-</div>
-<div id="rhrRecordBox" style="display:none">
-<div id="rhrFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;display:flex;gap:6px;align-items:center">
-<input type="number" id="rhrVal" min="40" max="120" placeholder="晨起静息心率(bpm)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<input type="date" id="rhrDate" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
-<button onclick="saveRhrRecord()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存</button>
-</div>
-<div style="font-size:10px;color:var(--text-3);margin-top:6px">📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）</div>
-</div>
-</div>
-</div>
-</div>
+
+</div><!-- /tab-nav -->
 
 
 
@@ -958,33 +787,6 @@ function initBodyCompDate(){
   if(d)d.value=getTodayStr();
 }
 
-// 记录中心：展开/收起（默认折叠，点开直接选饮食/训练）
-function toggleRecordCenter(){
-  const p=$('recordPanels');
-  const open=p.style.display==='none';
-  p.style.display=open?'block':'none';
-  $('recordToggleArrow').textContent=open?'▾':'▸';
-  const btn=$('recordToggleBtn');
-  btn.textContent=open?'收起':'展开录入';
-  btn.style.background=open?'var(--inset)':'var(--orange)';
-  btn.style.color=open?'var(--text-2)':'#fff';
-  $('recordHeadRow').style.marginBottom=open?'12px':'0';
-  if(open)switchRecordType();
-}
-
-// 记录中心：切换录入类型
-function switchRecordType(){
-  const t=$('recordType').value;
-  $('dietRecordBox').style.display=(t==='diet')?'block':'none';
-  $('trainRecordBox').style.display=(t==='train')?'block':'none';
-  $('bodycompRecordBox').style.display=(t==='bodycomp')?'block':'none';
-  $('dimRecordBox').style.display=(t==='dim')?'block':'none';
-  $('rhrRecordBox').style.display=(t==='rhr')?'block':'none';
-  // 切入对应类型时刷新一次数据展示
-  if(t==='diet'){if(typeof renderAllMeals==='function')renderAllMeals();if(typeof updateDietSummary==='function')updateDietSummary();}
-  if(t==='train'){if(typeof initTrainingRecordInfo==='function')initTrainingRecordInfo();if(typeof renderTrainingList==='function')renderTrainingList();if(typeof updateTrainDailySummary==='function')updateTrainDailySummary();}
-}
-
 // 静息心率记录
 function saveRhrRecord(){
   const fb=$('rhrFeedback');
@@ -1099,188 +901,303 @@ function importBackup(event){
 }
 
 // ===== 饮食记录模块 =====
-// 常用食物库 [名称, 热量, 蛋白, 饱和脂, 果糖, 碳水, 份量描述]
-const QUICK_FOODS=[
-  // 家常常备
-  ['🥩盐水卤牛腱(切片)',120,30,1.5,0,0,'1份≈100g'],
-  ['🫛盐水卤毛豆',147,13,0.6,0.8,11,'1份≈100g带壳'],
-  ['🥬青菜炒黑木耳(不喝汤)',45,3.5,0.2,0.8,6,'青菜200g+木耳50g'],
-  ['🍅西红柿牛肉(盐水煮)',250,35,4,2.5,12,'2番茄+150g牛肉'],
-  ['🥬凉拌菠菜(水煮不加油)',15,1.5,0.1,0,1.8,'1份≈50g'],
-  // 主食
-  ['🍚藜麦白米饭(1:1)',160,4,0.3,0.1,32,'1碗≈150g'],
-  ['🍚白米饭(熟)',116,2.6,0.3,0,26,'1碗≈150g'],
-  ['🍚杂粮饭(混合)',140,3.5,0.3,0.1,28,'1碗≈150g'],
-  ['🍠蒸红薯',43,0.8,0,0.5,10,'1份≈50g'],
+// 食材库：每100g基准 [名称, 热量/100g, 蛋白/100g, 饱和脂/100g, 果糖/100g, 碳水/100g, 单位, 默认量, 类型]
+//   类型: 'gram'(按g折算) | 'piece'(按个折算, perUnit=每个克数) | 'scoop'(勺, perUnit=每勺克数)
+const FOOD_DB=[
   // 蛋白质
-  ['💊蛋白粉(微Protein)',113,22,0.5,0,1.5,'1勺≈30g','scoop'],
-  ['🥚水煮蛋',78,6.3,1.6,0,0.6,'1个≈50g'],
-  ['🍌香蕉',89,1.1,0.1,6,23,'1根≈120g'],
-  ['🐟三文鱼刺身',139,17.2,1.5,0,0,'1份≈80g'],
-  ['🥩牛排(瘦)',175,26,3,0,0,'1份≈120g']
+  ['🥩牛腱(卤)',120,30,1.5,0,0,'g',100,'gram'],
+  ['🥩牛排(瘦)',175,26,3,0,0,'g',120,'gram'],
+  ['🐟三文鱼刺身',139,17.2,1.5,0,0,'g',80,'gram'],
+  ['🥚水煮蛋',156,12.6,3.2,0,1.1,'个',1,'piece'],   // 1个≈50g → 78kcal
+  ['💊蛋白粉',376,73,1.6,0,5,'勺',1,'scoop'],         // 1勺=30g → 113kcal
+  // 蔬菜(水煮/凉拌)
+  ['🥬凉拌菠菜(水煮)',23,2.9,0.1,0,3.6,'g',50,'gram'],
+  ['🥒凉拌黄瓜',16,0.8,0,0.5,2.9,'g',200,'gram'],     // 1根≈200g
+  ['🫛毛豆(带壳)',147,13,0.6,0.8,11,'g',100,'gram'],
+  // 主食
+  ['🍚白米饭(熟)',116,2.6,0.3,0,26,'g',150,'gram'],
+  ['🍚藜麦白米饭(1:1)',140,3.5,0.3,0.1,28,'g',150,'gram'],
+  ['🍚杂粮饭(混合)',140,3.5,0.3,0.1,28,'g',150,'gram'],
+  ['🍠蒸红薯',86,1.6,0,0.5,20.1,'g',50,'gram'],
+  ['🥔蒸土豆',81,2.6,0,0.1,18.5,'g',50,'gram'],
+  ['🍌香蕉',89,1.1,0.1,6,23,'g',120,'gram'],
 ];
-let _quickTarget='b'; // 当前快捷食物填入的餐次
+// 组合菜定义：多食材组成，按实际克数/个数拆分录入 + 调料档加成
+const COMBO_DISHES=[
+  {name:'🍅西红柿牛肉',icon:'🍅',ingredients:[
+    {name:'番茄',unit:'个',perUnitG:150,kcal100:18,p100:0.9,sf100:0.1,fr100:0,c100:3.9,def:2},
+    {name:'牛肉(瘦)',unit:'g',perUnitG:1,kcal100:130,p100:21,sf100:2.3,fr100:0,c100:0,def:150},
+  ],defCondiment:0},
+  {name:'🥬青菜炒木耳',icon:'🥬',ingredients:[
+    {name:'青菜',unit:'g',perUnitG:1,kcal100:15,p100:1.5,sf100:0,fr100:0,c100:3,def:200},
+    {name:'木耳(干)',unit:'g',perUnitG:1,kcal100:21,p100:1,sf100:0,fr100:0,c100:6,def:50},
+  ],defCondiment:1},
+];
+// 调料档加成
+const CONDIMENTS=[
+  {name:'无油仅盐',kcal:0,sf:0},
+  {name:'少油少盐',kcal:45,sf:1},
+  {name:'多油多盐',kcal:135,sf:3},
+];
+// 兼容别名（防止其他地方引用报错，指向FOOD_DB）
+const QUICK_FOODS=FOOD_DB;
+let _quickTarget='b'; // 当前暂存栏餐次
+let _cart=[]; // 暂存栏数据 [{type:'food',idx,qty,cal,p,sf,fr,c,desc}, {type:'combo',comboIdx,parts:[{name,qty}],condiment,cal,p,sf,fr,c,desc}]
+
 function setQuickTarget(t){
   _quickTarget=t;
+  _cartMeal=t;
   const labels={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'};
   const colors={b:'var(--orange)',l:'var(--green)',d:'var(--blue)',s:'var(--orange)'};
   ['b','l','d','s'].forEach(k=>{
     const el=$('qt'+k.toUpperCase());
+    if(!el)return;
     if(k===t){el.style.background=colors[k];el.style.color='#fff';el.style.border='none';el.style.fontWeight='600';}
     else{el.style.background='var(--inset)';el.style.color='var(--text-2)';el.style.border='1px solid var(--bdr)';el.style.fontWeight='400';}
   });
+  cartRender();
 }
-function renderQuickFoods(){
-  const c=$('quickFoods');
+let _cartMeal='b';
+
+// ===== 食材按钮渲染 =====
+function renderFoodButtons(){
+  const c=$('foodButtons');
   if(!c)return;
-  c.innerHTML=QUICK_FOODS.map((f,i)=>{
-    const isScoop=f[7]==='scoop';
-    const onClick=isScoop?`onclick="openScoopPicker(${i})"`:`onclick="quickAddFood(${i})"`;
-    const badge=isScoop?'<span style="color:var(--orange);font-size:10px;font-weight:800">·勺</span>':'';
-    return `<button ${onClick} style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap">${f[0]}${badge} <span style="color:var(--text-3);font-size:10px">${f[1]}k</span></button>`;
-  }).join('');
-  // 历史记录调用按钮
-  c.insertAdjacentHTML('beforeend',`<button onclick="openHistoryPicker()" style="background:linear-gradient(135deg,rgba(255,90,0,0.1),rgba(255,45,85,0.1));color:var(--orange);border:1px solid rgba(255,90,0,0.3);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🕘 调用近期</button>`);
+  let html='';
+  // 克数类食材
+  FOOD_DB.forEach((f,i)=>{
+    const name=f[0], kcal100=f[1], unit=f[6], defQty=f[7], tp=f[8];
+    let badge='';
+    if(tp==='scoop'){
+      badge=' <span style="color:var(--orange);font-size:10px;font-weight:800">勺</span>';
+    }else if(tp==='piece'){
+      badge=' <span style="color:var(--text-3);font-size:10px">/个</span>';
+    }else{
+      badge=' <span style="color:var(--text-3);font-size:10px">/100g</span>';
+    }
+    const hintKcal = tp==='scoop' ? Math.round(kcal100*0.3) : tp==='piece' ? Math.round(kcal100*0.5) : kcal100;
+    html+=`<button onclick="openFoodPicker(${i})" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap">${name}${badge} <span style="color:var(--text-3);font-size:10px">${hintKcal}k</span></button>`;
+  });
+  // 组合菜
+  COMBO_DISHES.forEach((d,i)=>{
+    html+=`<button onclick="openComboPicker(${i})" style="background:linear-gradient(135deg,rgba(255,90,0,0.08),rgba(255,45,85,0.08));color:var(--orange);border:1px solid rgba(255,90,0,0.2);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap">${d.name} <span style="color:var(--text-3);font-size:10px">组合</span></button>`;
+  });
+  // 调用近期
+  html+=`<button onclick="openHistoryPicker()" style="background:linear-gradient(135deg,rgba(255,90,0,0.1),rgba(255,45,85,0.1));color:var(--orange);border:1px solid rgba(255,90,0,0.3);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🕘 调用近期</button>`;
+  c.innerHTML=html;
 }
-// 蛋白粉勺数选择弹窗
-function openScoopPicker(idx){
-  const f=QUICK_FOODS[idx];
-  const ratios=[{label:'1勺',r:1},{label:'半勺',r:0.5},{label:'¼勺',r:0.25}];
+// 兼容旧调用
+function renderQuickFoods(){renderFoodButtons();}
+
+// ===== 克数输入弹窗 =====
+function openFoodPicker(idx){
+  const f=FOOD_DB[idx];
+  const name=f[0], kcal100=f[1], p100=f[2], sf100=f[3], fr100=f[4], c100=f[5], unit=f[6], defQty=f[7], tp=f[8];
   const mask=document.createElement('div');
-  mask.className='modal-mask';
-  mask.innerHTML=`<div class="modal-box" style="position:relative;text-align:center">
-    <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
-    <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px">${f[0]}</div>
-    <div style="font-size:12px;color:var(--text-3);margin-bottom:16px">1勺≈113kcal / 蛋白22g</div>
-    <div class="portion-picker">
-      ${ratios.map((p,i)=>`<div class="portion-btn" onclick="confirmScoop(${idx},${p.r},this)">${p.label}<div style="font-size:10px;color:var(--text-3);margin-top:2px">${Math.round(f[1]*p.r)}kcal / ${(f[2]*p.r).toFixed(1)}g</div></div>`).join('')}
-    </div>
-    <div style="margin-top:14px;font-size:11px;color:var(--text-3)">点击填入当前餐次</div>
-  </div>`;
-  document.body.appendChild(mask);
-}
-function confirmScoop(idx,r,el){
-  // 按比例累加到当前餐
-  const f=QUICK_FOODS[idx];
-  const scaled=[f[0],Math.round(f[1]*r*10)/10,Math.round(f[2]*r*10)/10,Math.round(f[3]*r*10)/10,Math.round(f[4]*r*10)/10,Math.round(f[5]*r*10)/10];
-  const tmp=QUICK_FOODS[idx];
-  QUICK_FOODS[idx]=scaled;
-  quickAddFood(idx);
-  QUICK_FOODS[idx]=tmp;
-  document.querySelector('.modal-mask').remove();
-  flashHint((r===1?'1勺':r===0.5?'半勺':'¼勺')+'蛋白粉已填入'+{b:'早餐',l:'午餐',d:'晚餐'}[_quickTarget]);
-}
-// 历史记录调用弹窗：按天分组、按餐次调用（只调选中的那一餐，不合并全天）
-function openHistoryPicker(){
-  const meals=getMeals();
-  const days=Object.keys(meals).sort().reverse().slice(0,7);
-  const mask=document.createElement('div');
-  mask.className='modal-mask';
-  const slotNames={b:'🌅 早餐',l:'☀️ 午餐',d:'🌙 晚餐',s:'🍎 加餐'};
-  let list='';
-  if(days.length===0){list='<div style="color:var(--text-3);text-align:center;padding:20px">暂无历史记录</div>';}
-  else{
-    days.forEach(dt=>{
-      const day=meals[dt];
-      const slots=['b','l','d','s'].filter(k=>(day[k]||[]).length>0);
-      if(slots.length===0)return;
-      let dayCal=0,dayP=0;
-      slots.forEach(k=>{(day[k]||[]).forEach(it=>{dayCal+=it.cal||0;dayP+=it.p||0;});});
-      let mealRows='';
-      slots.forEach(k=>{
-        let cal=0,p=0;const descs=[];
-        (day[k]||[]).forEach(it=>{cal+=it.cal||0;p+=it.p||0;if(it.desc)descs.push(it.desc);});
-        mealRows+=`<div class="hist-meal-row" onclick="applyHistoryMeal('${dt}','${k}')">`+
-          `<span class="hist-slot-tag">${slotNames[k]}</span>`+
-          `<span style="flex:1;font-size:11px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${descs.slice(0,3).join(' + ')||'无明细'}</span>`+
-          `<span style="font-size:11px;font-weight:700;color:var(--orange);white-space:nowrap">${cal}kcal·P${p}g</span>`+
-        `</div>`;
-      });
-      list+=`<div class="hist-day">`+
-        `<div class="hist-day-head"><span class="hist-day-date">${dt.slice(5).replace('-','/')}</span><span class="hist-day-cal">全天 ${dayCal} kcal · P${dayP}g</span></div>`+
-        `${mealRows}`+
-      `</div>`;
-    });
-    if(!list)list='<div style="color:var(--text-3);text-align:center;padding:20px">最近7天暂无餐次记录</div>';
-  }
-  const targetName={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[_quickTarget]||'早餐';
-  mask.innerHTML=`<div class="modal-box" style="position:relative">
-    <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
-    <div class="modal-title">🕘 调用近期饮食（按餐次）</div>
-    <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">点击某天的<b style="color:var(--orange)">某一餐</b>，只把那一餐填入当前餐次（${targetName}）——不会带入其他餐</div>
-    ${list}
-    <div style="margin-top:12px;font-size:11px;color:var(--text-3)">填入当前录入餐次，可点多次累加</div>
-  </div>`;
-  document.body.appendChild(mask);
-}
-function applyHistoryMeal(dt,k){
-  const meals=getMeals();
-  const items=(meals[dt]&&meals[dt][k])||[];
-  if(items.length===0)return;
-  let cal=0,p=0,sf=0,fr=0,c=0;const descs=[];
-  items.forEach(it=>{cal+=it.cal||0;p+=it.p||0;sf+=it.sf||0;fr+=it.fr||0;c+=it.c||0;if(it.desc)descs.push(it.desc);});
-  const mealName={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[k];
-  const dayLabel=dt.slice(5).replace('-','/');
-  if(_quickTarget==='s'){
-    // 目标为加餐：逐条直接入账今日加餐
-    const m2=getMeals();const today=getTodayStr();
-    if(!m2[today])m2[today]={b:[],l:[],d:[],s:[]};
-    items.forEach(it=>{m2[today].s.push({cal:it.cal||0,p:it.p||0,sf:it.sf||0,fr:it.fr||0,c:it.c||0,desc:(it.desc||'')+'['+dayLabel+mealName+']',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});});
-    setMeals(m2);renderMealList('s');updateDietSummary();
-    if(typeof filterDiet==='function')filterDiet();
-    if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
-    refreshDeficitViews();
+  mask.className='modal-mask picker-mask';
+  let unitLabel, placeholder, defaultVal;
+  if(tp==='scoop'){
+    unitLabel='勺'; placeholder='勺数(如1或0.5)'; defaultVal='';
+  }else if(tp==='piece'){
+    unitLabel='个'; placeholder='个数'; defaultVal='';
   }else{
-    const keys={b:['bCal','bP','bSf','bFr','bC','bDesc'],l:['lCal','lP','lSf','lFr','lC','lDesc'],d:['dCal','dP','dSf','dFr','dC','dDesc']};
-    const ks=keys[_quickTarget];
-    [ks[0],ks[1],ks[2],ks[3],ks[4]].forEach((kk,i)=>{
-      const vals=[cal,p,sf,fr,c];
-      const el=$(kk);const cur=parseFloat(el.value)||0;
-      el.value=Math.round((cur+vals[i])*10)/10;
-    });
-    const curDesc=$(ks[5]).value;
-    $(ks[5]).value=curDesc?curDesc+' + ['+dayLabel+mealName+']':'['+dayLabel+mealName+'] '+descs.slice(0,3).join('+');
+    unitLabel='g'; placeholder='克数(如142)'; defaultVal='';
   }
-  const mk=document.querySelector('.modal-mask');if(mk)mk.remove();
-  flashHint('已填入'+dayLabel+mealName+'合计 '+cal+'kcal');
+  mask.innerHTML=`<div class="modal-box" style="position:relative;text-align:center;max-width:340px">
+    <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
+    <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px">${name}</div>
+    <div style="font-size:11px;color:var(--text-3);margin-bottom:16px">基准：每100${unitLabel==='g'?'g':unitLabel} = ${kcal100}kcal · 蛋白${p100}g</div>
+    <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:14px">
+      <input type="number" id="foodPickerQty" placeholder="${placeholder}" style="background:var(--card);color:var(--text);border:2px solid var(--orange);border-radius:8px;padding:10px 14px;font-size:18px;font-weight:700;width:140px;text-align:center;outline:none" autofocus>
+      <span style="font-size:14px;color:var(--text-2);font-weight:600">${unitLabel}</span>
+    </div>
+    <div id="foodPickerPreview" style="font-size:13px;color:var(--orange);font-weight:700;margin-bottom:14px;min-height:20px">输入${unitLabel}数后实时预览</div>
+    <button onclick="confirmFoodPicker(${idx})" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:10px 28px;font-size:14px;font-weight:700;cursor:pointer">加入暂存栏</button>
+  </div>`;
+  document.body.appendChild(mask);
+  const input=mask.querySelector('#foodPickerQty');
+  const preview=mask.querySelector('#foodPickerPreview');
+  input.addEventListener('input',function(){
+    const qty=parseFloat(this.value)||0;
+    if(qty<=0){preview.textContent='输入'+unitLabel+'数后实时预览';return;}
+    let cal,p;
+    if(tp==='scoop'){const g=qty*30;cal=Math.round(g/100*kcal100);p=(g/100*p100).toFixed(1);}
+    else if(tp==='piece'){const g=qty*50;cal=Math.round(g/100*kcal100);p=(g/100*p100).toFixed(1);}
+    else{cal=Math.round(qty/100*kcal100);p=(qty/100*p100).toFixed(1);}
+    preview.textContent=cal+'kcal · 蛋白'+p+'g';
+  });
+  setTimeout(function(){input.focus();},50);
 }
-function quickAddFood(idx){
-  const f=QUICK_FOODS[idx];
-  const t=_quickTarget;
-  const prefix=t==='s'?'':t; // 加餐走单独逻辑
-  if(t==='s'){
-    // 加餐：直接添加一条加餐记录
-    const meals=getMeals();
-    const today=getTodayStr();
-    if(!meals[today])meals[today]={b:[],l:[],d:[],s:[]};
-    meals[today].s.push({cal:f[1],p:f[2],sf:f[3],fr:f[4],c:f[5],desc:f[0].replace(/[\u{1F300}-\u{1FAFF}]/gu,''),time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
-    setMeals(meals);
-    renderMealList('s');
-    updateDietSummary();
-    if(typeof filterDiet==='function')filterDiet();
+function confirmFoodPicker(idx){
+  const f=FOOD_DB[idx];
+  const name=f[0], kcal100=f[1], p100=f[2], sf100=f[3], fr100=f[4], c100=f[5], tp=f[8];
+  const qty=parseFloat(document.getElementById('foodPickerQty').value)||0;
+  if(qty<=0){flashHint('请输入数量');return;}
+  let grams,cal,p,sf,fr,c,desc;
+  if(tp==='scoop'){
+    grams=qty*30;
+    cal=Math.round(grams/100*kcal100);p=Math.round(grams/100*p100*10)/10;sf=Math.round(grams/100*sf100*10)/10;fr=Math.round(grams/100*fr100*10)/10;c=Math.round(grams/100*c100*10)/10;
+    desc=name.replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim()+(qty===1?' 1勺':qty===0.5?' 半勺':' '+qty+'勺');
+  }else if(tp==='piece'){
+    grams=qty*50;
+    cal=Math.round(grams/100*kcal100);p=Math.round(grams/100*p100*10)/10;sf=Math.round(grams/100*sf100*10)/10;fr=Math.round(grams/100*fr100*10)/10;c=Math.round(grams/100*c100*10)/10;
+    desc=name.replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim()+' '+qty+'个';
+  }else{
+    grams=qty;
+    cal=Math.round(qty/100*kcal100);p=Math.round(qty/100*p100*10)/10;sf=Math.round(qty/100*sf100*10)/10;fr=Math.round(qty/100*fr100*10)/10;c=Math.round(qty/100*c100*10)/10;
+    desc=name.replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim()+' '+qty+'g';
+  }
+  _cart.push({type:'food',idx:idx,qty:qty,grams:grams,cal:cal,p:p,sf:sf,fr:fr,c:c,desc:desc});
+  cartRender();
+  const pm1=document.querySelector('.picker-mask');if(pm1)pm1.remove();
+  flashHint('已加入暂存栏：'+desc+' ('+cal+'kcal)');
+}
+
+// ===== 组合菜构成面板 =====
+function openComboPicker(idx){
+  const d=COMBO_DISHES[idx];
+  const mask=document.createElement('div');
+  mask.className='modal-mask picker-mask';
+  let ingHtml='';
+  d.ingredients.forEach((ing,i)=>{
+    ingHtml+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span style="flex:1;font-size:12px;color:var(--text-2)">${ing.name}</span>
+      <input type="number" id="comboIng${i}" value="${ing.def}" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 8px;font-size:14px;font-weight:600;width:80px;text-align:center;outline:none">
+      <span style="font-size:12px;color:var(--text-3);width:20px">${ing.unit}</span>
+    </div>`;
+  });
+  let condHtml=CONDIMENTS.map((cd,i)=>`<option value="${i}">${cd.name}${cd.kcal>0?'(+'+cd.kcal+'kcal)':''}</option>`).join('');
+  mask.innerHTML=`<div class="modal-box" style="position:relative;max-width:380px">
+    <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
+    <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:12px">${d.name} 组合录入</div>
+    ${ingHtml}
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <span style="flex:1;font-size:12px;color:var(--text-2)">调料档</span>
+      <select id="comboCondiment" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">${condHtml}</select>
+    </div>
+    <div id="comboPreview" style="font-size:13px;color:var(--orange);font-weight:700;margin-bottom:14px;min-height:20px">调整数量后实时预览</div>
+    <button onclick="confirmComboPicker(${idx})" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:10px 28px;font-size:14px;font-weight:700;cursor:pointer">加入暂存栏</button>
+  </div>`;
+  document.body.appendChild(mask);
+  // 默认选中调料档
+  mask.querySelector('#comboCondiment').value=d.defCondiment;
+  const updatePreview=function(){
+    let cal=0,p=0;
+    d.ingredients.forEach((ing,i)=>{
+      const qty=parseFloat(mask.querySelector('#comboIng'+i).value)||0;
+      const g=qty*ing.perUnitG;
+      cal+=g/100*ing.kcal100;p+=g/100*ing.p100;
+    });
+    const cd=CONDIMENTS[parseInt(mask.querySelector('#comboCondiment').value)||0];
+    cal+=cd.kcal;
+    mask.querySelector('#comboPreview').textContent=Math.round(cal)+'kcal · 蛋白'+p.toFixed(1)+'g';
+  };
+  mask.querySelectorAll('input,select').forEach(function(el){el.addEventListener('input',updatePreview);el.addEventListener('change',updatePreview);});
+  updatePreview();
+}
+function confirmComboPicker(idx){
+  const d=COMBO_DISHES[idx];
+  let cal=0,p=0,sf=0,fr=0,c=0;
+  let parts=[];
+  d.ingredients.forEach((ing,i)=>{
+    const qty=parseFloat(document.getElementById('comboIng'+i).value)||0;
+    if(qty<=0)return;
+    const g=qty*ing.perUnitG;
+    cal+=g/100*ing.kcal100;p+=g/100*ing.p100;sf+=g/100*ing.sf100;fr+=g/100*ing.fr100;c+=g/100*ing.c100;
+    parts.push({name:ing.name,qty:qty,unit:ing.unit});
+  });
+  const cdIdx=parseInt(document.getElementById('comboCondiment').value)||0;
+  const cd=CONDIMENTS[cdIdx];
+  cal+=cd.kcal;sf+=cd.sf;
+  cal=Math.round(cal);p=Math.round(p*10)/10;sf=Math.round(sf*10)/10;fr=Math.round(fr*10)/10;c=Math.round(c*10)/10;
+  const partsStr=parts.map(function(pt){return pt.name+pt.qty+pt.unit;}).join('+');
+  const desc=d.name.replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim()+' '+partsStr+' ['+cd.name+']';
+  _cart.push({type:'combo',comboIdx:idx,parts:parts,condiment:cdIdx,cal:cal,p:p,sf:sf,fr:fr,c:c,desc:desc});
+  cartRender();
+  const pm2=document.querySelector('.picker-mask');if(pm2)pm2.remove();
+  flashHint('已加入暂存栏：'+desc+' ('+cal+'kcal)');
+}
+
+// ===== 暂存栏渲染 =====
+function cartRender(){
+  const el=$('cartList');
+  if(!el)return;
+  if(_cart.length===0){
+    el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:12px;font-size:12px">暂存栏为空，点击上方食材按钮添加</div>';
+  }else{
+    let html='';
+    _cart.forEach(function(item,i){
+      html+=`<div style="display:flex;align-items:center;gap:8px;background:var(--inset);border-radius:8px;padding:8px 10px;margin-bottom:6px">
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${item.desc}</div>
+          <div style="font-size:10px;color:var(--text-3)">${item.cal}kcal · P${item.p}g${item.sf>0?' · SF'+item.sf+'g':''}${item.c>0?' · C'+item.c+'g':''}</div>
+        </div>
+        <span onclick="cartRemove(${i})" style="color:var(--red);font-size:16px;cursor:pointer;padding:0 4px">×</span>
+      </div>`;
+    });
+    el.innerHTML=html;
+  }
+  // 合计
+  const totalEl=$('cartTotal');
+  if(totalEl){
+    let tCal=0,tP=0;
+    _cart.forEach(function(it){tCal+=it.cal;tP+=it.p;});
+    totalEl.textContent=_cart.length+'条 / '+tCal+'kcal · P'+tP.toFixed(1)+'g';
+  }
+}
+function cartRemove(i){
+  _cart.splice(i,1);
+  cartRender();
+}
+function cartClear(){
+  _cart=[];
+  cartRender();
+}
+function cartConfirm(){
+  if(_cart.length===0){flashHint('暂存栏为空');return;}
+  const meals=getMeals();
+  const today=getTodayStr();
+  if(!meals[today])meals[today]={b:[],l:[],d:[],s:[]};
+  if(!meals[today][_cartMeal])meals[today][_cartMeal]=[];
+  const timeStr=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  _cart.forEach(function(it){
+    meals[today][_cartMeal].push({cal:it.cal,p:it.p,sf:it.sf,fr:it.fr,c:it.c,desc:it.desc,time:timeStr});
+  });
+  setMeals(meals);
+  renderMealList(_cartMeal);
+  updateDietSummary();
+  if(typeof filterDiet==='function')filterDiet();
   if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
   refreshDeficitViews();
-    flashHint('已添加到加餐：'+f[0]);
-    return;
-  }
-  // 早/午/晚餐：累加到对应输入框
-  const keys={b:['bCal','bP','bSf','bFr','bC','bDesc'],l:['lCal','lP','lSf','lFr','lC','lDesc'],d:['dCal','dP','dSf','dFr','dC','dDesc']};
-  const ks=keys[t];
-  // 如果已有描述且不包含当前食物名，追加；否则填入
-  const curDesc=$(ks[5]).value;
-  const foodName=f[0].replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim();
-  [ks[0],ks[1],ks[2],ks[3],ks[4]].forEach((k,i)=>{
-    const el=$(k);
-    const cur=parseFloat(el.value)||0;
-    el.value=Math.round((cur+f[i+1])*10)/10;
-  });
-  if(curDesc && !curDesc.includes(foodName)){
-    $(ks[5]).value=curDesc+' + '+foodName;
-  } else if(!curDesc){
-    $(ks[5]).value=foodName;
-  }
-  // 闪一下提示
-  flashHint(foodName+' 已填入'+{b:'早餐',l:'午餐',d:'晚餐'}[t]);
+  const cnt=_cart.length;
+  _cart=[];
+  cartRender();
+  flashHint('已入账'+{b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[_cartMeal]+'：'+cnt+'条');
+}
+
+// ===== 旧函数兼容（蛋白粉勺数选择器保留，但改为加入暂存栏） =====
+function openScoopPicker(idx){
+  openFoodPicker(idx); // 统一走克数输入弹窗
+  const m=document.querySelector('.modal-mask:not(#dataEntryMask)');if(m)m.classList.add('picker-mask');
+}
+function confirmScoop(idx,r,el){
+  // 兼容旧调用：按勺数加入暂存栏
+  const f=FOOD_DB[idx];
+  const grams=r*30;
+  const cal=Math.round(grams/100*f[1]);
+  const p=Math.round(grams/100*f[2]*10)/10;
+  const sf=Math.round(grams/100*f[3]*10)/10;
+  const fr=Math.round(grams/100*f[4]*10)/10;
+  const c=Math.round(grams/100*f[5]*10)/10;
+  const desc=f[0].replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim()+(r===1?' 1勺':r===0.5?' 半勺':' '+r+'勺');
+  _cart.push({type:'food',idx:idx,qty:r,grams:grams,cal:cal,p:p,sf:sf,fr:fr,c:c,desc:desc});
+  cartRender();
+}
+
+// ===== 快速加食物（兼容旧调用，改为加入暂存栏） =====
+function quickAddFood(idx){
+  // 旧接口兼容：直接打开克数输入弹窗
+  openFoodPicker(idx);
 }
 function flashHint(msg){
   let el=$('foodHint');
@@ -1391,9 +1308,10 @@ function renderAllMeals(){
 }
 // ===== 历史饮食编辑 =====
 function loadEditMeals(){
-  const dt=$('editMealDate').value;
+  const dtEl=$('editMealDate');
   const el=$('editMealList');
-  if(!dt){el.innerHTML='请选择日期';return;}
+  if(!dtEl||!el)return; // 第二批通用编辑器重建前安全退出
+  const dt=dtEl.value;
   const meals=getMeals();
   const day=meals[dt];
   if(!day||(['b','l','d','s'].every(k=>!day[k]||day[k].length===0))){
@@ -3633,5 +3551,180 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
+
+<!-- 数据记录弹出面板 -->
+<div class="modal-mask" id="dataEntryMask" style="display:none">
+<div class="modal-box" style="position:relative;max-width:560px;max-height:90vh;overflow-y:auto">
+<button class="modal-close" onclick="closeDataEntry()">×</button>
+<div class="modal-title">📋 数据记录</div>
+<div style="display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap">
+<button onclick="switchEntryType('diet')" id="etDiet" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer">🍽️ 饮食</button>
+<button onclick="switchEntryType('train')" id="etTrain" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">🏋️ 训练</button>
+<button onclick="switchEntryType('bodycomp')" id="etBodycomp" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📊 体成分</button>
+<button onclick="switchEntryType('dim')" id="etDim" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📏 围度</button>
+<button onclick="switchEntryType('rhr')" id="etRhr" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">💓 心率</button>
+<button onclick="switchEntryType('weight')" id="etWeight" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">⚖️ 体重</button>
+</div>
+
+<!-- 饮食录入面板 -->
+<div id="entryDiet">
+<div style="display:flex;gap:4px;margin-bottom:10px">
+<button onclick="setQuickTarget('b')" id="qtB" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">早餐</button>
+<button onclick="setQuickTarget('l')" id="qtL" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer">午餐</button>
+<button onclick="setQuickTarget('d')" id="qtD" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer">晚餐</button>
+<button onclick="setQuickTarget('s')" id="qtS" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer">加餐</button>
+</div>
+<div style="background:var(--inset);border-radius:10px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">🛒 暂存栏 <span id="cartMealLabel" style="color:var(--orange)">早餐</span></div>
+<div id="cartList"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)">
+<span id="cartTotal" style="font-size:12px;font-weight:700;color:var(--orange)">0条 / 0kcal</span>
+<div style="display:flex;gap:6px">
+<button onclick="cartClear()" style="background:var(--inset);color:var(--text-3);border:1px solid var(--bdr);border-radius:6px;padding:6px 12px;font-size:11px;cursor:pointer">清空</button>
+<button onclick="cartConfirm()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:6px 18px;font-size:12px;font-weight:700;cursor:pointer">✓ 确认入账</button>
+</div>
+</div>
+</div>
+<div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">⚡ 快捷食材 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击输入克数，加入暂存栏</span></div>
+<div id="foodButtons" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+</div>
+<div id="dietDailySummary" style="font-size:11px;color:var(--orange);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">✏️ 手动输入 <span style="font-size:10px;color:var(--text-3);font-weight:400">直接填营养值，不经过暂存栏</span></div>
+<div id="manualMealSlots"></div>
+</div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">📋 今日已记录</div>
+<div id="mealListB" style="margin-bottom:6px"></div>
+<div id="mealListL" style="margin-bottom:6px"></div>
+<div id="mealListD" style="margin-bottom:6px"></div>
+<div id="mealListS" style="margin-bottom:6px"></div>
+</div>
+</div>
+
+<!-- 训练录入面板 -->
+<div id="entryTrain" style="display:none">
+<div id="trainRecordInfo" style="font-size:12px;color:var(--text-3);margin:0 0 8px"></div>
+<div id="trainDailySummary" style="font-size:11px;color:var(--blue);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trDyn" placeholder="动态消耗" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="trTotal" placeholder="总消耗(可选)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="trHr" placeholder="心率(可选 如122 (88-169))" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveTrainingItem()" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
+</div>
+</div>
+<div id="trainRecordList" style="margin-top:6px"></div>
+</div>
+
+<!-- 体成分面板 -->
+<div id="entryBodycomp" style="display:none">
+<div id="bodyCompFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="compWeight" step="0.1" min="50" max="150" placeholder="体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compBF" step="0.1" min="3" max="60" placeholder="体脂率(%)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compMuscle" step="0.1" min="20" max="100" placeholder="肌肉量(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<input type="number" id="compFFM" step="0.1" min="20" max="120" placeholder="去脂体重(kg)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compVF" step="1" min="1" max="30" placeholder="内脏脂肪(级)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="compBMR" step="1" min="1000" max="3000" placeholder="BMR(kcal)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+<input type="date" id="compDate" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveBodyComp()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存体成分</button>
+</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.5">💡 体重必填，其余按体脂秤显示填写。BMI自动计算。已记录的日期再次保存会覆盖。</div>
+</div>
+</div>
+
+<!-- 围度面板 -->
+<div id="entryDim" style="display:none">
+<div id="dimFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<input type="number" id="dimWaist" placeholder="腰围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimHip" placeholder="臀围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimChest" placeholder="胸围(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px">
+<input type="number" id="dimThigh" placeholder="大腿(cm)" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmFlex" placeholder="手臂绷紧" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="dimArmRelax" placeholder="手臂放松" step="0.5" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<div style="display:flex;gap:6px;margin-top:6px">
+<input type="text" id="dimNote" placeholder="备注(可选 如空腹晨测)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveDimRecord()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">保存</button>
+</div>
+</div>
+</div>
+
+<!-- 心率面板 -->
+<div id="entryRhr" style="display:none">
+<div id="rhrFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;display:flex;gap:6px;align-items:center">
+<input type="number" id="rhrVal" min="40" max="120" placeholder="晨起静息心率(bpm)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<input type="date" id="rhrDate" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+<button onclick="saveRhrRecord()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存</button>
+</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px">📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）</div>
+</div>
+
+<!-- 快捷体重面板 -->
+<div id="entryWeight" style="display:none">
+<div id="weightFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
+<div style="background:var(--inset);border-radius:8px;padding:12px;display:flex;gap:10px;align-items:center">
+<input type="number" id="dailyWeightInput" step="0.1" min="50" max="150" placeholder="输入体重(kg)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:15px;outline:none">
+<button onclick="saveDailyWeight()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer">确定</button>
+</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 只记体重时用这个；有完整体脂秤数据请切换到「体成分」面板</div>
+</div>
+
+</div>
+</div>
+
+<script>
+// 数据记录面板控制
+function openDataEntry(){
+  var mask=document.getElementById('dataEntryMask');
+  mask.style.display='flex';
+  switchEntryType('diet');
+  renderFoodButtons();
+  cartRender();
+  setQuickTarget('b');
+  updateDietSummary();
+  if(typeof renderAllMeals==='function')renderAllMeals();
+}
+function closeDataEntry(){
+  document.getElementById('dataEntryMask').style.display='none';
+}
+function switchEntryType(t){
+  var types=['diet','train','bodycomp','dim','rhr','weight'];
+  var labels={diet:'etDiet',train:'etTrain',bodycomp:'etBodycomp',dim:'etDim',rhr:'etRhr',weight:'etWeight'};
+  var panels={diet:'entryDiet',train:'entryTrain',bodycomp:'entryBodycomp',dim:'entryDim',rhr:'entryRhr',weight:'entryWeight'};
+  types.forEach(function(tp){
+    var btn=document.getElementById(labels[tp]);
+    var pan=document.getElementById(panels[tp]);
+    if(tp===t){btn.style.background='var(--orange)';btn.style.color='#fff';btn.style.border='none';btn.style.fontWeight='700';pan.style.display='block';}
+    else{btn.style.background='var(--inset)';btn.style.color='var(--text-2)';btn.style.border='1px solid var(--bdr)';btn.style.fontWeight='400';pan.style.display='none';}
+  });
+  if(t==='train'){if(typeof initTrainingRecordInfo==='function')initTrainingRecordInfo();if(typeof renderTrainingList==='function')renderTrainingList();}
+  if(t==='bodycomp'){if(typeof initBodyCompDate==='function')initBodyCompDate();}
+  if(t==='rhr'){var rd=document.getElementById('rhrDate');if(rd&&!rd.value)rd.value=getTodayStr();}
+}
+// 餐次标签更新
+var _origSetQuickTarget=setQuickTarget;
+setQuickTarget=function(t){
+  _origSetQuickTarget(t);
+  var el=document.getElementById('cartMealLabel');
+  if(el)el.textContent={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[t]||t;
+};
+</script>
+
 </body>
 </html>
