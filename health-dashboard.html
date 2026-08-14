@@ -9,14 +9,14 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260812a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px;-webkit-text-size-adjust:100%}
 body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-:root{--bg:#f5f5f7;--card:#ffffff;--inset:#eeeef0;--text:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;--blue:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;--radius:14px;--radius-sm:10px;--gap:16px;--bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.14);--r:var(--radius);--rs:var(--radius-sm)}
+:root{--bg:#f4f5f7;--card:#ffffff;--inset:#eef0f4;--text:#16181d;--text-2:#5c6370;--text-3:#9aa1ad;--blue:#2F6BFF;--green:#00B368;--orange:#FF5A00;--red:#FF2D55;--gold:#FFB400;--dark:#16181d;--radius:16px;--radius-sm:12px;--gap:16px;--bdr:rgba(22,24,29,0.08);--bdr2:rgba(22,24,29,0.16);--r:var(--radius);--rs:var(--radius-sm);--flame:linear-gradient(135deg,#FF5A00,#FF2D55);--teal:linear-gradient(135deg,#00B368,#00A8E8)}
 .container{max-width:480px;margin:0 auto;padding:0 16px 80px}
 .header{position:sticky;top:0;z-index:100;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:10px}
@@ -26,22 +26,24 @@ body{font-family:-apple-system,'SF Pro Text','PingFang SC','Helvetica Neue',sans
 .header-date{font-size:11px;color:var(--text-3);text-align:right}
 .tab-bar{position:sticky;top:60px;z-index:99;background:rgba(245,245,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;gap:0;padding:10px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
 .tab-bar::-webkit-scrollbar{display:none}
-.tab-item{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.2s;white-space:nowrap;cursor:pointer}
-.tab-item.active{color:var(--text);background:var(--card);border-color:var(--bdr2)}
+.tab-item{flex-shrink:0;padding:8px 15px;border-radius:22px;font-size:12px;font-weight:600;color:var(--text-2);background:transparent;border:1px solid transparent;transition:all 0.25s;white-space:nowrap;cursor:pointer}
+.tab-item.active{color:#fff;background:var(--flame);border-color:transparent;font-weight:800;box-shadow:0 4px 12px -4px rgba(255,90,0,0.5)}
 .tab-content{display:none;padding-top:16px}
 .tab-content.active{display:block}
-.card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:16px;border:none}
-.card-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px}
-.big-num{font-size:28px;font-weight:800;color:var(--text);line-height:1.1}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:16px;border:none;box-shadow:0 1px 3px rgba(22,24,29,0.05),0 8px 24px -16px rgba(255,90,0,0.15)}
+.card-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:14px;letter-spacing:0.2px}
+.card-title::before{content:"";display:inline-block;width:5px;height:15px;border-radius:3px;background:var(--flame);margin-right:8px;vertical-align:-2px}
+.big-num{font-size:30px;font-weight:900;color:var(--text);line-height:1.1;letter-spacing:-0.5px}
 .big-num .unit{font-size:14px;font-weight:400;color:var(--text-2)}
 .big-sub{font-size:13px;color:var(--text-2);margin-top:4px}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.kpi-item{background:var(--inset);border-radius:var(--radius-sm);padding:14px;text-align:center}
-.kpi-value{font-size:24px;font-weight:700;color:var(--text)}
+.kpi-item{background:var(--inset);border-radius:var(--radius-sm);padding:14px;text-align:center;border:1px solid transparent;transition:transform 0.15s}
+.kpi-item:active{transform:scale(0.97)}
+.kpi-value{font-size:24px;font-weight:800;color:var(--text)}
 .kpi-value .unit{font-size:11px;font-weight:400;color:var(--text-2)}
-.kpi-label{font-size:11px;color:var(--text-2);margin-top:4px}
-.progress-bar{height:8px;background:var(--inset);border-radius:4px;overflow:hidden;margin:8px 0}
-.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--orange),var(--red));transition:width 0.6s ease}
+.kpi-label{font-size:11px;color:var(--text-2);margin-top:4px;font-weight:600}
+.progress-bar{height:9px;background:var(--inset);border-radius:5px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;border-radius:5px;background:var(--flame);transition:width 0.6s ease}
 .stage-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-2)}
 .stage-row .num{font-size:20px;font-weight:700;color:var(--text)}
 .check-group{display:flex;gap:12px;flex-wrap:wrap}
@@ -98,6 +100,43 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 .ring-card-values{font-size:12px;color:var(--text-2);margin-bottom:4px}
 .ring-card-layers{font-size:10px;color:var(--text-3);line-height:1.5}
 .formula-note{margin-top:12px;font-size:10px;color:var(--text-3);line-height:1.6}
+/* ===== 热血风格增强 ===== */
+.dark-card{background:linear-gradient(135deg,#16181d,#2a2e37);border-radius:var(--radius);padding:18px;margin-bottom:16px;color:#fff}
+.dark-card .big-num{color:#fff}
+.dark-card .unit{color:rgba(255,255,255,0.6)}
+.dark-card .big-sub{color:rgba(255,255,255,0.65)}
+.flame-text{background:var(--flame);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.teal-text{background:var(--teal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.energy-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:0.3px}
+.energy-badge.orange{background:rgba(255,90,0,0.12);color:#FF5A00}
+.energy-badge.green{background:rgba(0,179,104,0.12);color:#00B368}
+.energy-badge.blue{background:rgba(47,107,255,0.12);color:#2F6BFF}
+.energy-badge.red{background:rgba(255,45,85,0.12);color:#FF2D55}
+.energy-badge.gold{background:rgba(255,180,0,0.15);color:#B8860B}
+.big-ring-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0}
+.week-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.week-nav{display:flex;align-items:center;gap:10px}
+.week-nav-btn{width:30px;height:30px;border-radius:8px;background:var(--inset);border:none;color:var(--text);font-size:16px;font-weight:700;cursor:pointer}
+.week-nav-btn:active{transform:scale(0.9)}
+.week-label{font-size:12px;font-weight:700;color:var(--text)}
+.hr-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.hr-dot{width:34px;height:34px;border-radius:50%;background:var(--flame);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.portion-picker{display:flex;gap:8px;margin-top:8px}
+.portion-btn{flex:1;background:var(--inset);border:1px solid var(--bdr);border-radius:10px;padding:10px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;text-align:center}
+.portion-btn:active{transform:scale(0.96)}
+.portion-btn.active{background:var(--flame);color:#fff;border-color:transparent}
+.hist-day{background:var(--inset);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.hist-day:active{background:rgba(255,90,0,0.08)}
+.hist-day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hist-day-date{font-size:12px;font-weight:700;color:var(--text)}
+.hist-day-cal{font-size:11px;color:var(--orange);font-weight:600}
+.hist-meal{font-size:11px;color:var(--text-2);line-height:1.7}
+.trend-line-wrap{position:relative}
+.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
+.modal-box{background:var(--card);border-radius:var(--radius);width:100%;max-width:400px;padding:20px;box-shadow:0 20px 60px -20px rgba(0,0,0,0.4);max-height:80vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:14px}
+.modal-close{position:absolute;top:16px;right:16px;font-size:22px;color:var(--text-2);cursor:pointer;background:none;border:none}
+.fat-zone-band{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;margin-bottom:8px;border-left:4px solid}
 </style>
 </head>
 <body>
@@ -141,6 +180,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 </div>
 <div id="macroHint" style="font-size:11px;color:var(--text-3);margin-top:8px;text-align:center"></div>
+<div id="todayProgressBars" style="margin-top:10px"></div>
 </div>
 <div class="card">
 <div class="card-title">⚖️ 今日体重</div>
@@ -282,7 +322,37 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
-<div class="card" style="background:linear-gradient(135deg,#e8f5e9,#f5f5f7)">
+<!-- ===== 周目标跟踪（核心）===== -->
+<div class="dark-card">
+<div class="week-toolbar">
+<div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:0.5px">🔥 每周减脂目标</div>
+<div class="week-nav">
+<button class="week-nav-btn" onclick="shiftWeek(-1)" style="background:rgba(255,255,255,0.15);color:#fff">‹</button>
+<div class="week-label" id="weekLabel" style="color:#fff">—</div>
+<button class="week-nav-btn" onclick="shiftWeek(1)" style="background:rgba(255,255,255,0.15);color:#fff">›</button>
+</div>
+</div>
+<div class="big-ring-wrap">
+<div id="weekDeficitRing" style="width:130px;height:130px"></div>
+<div style="margin-top:6px;font-size:15px;font-weight:900;color:#fff"><span id="weekDeficitBig" class="flame-text">—</span><span style="font-size:11px;color:rgba(255,255,255,0.6)"> / <span id="weekDeficitTarget">—</span> kcal</span></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+<div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center">
+<div style="font-size:24px;font-weight:900;color:#FFD28C" id="weekFatEst">—</div>
+<div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">本周预计已减脂肪</div>
+</div>
+<div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center">
+<div style="font-size:24px;font-weight:900;color:#A8E6C8" id="weekWeightEst">—</div>
+<div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px">预计体重(含水分)</div>
+</div>
+</div>
+<div id="weekRemainHint" style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.6;background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 12px"></div>
+</div>
+<div class="card">
+<div class="card-title">📊 本周缺口 & 周内调节</div>
+<div id="weekAdjustBox"></div>
+</div>
+<div class="card" style="background:linear-gradient(135deg,#fff3e0,#f5f5f7)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">🔥 累计热量缺口</div>
 <div class="big-num" id="heatDeficit" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
 <div class="big-sub" id="heatDeficitSub" style="color:var(--text-2)">—</div>
@@ -331,6 +401,14 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="calPieChart"></div>
 </div>
 <div class="card">
+<div class="card-title">📊 每日训练消耗</div>
+<div id="trainBarChart"></div>
+</div>
+<div class="card">
+<div class="card-title">🏋️ 训练类型分布</div>
+<div id="trainTypePie"></div>
+</div>
+<div class="card">
 <div class="card-title">📅 日期范围</div>
 <div class="date-range">
 <input type="date" id="trainStart" value="2026-05-31" onchange="filterTraining()">
@@ -360,6 +438,15 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 </div>
 <div class="card">
+<div class="card-title">📊 每日摄入对比上限线</div>
+<div id="dietCalChart"></div>
+<div id="dietChartLegend" style="font-size:10px;color:var(--text-3);margin-top:6px"></div>
+</div>
+<div class="card">
+<div class="card-title">📈 周汇总</div>
+<div id="dietWeeklySummary"></div>
+</div>
+<div class="card">
 <div class="card-title">📋 每日饮食明细</div>
 <div id="dietDetail"></div>
 </div>
@@ -374,9 +461,23 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 <!-- 卡片2: 体重趋势+体脂趋势合并 -->
 <div class="card">
-<div class="card-title">⚖️ 体重 & 体脂趋势</div>
+<div class="card-title">⚖️ 体重 & 体脂趋势 <span class="energy-badge green">7日均线</span></div>
 <div id="bodyWeightChart"></div>
-<div style="margin-top:12px"><div id="bfChart"></div></div>
+<div id="bfChartZone" style="margin-top:12px"></div>
+</div>
+<!-- 静息心率 -->
+<div class="card">
+<div class="card-title">💓 静息心率（周均）</div>
+<div id="rhrChart"></div>
+<div style="font-size:11px;color:var(--text-3);margin-top:8px;line-height:1.6">
+📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）。当前每周在「今日-心率记录」录入。
+</div>
+</div>
+<!-- 腰围趋势 -->
+<div class="card">
+<div class="card-title">📏 腰围 & 腰高比趋势</div>
+<div id="waistChart"></div>
+<div style="font-size:11px;color:var(--text-3);margin-top:8px">腰高比(腰围/身高)目标 &lt;0.5（男），你身高174cm → 腰围目标 &lt;87cm</div>
 </div>
 <!-- 卡片2b: 体成分录入 -->
 <div class="card">
@@ -950,7 +1051,7 @@ const QUICK_FOODS=[
   ['🍚白米饭(熟)',116,2.6,0.3,0,26,'1碗≈150g'],
   ['🍚杂粮饭(混合)',140,3.5,0.3,0.1,28,'1碗≈150g'],
   // 蛋白质
-  ['💊蛋白粉(微Protein)',113,22,0.5,0,1.5,'1勺≈30g'],
+  ['💊蛋白粉(微Protein)',113,22,0.5,0,1.5,'1勺≈30g','scoop'],
   ['🥚水煮蛋',78,6.3,1.6,0,0.6,'1个≈50g'],
   ['🍌香蕉',89,1.1,0.1,6,23,'1根≈120g'],
   ['🐟三文鱼刺身',139,17.2,1.5,0,0,'1份≈80g'],
@@ -971,8 +1072,94 @@ function renderQuickFoods(){
   const c=$('quickFoods');
   if(!c)return;
   c.innerHTML=QUICK_FOODS.map((f,i)=>{
-    return `<button onclick="quickAddFood(${i})" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap">${f[0]} <span style="color:var(--text-3);font-size:10px">${f[1]}k</span></button>`;
+    const isScoop=f[7]==='scoop';
+    const onClick=isScoop?`onclick="openScoopPicker(${i})"`:`onclick="quickAddFood(${i})"`;
+    const badge=isScoop?'<span style="color:var(--orange);font-size:10px;font-weight:800">·勺</span>':'';
+    return `<button ${onClick} style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap">${f[0]}${badge} <span style="color:var(--text-3);font-size:10px">${f[1]}k</span></button>`;
   }).join('');
+  // 历史记录调用按钮
+  c.insertAdjacentHTML('beforeend',`<button onclick="openHistoryPicker()" style="background:linear-gradient(135deg,rgba(255,90,0,0.1),rgba(255,45,85,0.1));color:var(--orange);border:1px solid rgba(255,90,0,0.3);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🕘 调用近期</button>`);
+}
+// 蛋白粉勺数选择弹窗
+function openScoopPicker(idx){
+  const f=QUICK_FOODS[idx];
+  const ratios=[{label:'1勺',r:1},{label:'半勺',r:0.5},{label:'¼勺',r:0.25}];
+  const mask=document.createElement('div');
+  mask.className='modal-mask';
+  mask.innerHTML=`<div class="modal-box" style="position:relative;text-align:center">
+    <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
+    <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px">${f[0]}</div>
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:16px">1勺≈113kcal / 蛋白22g</div>
+    <div class="portion-picker">
+      ${ratios.map((p,i)=>`<div class="portion-btn" onclick="confirmScoop(${idx},${p.r},this)">${p.label}<div style="font-size:10px;color:var(--text-3);margin-top:2px">${Math.round(f[1]*p.r)}kcal / ${(f[2]*p.r).toFixed(1)}g</div></div>`).join('')}
+    </div>
+    <div style="margin-top:14px;font-size:11px;color:var(--text-3)">点击填入当前餐次</div>
+  </div>`;
+  document.body.appendChild(mask);
+}
+function confirmScoop(idx,r,el){
+  // 按比例累加到当前餐
+  const f=QUICK_FOODS[idx];
+  const scaled=[f[0],Math.round(f[1]*r*10)/10,Math.round(f[2]*r*10)/10,Math.round(f[3]*r*10)/10,Math.round(f[4]*r*10)/10,Math.round(f[5]*r*10)/10];
+  const tmp=QUICK_FOODS[idx];
+  QUICK_FOODS[idx]=scaled;
+  quickAddFood(idx);
+  QUICK_FOODS[idx]=tmp;
+  document.querySelector('.modal-mask').remove();
+  flashHint((r===1?'1勺':r===0.5?'半勺':'¼勺')+'蛋白粉已填入'+{b:'早餐',l:'午餐',d:'晚餐'}[_quickTarget]);
+}
+// 历史记录调用弹窗：最近N天列表
+function openHistoryPicker(){
+  const meals=getMeals();
+  const days=Object.keys(meals).sort().reverse().slice(0,7);
+  const mask=document.createElement('div');
+  mask.className='modal-mask';
+  let list='';
+  if(days.length===0){list='<div style="color:var(--text-3);text-align:center;padding:20px">暂无历史记录</div>';}
+  else{
+    days.forEach(dt=>{
+      const day=meals[dt];
+      let cal=0,p=0;let mealNotes='';
+      ['b','l','d','s'].forEach(k=>{
+        (day[k]||[]).forEach(it=>{cal+=it.cal||0;p+=it.p||0;});
+      });
+      const notes=[];['b','l','d','s'].forEach(k=>{(day[k]||[]).forEach(it=>{if(it.desc)notes.push(it.desc);});});
+      mealNotes=notes.slice(0,3).join(' · ')||'无明细';
+      list+=`<div class="hist-day" onclick="applyHistoryDay('${dt}',this)">
+        <div class="hist-day-head"><span class="hist-day-date">${dt.slice(5).replace('-','/')}</span><span class="hist-day-cal">${cal} kcal · P${p}g</span></div>
+        <div class="hist-meal">${mealNotes}</div>
+      </div>`;
+    });
+  }
+  mask.innerHTML=`<div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
+    <div class="modal-title">🕘 调用近期饮食（最近7天）</div>
+    <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">点击某天，将其<b style="color:var(--orange)">全餐合计</b>填入当前餐次（${'早餐'}）</div>
+    ${list}
+    <div style="margin-top:12px;font-size:11px;color:var(--text-3)">点击后填入当前选中的餐次，可点多次累加</div>
+  </div>`;
+  document.body.appendChild(mask);
+}
+function applyHistoryDay(dt){
+  const meals=getMeals();
+  const day=meals[dt];
+  if(!day)return;
+  let cal=0,p=0,sf=0,fr=0,c=0;let descs=[];
+  ['b','l','d','s'].forEach(k=>{(day[k]||[]).forEach(it=>{cal+=it.cal||0;p+=it.p||0;sf+=it.sf||0;fr+=it.fr||0;c+=it.c||0;if(it.desc)descs.push(it.desc);});});
+  const keys={b:['bCal','bP','bSf','bFr','bC','bDesc'],l:['lCal','lP','lSf','lFr','lC','lDesc'],d:['dCal','dP','dSf','dFr','dC','dDesc']};
+  const ks=keys[_quickTarget];
+  if(ks){
+    [ks[0],ks[1],ks[2],ks[3],ks[4]].forEach((k,i)=>{
+      const vals=[cal,p,sf,fr,c];
+      const el=$(k);const cur=parseFloat(el.value)||0;
+      el.value=Math.round((cur+vals[i])*10)/10;
+    });
+    const curDesc=$(ks[5]).value;
+    const dayLabel=dt.slice(5).replace('-','/')+'餐';
+    $(ks[5]).value=curDesc?curDesc+' + ['+dayLabel+']':'['+dayLabel+'] '+descs.slice(0,3).join('+');
+  }
+  document.querySelector('.modal-mask').remove();
+  flashHint('已填入'+dt.slice(5).replace('-','/')+'合计 '+cal+'kcal');
 }
 function quickAddFood(idx){
   const f=QUICK_FOODS[idx];
@@ -1215,6 +1402,8 @@ function updateDietSummary(){
     });
   }
   $('dietDailySummary').textContent=totalCal>0?`今日合计 ${totalCal}kcal | P${totalP}g | C${totalC}g`:'点击+展开录入';
+  // 进度条
+  try{ renderTodayProgressBars(totalCal,totalP,totalSf,totalFr,totalC); }catch(e){}
   // Update remaining quota if on nav tab
   if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
     const _dow=new Date().getDay();
@@ -1246,6 +1435,31 @@ function updateDietSummary(){
     const hintEl=$('macroHint');
     if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥130g | 碳水'+targetC+'g（训练日120-150g/休息日80g） | 饱和脂肪≤20g';
   }
+}
+// 今日剩余额度微型进度条
+function renderTodayProgressBars(cal,p,sf,fr,c){
+  const el=$('todayProgressBars');
+  if(!el)return;
+  const _dow=new Date().getDay();
+  const isTrain=_dow!==0&&_dow!==3;
+  const tCal=isTrain?1400:1000, tP=130, tC=isTrain?130:80, tSF=20;
+  const bars=[
+    {label:'热量',val:cal,max:tCal,unit:'kcal',color:cal>tCal?'var(--red)':'var(--orange)'},
+    {label:'蛋白',val:p,max:tP,unit:'g',color:p>=tP?'var(--green)':'var(--green)'},
+    {label:'碳水',val:c,max:tC,unit:'g',color:c>tC?'var(--red)':'var(--blue)'},
+    {label:'饱和脂',val:sf,max:tSF,unit:'g',color:sf>tSF?'var(--red)':'var(--gold)'}
+  ];
+  let h='';
+  bars.forEach(b=>{
+    const pct=Math.min(100,b.val/b.max*100);
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'+
+      '<span style="font-size:10px;color:var(--text-2);width:38px;flex-shrink:0">'+b.label+'</span>'+
+      '<div style="flex:1;height:6px;background:var(--inset);border-radius:3px;overflow:hidden">'+
+      '<div style="width:'+pct.toFixed(1)+'%;height:100%;background:'+b.color+';border-radius:3px;transition:width 0.5s"></div></div>'+
+      '<span style="font-size:10px;color:'+(b.val>b.max?'var(--red)':'var(--text-3)')+';width:64px;text-align:right;flex-shrink:0">'+Math.round(b.val)+'/'+b.max+'</span>'+
+      '</div>';
+  });
+  el.innerHTML=h;
 }
 
 // ===== 训练记录模块 =====
@@ -1761,9 +1975,214 @@ function initOverview(){
   // Charts
   const chartW=450,chartH=200;
   drawWeightProgressChart('weightChart',WD,75,'2026-12-01',1.74);
+
+  // ===== 热血目标体系：周目标跟踪 + 周缺口 =====
+  try{ renderWeekTracker(); }catch(e){ console.warn('周目标渲染失败:',e.message); }
+  try{ renderWeeklyAdjust(); }catch(e){ console.warn('周内调节渲染失败:',e.message); }
+}
+
+// ===== 热血目标体系：个人化系数 + 周目标 + 非线性曲线 =====
+// 参数：当前体重/目标/体脂率目标/掉速构成/个人化系数
+const GOAL_CFG = {
+  startW: 83.05,        // 当前体重(8/14)
+  dec1W: 75,            // 12/1目标
+  feb1W: 70,            // 2/1目标
+  bfTarget: 21,         // 体脂率目标(单一)
+  fatRatio: 0.73,       // 掉速构成：73%脂肪/27%FFM
+  coef: 24500,          // 个人化系数 kcal/kg脂肪(自动更新)
+  // 非线性曲线：前端快→后端慢，分3段(攻坚/过渡/精修)
+  phases: [
+    {name:'攻坚期', from:'2026-08-14', to:'2026-11-01', weekFat:0.50},
+    {name:'过渡期', from:'2026-11-01', to:'2026-12-01', weekFat:0.45},
+    {name:'精修期', from:'2026-12-01', to:'2027-02-01', weekFat:0.40}
+  ]
+};
+let _weekOffset=0; // 周导航偏移，0=本周
+
+// 周一的日期字符串
+function mondayOfDate(d){const x=new Date(d);const dow=x.getDay()||7;x.setDate(x.getDate()-(dow-1));x.setHours(0,0,0,0);return x;}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function parseD(s){return new Date(s+'T00:00:00');}
+
+// 计算个人化系数：用最近若干周的真实 记录缺口 / 周均体重变化 倒推
+function calcPersonalCoef(){
+  const coef=24500; // 默认值，基于历史数据
+  // 尝试自动计算：近4周累计缺口 / (体重下降/0.73)
+  try{
+    const now=new Date();
+    const mondays=[];
+    for(let i=4;i>=1;i--){mondays.push(mondayOfDate(addDays(now,-7*i)));}
+    const start=mondays[0], end=new Date(now);
+    // 周均体重
+    function wkAvg(ws,we){
+      let sum=0,cnt=0;
+      for(let d=new Date(ws);d<=we;d=addDays(d,1)){
+        const ds=dstr(d);
+        const rec=WD.find(x=>x.date===ds);
+        if(rec&&rec.weight){sum+=rec.weight;cnt++;}
+      }
+      return cnt?sum/cnt:null;
+    }
+    const avg1=wkAvg(start,mondayOfDate(addDays(start,6)));
+    const avg2=wkAvg(mondayOfDate(addDays(now,-7)),now);
+    if(avg1&&avg2){
+      // 累计缺口（近4周）
+      let deficit=0;
+      for(let d=new Date(start);d<=now;d=addDays(d,1)){
+        const ds=dstr(d);
+        const diet=DD.find(x=>x.date===ds);
+        const train=TD.find(x=>x.date===ds);
+        const bmr=1672;
+        if(diet&&diet.t.cal>0){
+          const intake=diet.t.cal;
+          const exp=bmr+300+(train?train.total:0);
+          deficit+=(exp-intake);
+        }
+      }
+      const weightLoss=(avg1-avg2);
+      if(weightLoss>0.05&&deficit>0){
+        const calcCoef=deficit/(weightLoss*GOAL_CFG.fatRatio);
+        if(calcCoef>8000&&calcCoef<60000) return Math.round(calcCoef);
+      }
+    }
+  }catch(e){}
+  return coef;
+}
+
+// 根据当前日期取所处阶段
+function currentPhase(){
+  const now=new Date();
+  for(const p of GOAL_CFG.phases){
+    if(now>=parseD(p.from)&&now<parseD(p.to)) return p;
+  }
+  return GOAL_CFG.phases[GOAL_CFG.phases.length-1];
+}
+
+// 本周目标缺口
+function weekDeficitTarget(){
+  const p=currentPhase();
+  return Math.round(p.weekFat*GOAL_CFG.coef);
+}
+
+// 获取某周(周一起点)的累计缺口和明细
+function weekData(monday){
+  const weekStart=new Date(monday), weekEnd=addDays(new Date(monday),6);
+  let intake=0,exp=0,days=0;
+  for(let d=new Date(weekStart);d<=weekEnd;d=addDays(d,1)){
+    const ds=dstr(d);
+    const diet=DD.find(x=>x.date===ds);
+    const train=TD.find(x=>x.date===ds);
+    if(diet&&diet.t.cal>0){
+      intake+=diet.t.cal;
+      exp+=(1672+300+(train?train.total:0));
+      days++;
+    }
+  }
+  return {deficit:Math.max(0,exp-intake), intake, exp, days, isCurrent:dstr(weekStart)<=dstr(new Date())};
+}
+
+// 渲染周目标圆环
+function renderWeekTracker(){
+  const now=new Date();
+  const thisMonday=mondayOfDate(now);
+  const monday=addDays(thisMonday,_weekOffset*7);
+  const wd=weekData(monday);
+  const target=weekDeficitTarget();
+  const pct=Math.min(100,wd.deficit/target*100);
+  $('weekLabel').textContent=(monday.getMonth()+1)+'/'+monday.getDate()+'周';
+  $('weekDeficitTarget').textContent=target.toLocaleString();
+  $('weekDeficitBig').textContent=wd.deficit.toLocaleString();
+  // 环形图
+  $('weekDeficitRing').innerHTML=makeRing(pct,wd.deficit,target);
+  // 预计减脂/体重
+  const fatEst=wd.deficit/GOAL_CFG.coef;
+  $('weekFatEst').textContent=fatEst.toFixed(2)+' kg';
+  $('weekWeightEst').textContent=(fatEst/GOAL_CFG.fatRatio).toFixed(2)+' kg';
+  // 剩余提示
+  const phase=currentPhase();
+  if(wd.isCurrent){
+    const remain=target-wd.deficit;
+    const daysLeft=7-(new Date().getDay()||7);
+    if(remain>0){
+      const perDay=Math.ceil(remain/Math.max(1,daysLeft));
+      $('weekRemainHint').innerHTML='🎯 阶段目标 <b style="color:#FFD28C">'+phase.weekFat.toFixed(2)+'kg脂肪/周</b><br>'+
+        '距本周目标还差 <b style="color:#FFD28C">'+remain.toLocaleString()+' kcal</b><br>'+
+        '剩余 <b>'+daysLeft+'天</b>，每天需再多补约 <b style="color:#FFD28C">'+perDay.toLocaleString()+' kcal</b> 缺口'+
+        '<div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,0.55)">依据个人化系数 ~'+GOAL_CFG.coef.toLocaleString()+' kcal/kg 脂肪（自动校准）</div>';
+    }else{
+      $('weekRemainHint').innerHTML='✅ 本周缺口已达成目标！已超出 <b style="color:#A8E6C8">'+(wd.deficit-target).toLocaleString()+' kcal</b><br>'+
+        '<div style="font-size:11px;color:rgba(255,255,255,0.55)">本周阶段目标：'+phase.weekFat.toFixed(2)+'kg脂肪</div>';
+    }
+  }else{
+    $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 '+wd.deficit.toLocaleString()+' kcal，目标 '+target.toLocaleString()+' kcal';
+  }
+}
+function shiftWeek(d){
+  _weekOffset+=d;
+  renderWeekTracker();
+  renderWeeklyAdjust();
+}
+// 环形SVG
+function makeRing(pct,val,target){
+  const r=52,c=2*Math.PI*r;
+  const off=c*(1-pct/100);
+  const isComplete=pct>=100;
+  const color=isComplete?'#00B368':'#FF5A00';
+  return '<svg viewBox="0 0 120 120" style="width:100%;height:100%">'+
+    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12"/>'+
+    '<circle cx="60" cy="60" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 0.6s"/>'+
+    '<text x="60" y="56" text-anchor="middle" fill="#fff" font-size="20" font-weight="900">'+Math.round(pct)+'%</text>'+
+    '<text x="60" y="72" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-size="9">完成</text>'+
+    '</svg>';
+}
+
+// 周内调节器：本周每日缺口明细 + 剩余调节
+function renderWeeklyAdjust(){
+  const now=new Date();
+  const monday=mondayOfDate(now);
+  let rows='';
+  let cum=0;
+  const target=weekDeficitTarget();
+  for(let i=0;i<7;i++){
+    const d=addDays(monday,i);
+    const ds=dstr(d);
+    const diet=DD.find(x=>x.date===ds);
+    const train=TD.find(x=>x.date===ds);
+    const isToday=ds===dstr(now);
+    const isFuture=ds>dstr(now);
+    const isRest=(new Date(d).getDay()===0||new Date(d).getDay()===3);
+    let cal=0,exp=0;
+    if(diet&&diet.t.cal>0){cal=diet.t.cal;exp=1672+300+(train?train.total:0);}
+    cum+=Math.max(0,exp-cal);
+    const dayDef=Math.max(0,exp-cal);
+    const limit=isRest?1000:1400;
+    const over=cal>limit;
+    rows+='<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr)">'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+      '<span style="width:30px;height:30px;border-radius:8px;background:'+(isToday?'var(--flame)':'var(--inset)')+';color:'+(isToday?'#fff':'var(--text)')+';font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center">'+(d.getMonth()+1)+'/'+d.getDate()+'</span>'+
+      '<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+(isToday?'今天':(isFuture?'待记录':'')+(d.getDay()===0||d.getDay()===3?' 休息日':''))+'</div>'+
+      '<div style="font-size:10px;color:var(--text-3)">'+(cal?cal+'kcal 摄入':'无记录')+(over?' <span style="color:var(--red)">超限!</span>':'')+'</div></div></div>'+
+      '<div style="text-align:right"><div style="font-size:12px;font-weight:700;color:'+(dayDef>0?'var(--orange)':'var(--text-3)')+'">'+(dayDef?('+'+dayDef.toLocaleString()):'—')+'</div>'+
+      '<div style="font-size:9px;color:var(--text-3)">缺口</div></div></div>';
+  }
+  // 本周累计 + 今日/剩余调节
+  const wd=weekData(monday);
+  const remain=target-wd.deficit;
+  const daysLeft=7-(now.getDay()||7);
+  const perDay=Math.ceil(remain/Math.max(1,daysLeft));
+  const totalRow='<div style="margin-top:12px;padding:12px;background:var(--inset);border-radius:12px">'+
+    '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-2)">本周累计缺口</span><span style="font-weight:800;color:var(--orange)">'+wd.deficit.toLocaleString()+' / '+target.toLocaleString()+' kcal</span></div>'+
+    '<div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+Math.min(100,wd.deficit/target*100).toFixed(1)+'%"></div></div>'+
+    '<div style="font-size:11px;color:var(--text-2);margin-top:6px">'+
+      (remain>0?'还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余'+daysLeft+'天 · 每天需补 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b>缺口' : '✅ 已达成本周目标')+
+    '</div></div>';
+  $('weekAdjustBox').innerHTML=totalRow+rows;
 }
 
 // ===== TAB 3: TRAINING =====
+
+
 function filterTraining(){
   const s=$('trainStart').value,e=$('trainEnd').value;
   // TD already contains both training.json and localStorage data (merged by mergeTrainingLS)
@@ -1795,6 +2214,64 @@ function filterTraining(){
   // Table
   const tbody=document.querySelector('#trainTable tbody');
   tbody.innerHTML=combined.map(function(t){return '<tr><td>'+t.date.slice(5)+'</td><td>'+t.type+'</td><td>'+t.dur+'min</td><td>'+t.dyn+'kcal</td><td>'+t.total+'kcal</td></tr>';}).join('');
+
+  // 每日训练消耗柱状图
+  const barEl=$('trainBarChart');
+  if(barEl){
+    const data=combined.map(t=>({date:t.date.slice(5),cal:t.total}));
+    if(data.length>1){
+      barEl.innerHTML=makeBarChart(data,'date','cal','#FF5A00','训练消耗kcal');
+    }else{barEl.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">数据不足</div>';}
+  }
+  // 训练类型分布
+  const typeEl=$('trainTypePie');
+  if(typeEl){
+    const typeCount={};
+    combined.forEach(t=>{
+      let key='力量';
+      const ty=t.type||'';
+      if(/Zone2|有氧|zone2|Zone2/i.test(ty))key='Zone2有氧';
+      else if(/推/i.test(ty)&&!ty.includes('拉'))key='推力';
+      else if(/拉/i.test(ty))key='拉力';
+      else if(/下肢|腿|髋/i.test(ty))key='下肢';
+      else if(/HIIT|功能性|全身/i.test(ty))key='HIIT/整合';
+      typeCount[key]=(typeCount[key]||0)+t.total;
+    });
+    const slices=Object.keys(typeCount).map(k=>({label:k,value:typeCount[k]}));
+    const colors=['#FF5A00','#2F6BFF','#00B368','#FFB400','#FF2D55'];
+    slices.forEach((s,i)=>s.color=colors[i%colors.length]);
+    if(slices.length>1){
+      typeEl.innerHTML=makePieChart(slices,280,180);
+    }else{typeEl.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">数据不足</div>';}
+  }
+}
+
+// 通用柱状图
+function makeBarChart(data,xKey,yKey,color,label){
+  const w=450,h=180,pad={l:34,r:12,t:16,b:26};
+  const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const vals=data.map(d=>d[yKey]);
+  const maxV=Math.max(...vals,1);
+  let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4);
+    const v=maxV*i/4;
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+Math.round(v)+'</text>';
+  }
+  const n=data.length;
+  const bw=Math.min(22,cw/n*0.6);
+  const step=cw/n;
+  data.forEach((d,i)=>{
+    const x=pad.l+step*i+step/2-bw/2;
+    const bh=ch*(d[yKey]/maxV);
+    const y=pad.t+ch-bh;
+    svg+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="3" fill="'+color+'" fill-opacity="0.85"/>';
+    if(n<=14) svg+='<text x="'+(x+bw/2)+'" y="'+(y-4)+'" fill="'+color+'" font-size="8" font-weight="600" text-anchor="middle">'+d[yKey]+'</text>';
+    if(i%Math.ceil(n/8)===0||i===n-1) svg+='<text x="'+(x+bw/2)+'" y="'+(h-8)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+d[xKey]+'</text>';
+  });
+  svg+='</svg>';
+  return svg;
 }
 
 // ===== TAB 4: DIET =====
@@ -1834,6 +2311,10 @@ function filterDiet(){
   const totalP=combined.reduce((s,d)=>s+d.t.p,0);
   $('totalCalIn').innerHTML=totalCal.toLocaleString()+'<span class="unit"> kcal</span>';
   $('totalProteinIn').innerHTML='蛋白 '+totalP.toLocaleString()+'g | 日均 '+fmt(totalCal/(combined.length||1),0)+'kcal';
+
+  // 每日摄入柱状图 + 上限线 + 周汇总
+  try{ renderDietCalChart(combined,s,e); }catch(err){}
+  try{ renderDietWeekly(combined); }catch(err){}
   
   let html='';
   combined.slice().reverse().forEach(d=>{
@@ -1868,6 +2349,83 @@ function filterDiet(){
   });
   $('dietDetail').innerHTML=html;
 }
+// 饮食每日摄入柱状图（带训练日/休息日上限线）
+function renderDietCalChart(data,s,e){
+  const el=$('dietCalChart');
+  if(!el)return;
+  const days=data.filter(d=>d.t.cal>0);
+  if(days.length<2){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">数据不足</div>';return;}
+  // 只显示最近30天避免过密
+  const show=days.slice(-30);
+  const w=450,h=180,pad={l:34,r:12,t:16,b:26};
+  const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const maxCal=1600;
+  let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4);const v=maxCal*i/4;
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+Math.round(v)+'</text>';
+  }
+  // 上限线
+  const n=show.length,step=cw/n,bw=Math.min(20,cw/n*0.5);
+  const y1000=pad.t+ch*(1-1000/maxCal);
+  const y1400=pad.t+ch*(1-1400/maxCal);
+  svg+='<line x1="'+pad.l+'" y1="'+y1400+'" x2="'+(w-pad.r)+'" y2="'+y1400+'" stroke="#FF5A00" stroke-width="1.5" stroke-dasharray="6,4"/>';
+  svg+='<text x="'+(w-pad.r-4)+'" y="'+(y1400-4)+'" fill="#FF5A00" font-size="8" text-anchor="end">训练1400</text>';
+  svg+='<line x1="'+pad.l+'" y1="'+y1000+'" x2="'+(w-pad.r)+'" y2="'+y1000+'" stroke="#9aa1ad" stroke-width="1.5" stroke-dasharray="6,4"/>';
+  svg+='<text x="'+(w-pad.r-4)+'" y="'+(y1000+12)+'" fill="#9aa1ad" font-size="8" text-anchor="end">休息1000</text>';
+  show.forEach((d,i)=>{
+    const x=pad.l+step*i+step/2-bw/2;
+    const bh=ch*(d.t.cal/maxCal);const y=pad.t+ch-bh;
+    const dow=new Date(d.date+'T00:00:00').getDay();
+    const isRest=(dow===0||dow===3);
+    const limit=isRest?1000:1400;
+    const over=d.t.cal>limit;
+    const color=over?'#FF2D55':(isRest?'#9aa1ad':'#FFB400');
+    svg+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="3" fill="'+color+'" fill-opacity="0.8"/>';
+    if(show.length<=14) svg+='<text x="'+(x+bw/2)+'" y="'+(y-4)+'" fill="'+color+'" font-size="7" text-anchor="middle">'+d.t.cal+'</text>';
+    if(i%Math.ceil(show.length/8)===0||i===show.length-1) svg+='<text x="'+(x+bw/2)+'" y="'+(h-8)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+d.date.slice(5).replace('-','/')+'</text>';
+  });
+  svg+='</svg>';
+  el.innerHTML=svg;
+  const legendEl=$('dietChartLegend');
+  if(legendEl) legendEl.innerHTML='🟨训练日(≤1400) 🟥超限 · ⬜休息日(≤1000) · 虚线=当日上限';
+}
+// 饮食周汇总
+function renderDietWeekly(data){
+  const el=$('dietWeeklySummary');
+  if(!el)return;
+  const days=data.filter(d=>d.t.cal>0);
+  if(days.length===0){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:12px">暂无数据</div>';return;}
+  // 按周分组（周一为一周起点）
+  const weeks={};
+  days.forEach(d=>{
+    const dt=new Date(d.date+'T00:00:00');
+    const dow=dt.getDay()||7;
+    const monday=new Date(dt);monday.setDate(dt.getDate()-(dow-1));
+    const key=monday.toISOString().slice(0,10);
+    if(!weeks[key])weeks[key]={cal:0,p:0,days:0,over:0};
+    weeks[key].cal+=d.t.cal;weeks[key].p+=d.t.p;weeks[key].days++;
+    const isRest=(dt.getDay()===0||dt.getDay()===3);
+    const limit=isRest?1000:1400;
+    if(d.t.cal>limit)weeks[key].over++;
+  });
+  const keys=Object.keys(weeks).sort().reverse().slice(0,6);
+  let h='';
+  keys.forEach(k=>{
+    const w=weeks[k];
+    const avg=Math.round(w.cal/w.days);
+    const avgP=Math.round(w.p/w.days);
+    const ok=w.days-w.over;
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">'+
+      '<div><div style="font-size:12px;font-weight:700;color:var(--text)">'+k.slice(5).replace('-','/')+' 周</div>'+
+      '<div style="font-size:10px;color:var(--text-3)">'+w.days+'天记录 · 日均'+avg+'kcal / P'+avgP+'g</div></div>'+
+      '<div style="text-align:right"><div style="font-size:14px;font-weight:800;color:var(--orange)">'+Math.round(w.cal)+' kcal</div>'+
+      '<div style="font-size:10px;color:'+(w.over>0?'var(--red)':'var(--green)')+'">'+ok+'/'+w.days+'天达标'+(w.over>0?' · '+w.over+'天超限':'')+'</div></div></div>';
+  });
+  el.innerHTML=h||'<div style="color:var(--text-3);text-align:center;padding:12px">暂无周数据</div>';
+}
+
 
 // ===== TAB 5: BODY =====
 function filterBody(){
@@ -1875,10 +2433,19 @@ function filterBody(){
   const chartW=450,chartH=200;
   
   const fw=WD.filter(d=>d.date>=s&&d.date<=e);
-  $('bodyWeightChart').innerHTML=makeLineChart(fw,'date','weight',chartW,chartH,'#F59E0B','体重',false);
+  // 体重 + 7日均线
+  const weightSeries=makeLineChartWithMA(fw,'date','weight',chartW,chartH,'#FFB400','体重',7);
+  $('bodyWeightChart').innerHTML=weightSeries;
   
+  // 体脂率 + 减脂区间带（叠加备忘的29→26/26→23/23→20/20→18）
   const bfd=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null);
-  $('bfChart').innerHTML=makeLineChart(bfd,'date','bf',chartW,180,'#34D399','体脂率',true);
+  const bfZoneEl=$('bfChartZone');
+  if(bfZoneEl) bfZoneEl.innerHTML=makeBfZoneChart(bfd,chartW,180);
+  
+  // 静息心率周走势
+  try{ renderRhrChart(); }catch(err){}
+  // 腰围 + 腰高比
+  try{ renderWaistChart(s,e); }catch(err){}
   
   renderBodyPartDistance();
   
@@ -2022,6 +2589,156 @@ function renderBodyPartDistance(){
   h+='</div>';
   $('bodyPartDistance').innerHTML=h;
 }
+// ===== 体测增强图表 =====
+// 折线图 + 移动均线
+function makeLineChartWithMA(data,xKey,yKey,w,h,color,label,maN){
+  const points=data.map(d=>({date:d[xKey],v:d[yKey]})).filter(p=>p.v!=null);
+  if(points.length<2)return '<div style="color:var(--text-3);text-align:center;padding:20px">数据不足</div>';
+  const pad={l:40,r:15,t:20,b:30},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const vals=points.map(p=>p.v);
+  const minY=Math.min(...vals),maxY=Math.max(...vals),rangeY=maxY-minY||1;
+  const yMin=minY-rangeY*0.12,yMax=maxY+rangeY*0.12;
+  let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4),v=yMin+(yMax-yMin)*i/4;
+    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(w-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="9" text-anchor="end">'+v.toFixed(1)+'</text>';
+  }
+  const X=i=>pad.l+cw*(i/(points.length-1));
+  const Y=v=>pad.t+ch*(1-(v-yMin)/(yMax-yMin));
+  // 原始线
+  let path='';
+  points.forEach((p,i)=>{path+=(i?'L':'M')+X(i)+','+Y(p.v);});
+  svg+='<path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" opacity="0.5"/>';
+  // 移动均线
+  if(maN>1&&points.length>=maN){
+    let maPath='';
+    for(let i=maN-1;i<points.length;i++){
+      let s=0;for(let j=i-maN+1;j<=i;j++)s+=points[j].v;
+      const avg=s/maN;
+      maPath+=(maPath?'L':'M')+X(i)+','+Y(avg);
+    }
+    svg+='<path d="'+maPath+'" fill="none" stroke="'+color+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+    // 均线图例
+    svg+='<line x1="'+(pad.l+8)+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+24)+'" y2="'+(pad.t+8)+'" stroke="'+color+'" stroke-width="2.4"/>';
+    svg+='<text x="'+(pad.l+28)+'" y="'+(pad.t+11)+'" fill="'+color+'" font-size="9" font-weight="600">'+maN+'日均线</text>';
+  }
+  // 点
+  points.forEach((p,i)=>{
+    svg+='<circle cx="'+X(i)+'" cy="'+Y(p.v)+'" r="2.5" fill="'+color+'"/>';
+    if(i===0||i===points.length-1||i%Math.ceil(points.length/6)===0) svg+='<text x="'+X(i)+'" y="'+(Y(p.v)-6)+'" fill="'+color+'" font-size="8" text-anchor="middle" font-weight="600">'+p.v.toFixed(1)+'</text>';
+  });
+  // x标签
+  for(let i=0;i<points.length;i++){
+    if(i%Math.ceil(points.length/6)===0||i===points.length-1) svg+='<text x="'+X(i)+'" y="'+(h-6)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+points[i].date.slice(5).replace('-','/')+'</text>';
+  }
+  svg+='</svg>';
+  return svg;
+}
+// 体脂率图 + 减脂区间带（29→26/26→23/23→20/20→18）
+function makeBfZoneChart(data,w,h){
+  const points=data.map(d=>({date:d.date,v:d.bf})).filter(p=>p.v!=null);
+  if(points.length<1)return '<div style="color:var(--text-3);text-align:center;padding:20px">数据不足</div>';
+  const pad={l:40,r:15,t:20,b:30},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+  const yMax=Math.max(...points.map(p=>p.v),29)+1;
+  const yMin=Math.min(17,Math.min(...points.map(p=>p.v))-1);
+  let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
+  const Y=v=>pad.t+ch*(1-(v-yMin)/(yMax-yMin));
+  const X=i=>pad.l+cw*(i/(Math.max(1,points.length-1)));
+  // 减脂区间带背景
+  const zones=[
+    {from:29,to:26,label:'四肢',color:'rgba(52,211,153,0.12)'},
+    {from:26,to:23,label:'胸肩',color:'rgba(255,180,0,0.12)'},
+    {from:23,to:20,label:'腹部开始',color:'rgba(255,138,0,0.15)'},
+    {from:20,to:18,label:'下腹',color:'rgba(255,45,85,0.15)'},
+    {from:18,to:yMin,label:'腹肌',color:'rgba(255,45,85,0.2)'}
+  ];
+  zones.forEach(z=>{
+    const yTop=Y(z.from),yBot=Y(z.to);
+    if(yBot<yTop){svg+='<rect x="'+pad.l+'" y="'+yBot+'" width="'+cw+'" height="'+(yTop-yBot)+'" fill="'+z.color+'"/>';}
+    svg+='<text x="'+(w-pad.r-4)+'" y="'+(Y(z.from)-3)+'" fill="rgba(0,0,0,0.25)" font-size="8" text-anchor="end">'+z.label+'</text>';
+  });
+  // 目标线21%
+  const y21=Y(21);
+  svg+='<line x1="'+pad.l+'" y1="'+y21+'" x2="'+(w-pad.r)+'" y2="'+y21+'" stroke="#FF2D55" stroke-width="1.8" stroke-dasharray="6,4"/>';
+  svg+='<text x="'+(pad.l+4)+'" y="'+(y21-4)+'" fill="#FF2D55" font-size="9" font-weight="700">目标21%</text>';
+  // 网格
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4),v=yMin+(yMax-yMin)*i/4;
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+v.toFixed(0)+'</text>';
+  }
+  // 实际折线
+  let path='';
+  points.forEach((p,i)=>{path+=(i?'L':'M')+X(i)+','+Y(p.v);});
+  svg+='<path d="'+path+'" fill="none" stroke="#00B368" stroke-width="2" stroke-linejoin="round"/>';
+  points.forEach((p,i)=>{
+    svg+='<circle cx="'+X(i)+'" cy="'+Y(p.v)+'" r="3" fill="#00B368"/>';
+    if(i===points.length-1) svg+='<text x="'+X(i)+'" y="'+(Y(p.v)-8)+'" fill="#00B368" font-size="9" font-weight="700" text-anchor="middle">'+p.v.toFixed(1)+'%</text>';
+  });
+  svg+='</svg>';
+  return svg;
+}
+// 静息心率周走势
+function renderRhrChart(){
+  const el=$('rhrChart');
+  if(!el)return;
+  // 初始历史数据（用户提供 5/31-8/15）
+  const hist=[
+    {date:'2026-06-06',hr:84},{date:'2026-06-13',hr:87},{date:'2026-06-20',hr:81},
+    {date:'2026-06-27',hr:77},{date:'2026-07-04',hr:80},{date:'2026-07-11',hr:82},
+    {date:'2026-07-18',hr:83},{date:'2026-07-25',hr:81},{date:'2026-08-01',hr:75},
+    {date:'2026-08-08',hr:71},{date:'2026-08-15',hr:67}
+  ];
+  // 合并用户后续录入的（从LS）
+  try{
+    const ls=JSON.parse(localStorage.getItem('health_rhr')||'[]');
+    ls.forEach(r=>{const i=hist.findIndex(h=>h.date===r.date);if(i>=0)hist[i].hr=r.hr;else hist.push(r);});
+  }catch(e){}
+  hist.sort((a,b)=>a.date.localeCompare(b.date));
+  if(hist.length<2){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">静息心率数据不足</div>';return;}
+  // 用makeLineChart渲染
+  el.innerHTML=makeLineChart(hist,'date','hr',450,170,'#FF2D55','静息心率',true);
+  // 底部说明当前值
+  const latest=hist[hist.length-1];
+  const first=hist[0];
+  const trend=first.hr-latest.hr;
+  const trendColor=trend>0?'var(--green)':'var(--red)';
+  el.insertAdjacentHTML('afterend','<div style="margin-top:8px;font-size:12px;color:var(--text-2)">当前 <b style="color:'+trendColor+'">'+latest.hr+' bpm</b> · 较起始('+first.hr+') '+(trend>0?'↓'+trend:'↑'+Math.abs(trend))+' bpm '+(trend>0?'✅有氧改善':'')+'</div>');
+}
+// 腰围 + 腰高比趋势
+function renderWaistChart(s,e){
+  const el=$('waistChart');
+  if(!el)return;
+  const dims=DIM.filter(d=>d.date>=s&&d.date<=e&&d.waist);
+  if(dims.length<2){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">围度数据不足（需2次以上记录）</div>';return;}
+  const h=1.74;
+  const pts=dims.map(d=>({date:d.date,waist:d.waist}));
+  const chartW=450,chartH=170,pad={l:40,r:15,t:20,b:30},cw=chartW-pad.l-pad.r,ch=chartH-pad.t-pad.b;
+  const minW=Math.min(...pts.map(p=>p.waist)),maxW=Math.max(...pts.map(p=>p.waist));
+  const yMin=Math.floor(minW-4),yMax=Math.ceil(maxW+4);
+  let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
+  const X=i=>pad.l+cw*(i/(pts.length-1));
+  const Y=v=>pad.t+ch*(1-(v-yMin)/(yMax-yMin));
+  // 目标线87cm(腰高比0.5)
+  const y87=Y(87);
+  svg+='<line x1="'+pad.l+'" y1="'+y87+'" x2="'+(chartW-pad.r)+'" y2="'+y87+'" stroke="#FF2D55" stroke-width="1.8" stroke-dasharray="6,4"/>';
+  svg+='<text x="'+(chartW-pad.r-4)+'" y="'+(y87-4)+'" fill="#FF2D55" font-size="9" font-weight="700" text-anchor="end">目标87(腰高比0.5)</text>';
+  for(let i=0;i<=4;i++){
+    const y=pad.t+ch*(1-i/4),v=yMin+(yMax-yMin)*i/4;
+    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+Math.round(v)+'</text>';
+  }
+  let path='';
+  pts.forEach((p,i)=>{path+=(i?'L':'M')+X(i)+','+Y(p.waist);});
+  svg+='<path d="'+path+'" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linejoin="round"/>';
+  pts.forEach((p,i)=>{
+    svg+='<circle cx="'+X(i)+'" cy="'+Y(p.waist)+'" r="3.5" fill="#2F6BFF"/>';
+    const whr=p.waist/174;
+    svg+='<text x="'+X(i)+'" y="'+(Y(p.waist)+14)+'" fill="#2F6BFF" font-size="8" font-weight="600" text-anchor="middle">'+p.waist+'('+whr.toFixed(2)+')</text>';
+    svg+='<text x="'+X(i)+'" y="'+(chartH-8)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+p.date.slice(5).replace('-','/')+'</text>';
+  });
+  svg+='</svg>';
+  el.innerHTML=svg;
+}
 
 // ===== TAB MEMO: 备忘 =====
 function initMemo(){
@@ -2115,39 +2832,75 @@ function initMemo(){
     {name:'KSM-66',dose:'1粒(600mg)',note:'睡前·降皮质醇+促恢复',time:'22:50',stock:'2盒',price:286.94},
     {name:'他达拉非',dose:'5mg',note:'任意时间·血管健康+前列腺',time:'任意',stock:'3盒',price:251}
   ];
-  // 按时间分组渲染补剂清单
-  let sp='',totalPrice=0,lastTime='';
+  // 按时间分组渲染补剂清单（可折叠）
+  let totalPrice=0;
   const timeLabels={'19:00':'🏠 19:00 空腹（训练前）','21:45':'💪 21:45 训后','22:00':'🍽 22:00 晚餐随餐','22:50':'🌙 22:50 睡前','任意':'⏰ 任意时间'};
+  // 默认展开睡前(22:50)组，其他收起
+  const groups={};
   supps.forEach(s=>{
     if(s.price>0)totalPrice+=s.price;
-    if(s.time!==lastTime){
-      lastTime=s.time;
-      sp+='<div style="font-size:12px;font-weight:700;color:var(--blue);padding:10px 0 4px;border-top:1px solid var(--bdr)">'+(timeLabels[s.time]||s.time)+'</div>';
-    }
-    sp+='<div style="display:flex;justify-content:space-between;padding:5px 0 5px 12px;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--text)">'+s.name+'</span><span style="font-size:11px;color:var(--text-3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--text-3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'<br><span style="color:var(--blue)">¥'+s.price+'</span></div></div>';
+    if(!groups[s.time])groups[s.time]=[];
+    groups[s.time].push(s);
+  });
+  const timeOrder=['19:00','21:45','22:00','22:50','任意'];
+  let sp='';
+  timeOrder.forEach(t=>{
+    if(!groups[t])return;
+    const items=groups[t];
+    const id='suppGrp'+t.replace(':','');
+    const collapsed=(t==='22:00'||t==='任意')?'':'';
+    const disp=collapsed?'none':'block';
+    sp+='<div style="margin-bottom:4px">';
+    sp+='<div onclick="toggleSuppGroup(\''+id+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:10px 8px;cursor:pointer;background:var(--inset);border-radius:10px;margin:6px 0">';
+    sp+='<span style="font-size:12px;font-weight:800;color:var(--text)">'+(timeLabels[t]||t)+'</span>';
+    sp+='<span style="font-size:11px;color:var(--text-3)">'+items.length+'项 <span id="'+id+'Icon">'+(collapsed?'▸':'▾')+'</span></span>';
+    sp+='</div>';
+    sp+='<div id="'+id+'" style="display:'+disp+'">';
+    items.forEach(s=>{
+      sp+='<div style="display:flex;justify-content:space-between;padding:5px 0 5px 12px;border-bottom:1px solid var(--bdr)"><div><span style="font-size:13px;color:var(--text)">'+s.name+'</span><span style="font-size:11px;color:var(--text-3);margin-left:8px">'+s.dose+'</span></div><div style="font-size:11px;color:var(--text-3);text-align:right">'+s.note+(s.stock?'<br>'+s.stock:'')+'<br><span style="color:var(--blue)">¥'+s.price+'</span></div></div>';
+    });
+    sp+='</div></div>';
   });
   sp+='<div style="display:flex;justify-content:space-between;padding:10px 0;margin-top:8px;border-top:2px solid var(--blue)"><div style="font-size:14px;font-weight:700;color:var(--text)">补剂总花费</div><div style="font-size:16px;font-weight:700;color:var(--blue)">¥'+totalPrice.toFixed(0)+'</div></div>';
   $('supplementMemo').innerHTML=sp;
 
-  // 减脂部位与体脂率对应区间
+  // 减脂部位与体脂率对应区间（自动从体测最新体脂率定位）
+  const latestBF=WD.filter(d=>d.bf!=null).pop();
+  const curBF=latestBF?latestBF.bf:28.9;
   const zones=[
-    {range:'29→26%',parts:'脸、手臂、小腿',icon:'🟢',status:'你在这',note:'当前~29%，四肢正在变细'},
-    {range:'26→23%',parts:'胸、上背、肩、大腿',icon:'🟡',status:'下一站',note:'胸开始变紧变薄'},
-    {range:'23→20%',parts:'腹部开始松动，腰线出现',icon:'🟡',status:'关键期',note:'肚子真正开始变小'},
-    {range:'20→18%',parts:'下腹、腰侧大面积消退',icon:'🟠',status:'突破期',note:'腹部明显平坦'},
-    {range:'<18%',parts:'腹肌轮廓可见',icon:'🔴',status:'终极目标',note:'完全暴露腹部线条'}
+    {range:'29→26%',parts:'脸、手臂、小腿',icon:'🟢',low:26,high:99,note:'四肢正在变细'},
+    {range:'26→23%',parts:'胸、上背、肩、大腿',icon:'🟡',low:23,high:26,note:'胸开始变紧变薄'},
+    {range:'23→20%',parts:'腹部开始松动，腰线出现',icon:'🟡',low:20,high:23,note:'肚子真正开始变小'},
+    {range:'20→18%',parts:'下腹、腰侧大面积消退',icon:'🟠',low:18,high:20,note:'腹部明显平坦'},
+    {range:'<18%',parts:'腹肌轮廓可见',icon:'🔴',low:0,high:18,note:'完全暴露腹部线条'}
   ];
+  // 自动定位当前段
+  let currentIdx=0;
+  zones.forEach((zn,i)=>{ if(curBF>=zn.low&&curBF<zn.high) currentIdx=i; });
   let z='';
   zones.forEach((zn,i)=>{
-    const highlight=zn.status==='你在这'?'background:rgba(52,211,153,0.08);border-left:3px solid #34D399;':'border-left:3px solid transparent;';
+    const isCurrent=(i===currentIdx);
+    const isPast=(i>currentIdx); // 已过阶段
+    const highlight=isCurrent?'background:linear-gradient(135deg,rgba(255,90,0,0.12),rgba(255,45,85,0.08));border-left:4px solid #FF5A00;':(isPast?'background:rgba(0,179,104,0.06);border-left:4px solid #00B368;':'border-left:4px solid transparent;');
+    const statusLabel=isCurrent?'🎯 你在这':(isPast?'✅ 已达成':'待达成');
+    const statusColor=isCurrent?'var(--orange)':(isPast?'var(--green)':'var(--text-3)');
     z+='<div style="padding:10px 8px;'+highlight+'border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">';
-    z+='<div><div style="font-size:13px;color:var(--text);font-weight:500">'+zn.icon+' 体脂 '+zn.range+'</div>';
+    z+='<div><div style="font-size:13px;color:var(--text);font-weight:600">'+zn.icon+' 体脂 '+zn.range+'</div>';
     z+='<div style="font-size:11px;color:var(--text-2);margin-top:3px">'+zn.parts+'</div></div>';
-    z+='<div style="text-align:right"><div style="font-size:11px;color:var(--orange);font-weight:500">'+zn.status+'</div>';
+    z+='<div style="text-align:right"><div style="font-size:11px;color:'+statusColor+';font-weight:700">'+statusLabel+'</div>';
     z+='<div style="font-size:10px;color:var(--text-3);margin-top:3px">'+zn.note+'</div></div></div>';
   });
-  z+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">💡 当前体脂率~29%（8/2），距腹部明显变化还需降至23%以下。男性腹部脂肪α受体密度高，天然最后消退。</div>';
+  z+='<div style="margin-top:10px;font-size:11px;color:var(--text-3)">💡 当前体脂率 <b style="color:var(--orange)">'+curBF.toFixed(1)+'%</b>（'+latestBF.date.slice(5)+'），距目标 <b style="color:var(--red)">21%</b> 还需再降 '+(curBF-21).toFixed(1)+' 个点。男性腹部脂肪α受体密度高，天然最后消退。</div>';
   $('fatLossZones').innerHTML=z;
+}
+
+// 补剂分组折叠切换
+function toggleSuppGroup(id){
+  const el=document.getElementById(id);
+  const icon=document.getElementById(id+'Icon');
+  if(!el)return;
+  if(el.style.display==='none'){el.style.display='block';icon.textContent='▾';}
+  else{el.style.display='none';icon.textContent='▸';}
 }
 
 // ===== REVIEW SECTION (动态周/月复盘) =====
