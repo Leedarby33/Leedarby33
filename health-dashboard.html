@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260815c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260815d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -902,7 +902,7 @@ function importBackup(event){
 // ===== 饮食记录模块 =====
 // 食材库：每100g基准 [名称, 热量/100g, 蛋白/100g, 饱和脂/100g, 果糖/100g, 碳水/100g, 单位, 默认量, 类型]
 //   类型: 'gram'(按g折算) | 'piece'(按个折算, perUnit=每个克数) | 'scoop'(勺, perUnit=每勺克数)
-const FOOD_DB=[
+let FOOD_DB=[
   // 蛋白质
   ['🥩牛腱(卤)',120,30,1.5,0,0,'g',100,'gram'],
   ['🥩牛排(瘦)',175,26,3,0,0,'g',120,'gram'],
@@ -938,7 +938,15 @@ const CONDIMENTS=[
   {name:'少油少盐',kcal:45,sf:1},
   {name:'多油多盐',kcal:135,sf:3},
 ];
-// 兼容别名（防止其他地方引用报错，指向FOOD_DB）
+// 用户自定义食材存localStorage，启动时合并到FOOD_DB
+let _userFoods=[];
+function loadUserFoods(){
+  try{_userFoods=JSON.parse(localStorage.getItem('health_userfoods')||'[]');}catch(e){_userFoods=[];}
+  _userFoods.forEach(function(f){FOOD_DB.push(f);});
+}
+function saveUserFoods(){localStorage.setItem('health_userfoods',JSON.stringify(_userFoods));}
+loadUserFoods();
+// 兼容别名
 const QUICK_FOODS=FOOD_DB;
 let _quickTarget='b'; // 当前暂存栏餐次
 let _cart=[]; // 暂存栏数据 [{type:'food',idx,qty,cal,p,sf,fr,c,desc}, {type:'combo',comboIdx,parts:[{name,qty}],condiment,cal,p,sf,fr,c,desc}]
@@ -1187,6 +1195,64 @@ function addManualToCart(){
   cartRender();
   $('manualDesc').value='';$('manualCal').value='';$('manualP').value='';$('manualSf').value='';$('manualFr').value='';$('manualC').value='';
   flashHint('已加入暂存栏：'+(desc||'自定义')+' ('+cal+'kcal)');
+}
+
+// 自定义食物加入快捷食材库（按100g基准折算后存入）
+function addManualToFoodDB(){
+  const desc=($('manualDesc').value||'').trim();
+  const cal=parseInt($('manualCal').value)||0;
+  const p=parseFloat($('manualP').value)||0;
+  const sf=parseFloat($('manualSf').value)||0;
+  const fr=parseFloat($('manualFr').value)||0;
+  const c=parseFloat($('manualC').value)||0;
+  if(cal===0&&p===0){flashHint('至少填热量或蛋白');return;}
+  if(!desc){flashHint('请填食物名称');return;}
+  // 存入格式：[名称, 热量/100g, 蛋白/100g, 饱和脂/100g, 果糖/100g, 碳水/100g, 'g', 100, 'custom']
+  // 自定义输入的值视为"每份"（默认100g份量），按100g基准存储
+  const foodItem=['🍽️'+desc, cal, p, sf, fr, c, 'g', 100, 'custom'];
+  _userFoods.push(foodItem);
+  FOOD_DB.push(foodItem);
+  saveUserFoods();
+  renderFoodButtons();
+  $('manualDesc').value='';$('manualCal').value='';$('manualP').value='';$('manualSf').value='';$('manualFr').value='';$('manualC').value='';
+  flashHint('已加入快捷食材：'+desc+' ('+cal+'kcal/100g)');
+}
+
+// 管理快捷食材：弹窗列出所有食材，可删自定义的
+function manageFoodDB(){
+  const mask=document.createElement('div');
+  mask.className='modal-mask picker-mask';
+  let list='';
+  FOOD_DB.forEach(function(f,i){
+    const isCustom=f[8]==='custom';
+    const isBuiltin=f[8]!=='custom';
+    list+='<div style="display:flex;justify-content:space-between;align-items:center;background:var(--inset);border-radius:8px;padding:8px 10px;margin-bottom:4px">'+
+      '<span style="font-size:12px;color:var(--text)">'+f[0]+' <span style="color:var(--text-3);font-size:10px">'+f[1]+'k/100g</span>'+(isCustom?' <span style="color:var(--green);font-size:10px">自定义</span>':'')+'</span>'+
+      (isCustom?'<span onclick="deleteFoodFromDB('+i+')" style="color:var(--red);font-size:14px;cursor:pointer;padding:0 4px">×</span>':'<span style="color:var(--text-3);font-size:10px">内置</span>')+
+    '</div>';
+  });
+  mask.innerHTML='<div class="modal-box" style="position:relative;max-width:420px;max-height:80vh;overflow-y:auto">'+
+    '<button class="modal-close" onclick="this.closest(\'.modal-mask\').remove()">×</button>'+
+    '<div class="modal-title">⚙️ 快捷食材管理</div>'+
+    '<div style="font-size:11px;color:var(--text-3);margin-bottom:10px">内置食材不可删除；自定义食材可删除（红色×）</div>'+
+    list+
+    '</div>';
+  document.body.appendChild(mask);
+}
+function deleteFoodFromDB(idx){
+  if(idx<0||idx>=FOOD_DB.length)return;
+  const f=FOOD_DB[idx];
+  if(f[8]!=='custom'){flashHint('内置食材不可删除');return;}
+  // 从_userFoods也删除
+  const uIdx=_userFoods.findIndex(function(uf){return uf[0]===f[0]&&uf[1]===f[1];});
+  if(uIdx>=0)_userFoods.splice(uIdx,1);
+  FOOD_DB.splice(idx,1);
+  saveUserFoods();
+  renderFoodButtons();
+  // 刷新管理弹窗
+  const pm=document.querySelector('.picker-mask');if(pm)pm.remove();
+  manageFoodDB();
+  flashHint('已删除：'+f[0]);
 }
 
 // ===== 旧函数兼容（蛋白粉勺数选择器保留，但改为加入暂存栏） =====
@@ -3577,7 +3643,6 @@ if('serviceWorker' in navigator){
 <button onclick="switchEntryType('bodycomp')" id="etBodycomp" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📊 体成分</button>
 <button onclick="switchEntryType('dim')" id="etDim" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📏 围度</button>
 <button onclick="switchEntryType('rhr')" id="etRhr" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">💓 心率</button>
-<button onclick="switchEntryType('weight')" id="etWeight" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">⚖️ 体重</button>
 <button onclick="switchEntryType('history')" id="etHistory" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📝 历史编辑</button>
 <button onclick="switchEntryType('backup')" id="etBackup" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">💾 备份</button>
 </div>
@@ -3613,10 +3678,16 @@ if('serviceWorker' in navigator){
 <input type="number" id="manualFr" placeholder="果糖" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 <input type="number" id="manualC" placeholder="碳水" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 </div>
-<button onclick="addManualToCart()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:600;cursor:pointer">+ 加入暂存栏</button>
+<div style="display:flex;gap:6px">
+<button onclick="addManualToCart()" style="flex:1;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:600;cursor:pointer">+ 加入暂存栏</button>
+<button onclick="addManualToFoodDB()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">⭐ 加入快捷食材</button>
+</div>
 </div>
 <div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">⚡ 快捷食材 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击输入克数，加入暂存栏</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2)">⚡ 快捷食材 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击输入克数</span></div>
+<button onclick="manageFoodDB()" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:4px 10px;font-size:10px;cursor:pointer">⚙️ 管理</button>
+</div>
 <div id="foodButtons" style="display:flex;flex-wrap:wrap;gap:5px"></div>
 </div>
 <div id="dietDailySummary" style="font-size:11px;color:var(--orange);margin-bottom:8px"></div>
@@ -3701,16 +3772,6 @@ if('serviceWorker' in navigator){
 <div style="font-size:10px;color:var(--text-3);margin-top:6px">📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）</div>
 </div>
 
-<!-- 快捷体重面板 -->
-<div id="entryWeight" style="display:none">
-<div id="weightFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;display:flex;gap:10px;align-items:center">
-<input type="number" id="dailyWeightInput" step="0.1" min="50" max="150" placeholder="输入体重(kg)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:15px;outline:none">
-<button onclick="saveDailyWeight()" style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer">确定</button>
-</div>
-<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 只记体重时用这个；有完整体脂秤数据请切换到「体成分」面板</div>
-</div>
-
 <!-- 历史编辑面板 -->
 <div id="entryHistory" style="display:none">
 <div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">
@@ -3755,9 +3816,9 @@ function closeDataEntry(){
   document.getElementById('dataEntryMask').style.display='none';
 }
 function switchEntryType(t){
-  var types=['diet','train','bodycomp','dim','rhr','weight','history','backup'];
-  var labels={diet:'etDiet',train:'etTrain',bodycomp:'etBodycomp',dim:'etDim',rhr:'etRhr',weight:'etWeight',history:'etHistory',backup:'etBackup'};
-  var panels={diet:'entryDiet',train:'entryTrain',bodycomp:'entryBodycomp',dim:'entryDim',rhr:'entryRhr',weight:'entryWeight',history:'entryHistory',backup:'entryBackup'};
+  var types=['diet','train','bodycomp','dim','rhr','history','backup'];
+  var labels={diet:'etDiet',train:'etTrain',bodycomp:'etBodycomp',dim:'etDim',rhr:'etRhr',history:'etHistory',backup:'etBackup'};
+  var panels={diet:'entryDiet',train:'entryTrain',bodycomp:'entryBodycomp',dim:'entryDim',rhr:'entryRhr',history:'entryHistory',backup:'entryBackup'};
   types.forEach(function(tp){
     var btn=document.getElementById(labels[tp]);
     var pan=document.getElementById(panels[tp]);
