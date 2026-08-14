@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814h';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814i';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -125,12 +125,15 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 .portion-btn{flex:1;background:var(--inset);border:1px solid var(--bdr);border-radius:10px;padding:10px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;text-align:center}
 .portion-btn:active{transform:scale(0.96)}
 .portion-btn.active{background:var(--flame);color:#fff;border-color:transparent}
-.hist-day{background:var(--inset);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.hist-day{background:var(--inset);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:default}
 .hist-day:active{background:rgba(255,90,0,0.08)}
 .hist-day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .hist-day-date{font-size:12px;font-weight:700;color:var(--text)}
 .hist-day-cal{font-size:11px;color:var(--orange);font-weight:600}
 .hist-meal{font-size:11px;color:var(--text-2);line-height:1.7}
+.hist-meal-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;margin-top:6px;cursor:pointer}
+.hist-meal-row:active{background:rgba(255,90,0,0.08);border-color:var(--orange)}
+.hist-slot-tag{font-size:10px;font-weight:700;color:#fff;background:var(--blue);border-radius:5px;padding:2px 7px;white-space:nowrap}
 .trend-line-wrap{position:relative}
 .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(3px)}
 .modal-box{background:var(--card);border-radius:var(--radius);width:100%;max-width:400px;padding:20px;box-shadow:0 20px 60px -20px rgba(0,0,0,0.4);max-height:80vh;overflow-y:auto}
@@ -217,8 +220,9 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="todayPlan"></div>
 </div>
 <div class="card" style="background:linear-gradient(135deg,#fff8e1,#f5f5f7)">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<div class="card-title" style="margin-bottom:0">📝 今日记录中心</div>
+<div id="recordHeadRow" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+<div class="card-title" style="margin-bottom:0;cursor:pointer;user-select:none" onclick="toggleRecordCenter()">📝 今日记录中心 <span id="recordToggleArrow" style="display:inline-block;font-size:12px;color:var(--text-3)">▸</span></div>
+<div style="display:flex;gap:6px;align-items:center">
 <select id="recordType" onchange="switchRecordType()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
 <option value="diet">🍽️ 饮食记录</option>
 <option value="train">🏋️ 训练记录</option>
@@ -226,7 +230,10 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <option value="dim">📏 围度</option>
 <option value="rhr">💓 静息心率</option>
 </select>
+<button id="recordToggleBtn" onclick="toggleRecordCenter()" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">展开录入</button>
 </div>
+</div>
+<div id="recordPanels" style="display:none">
 <div id="dietRecordBox">
 <div id="dietDailySummary" style="font-size:11px;color:var(--orange);margin-bottom:8px"></div>
 <div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
@@ -362,6 +369,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <button onclick="saveRhrRecord()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存</button>
 </div>
 <div style="font-size:10px;color:var(--text-3);margin-top:6px">📝 每周记录一次晨起静息心率，Zone2训练后应呈下降趋势（有氧能力提升信号）</div>
+</div>
 </div>
 </div>
 </div>
@@ -950,6 +958,20 @@ function initBodyCompDate(){
   if(d)d.value=getTodayStr();
 }
 
+// 记录中心：展开/收起（默认折叠，点开直接选饮食/训练）
+function toggleRecordCenter(){
+  const p=$('recordPanels');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  $('recordToggleArrow').textContent=open?'▾':'▸';
+  const btn=$('recordToggleBtn');
+  btn.textContent=open?'收起':'展开录入';
+  btn.style.background=open?'var(--inset)':'var(--orange)';
+  btn.style.color=open?'var(--text-2)':'#fff';
+  $('recordHeadRow').style.marginBottom=open?'12px':'0';
+  if(open)switchRecordType();
+}
+
 // 记录中心：切换录入类型
 function switchRecordType(){
   const t=$('recordType').value;
@@ -1083,6 +1105,8 @@ const QUICK_FOODS=[
   ['🥩盐水卤牛腱(切片)',120,30,1.5,0,0,'1份≈100g'],
   ['🫛盐水卤毛豆',147,13,0.6,0.8,11,'1份≈100g带壳'],
   ['🥬青菜炒黑木耳(不喝汤)',45,3.5,0.2,0.8,6,'青菜200g+木耳50g'],
+  ['🍅西红柿牛肉(盐水煮)',250,35,4,2.5,12,'2番茄+150g牛肉'],
+  ['🥬凉拌菠菜(水煮不加油)',15,1.5,0.1,0,1.8,'1份≈50g'],
   // 主食
   ['🍚藜麦白米饭(1:1)',160,4,0.3,0.1,32,'1碗≈150g'],
   ['🍚白米饭(熟)',116,2.6,0.3,0,26,'1碗≈150g'],
@@ -1145,58 +1169,79 @@ function confirmScoop(idx,r,el){
   document.querySelector('.modal-mask').remove();
   flashHint((r===1?'1勺':r===0.5?'半勺':'¼勺')+'蛋白粉已填入'+{b:'早餐',l:'午餐',d:'晚餐'}[_quickTarget]);
 }
-// 历史记录调用弹窗：最近N天列表
+// 历史记录调用弹窗：按天分组、按餐次调用（只调选中的那一餐，不合并全天）
 function openHistoryPicker(){
   const meals=getMeals();
   const days=Object.keys(meals).sort().reverse().slice(0,7);
   const mask=document.createElement('div');
   mask.className='modal-mask';
+  const slotNames={b:'🌅 早餐',l:'☀️ 午餐',d:'🌙 晚餐',s:'🍎 加餐'};
   let list='';
   if(days.length===0){list='<div style="color:var(--text-3);text-align:center;padding:20px">暂无历史记录</div>';}
   else{
     days.forEach(dt=>{
       const day=meals[dt];
-      let cal=0,p=0;let mealNotes='';
-      ['b','l','d','s'].forEach(k=>{
-        (day[k]||[]).forEach(it=>{cal+=it.cal||0;p+=it.p||0;});
+      const slots=['b','l','d','s'].filter(k=>(day[k]||[]).length>0);
+      if(slots.length===0)return;
+      let dayCal=0,dayP=0;
+      slots.forEach(k=>{(day[k]||[]).forEach(it=>{dayCal+=it.cal||0;dayP+=it.p||0;});});
+      let mealRows='';
+      slots.forEach(k=>{
+        let cal=0,p=0;const descs=[];
+        (day[k]||[]).forEach(it=>{cal+=it.cal||0;p+=it.p||0;if(it.desc)descs.push(it.desc);});
+        mealRows+=`<div class="hist-meal-row" onclick="applyHistoryMeal('${dt}','${k}')">`+
+          `<span class="hist-slot-tag">${slotNames[k]}</span>`+
+          `<span style="flex:1;font-size:11px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${descs.slice(0,3).join(' + ')||'无明细'}</span>`+
+          `<span style="font-size:11px;font-weight:700;color:var(--orange);white-space:nowrap">${cal}kcal·P${p}g</span>`+
+        `</div>`;
       });
-      const notes=[];['b','l','d','s'].forEach(k=>{(day[k]||[]).forEach(it=>{if(it.desc)notes.push(it.desc);});});
-      mealNotes=notes.slice(0,3).join(' · ')||'无明细';
-      list+=`<div class="hist-day" onclick="applyHistoryDay('${dt}',this)">
-        <div class="hist-day-head"><span class="hist-day-date">${dt.slice(5).replace('-','/')}</span><span class="hist-day-cal">${cal} kcal · P${p}g</span></div>
-        <div class="hist-meal">${mealNotes}</div>
-      </div>`;
+      list+=`<div class="hist-day">`+
+        `<div class="hist-day-head"><span class="hist-day-date">${dt.slice(5).replace('-','/')}</span><span class="hist-day-cal">全天 ${dayCal} kcal · P${dayP}g</span></div>`+
+        `${mealRows}`+
+      `</div>`;
     });
+    if(!list)list='<div style="color:var(--text-3);text-align:center;padding:20px">最近7天暂无餐次记录</div>';
   }
+  const targetName={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[_quickTarget]||'早餐';
   mask.innerHTML=`<div class="modal-box" style="position:relative">
     <button class="modal-close" onclick="this.closest('.modal-mask').remove()">×</button>
-    <div class="modal-title">🕘 调用近期饮食（最近7天）</div>
-    <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">点击某天，将其<b style="color:var(--orange)">全餐合计</b>填入当前餐次（${'早餐'}）</div>
+    <div class="modal-title">🕘 调用近期饮食（按餐次）</div>
+    <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">点击某天的<b style="color:var(--orange)">某一餐</b>，只把那一餐填入当前餐次（${targetName}）——不会带入其他餐</div>
     ${list}
-    <div style="margin-top:12px;font-size:11px;color:var(--text-3)">点击后填入当前选中的餐次，可点多次累加</div>
+    <div style="margin-top:12px;font-size:11px;color:var(--text-3)">填入当前录入餐次，可点多次累加</div>
   </div>`;
   document.body.appendChild(mask);
 }
-function applyHistoryDay(dt){
+function applyHistoryMeal(dt,k){
   const meals=getMeals();
-  const day=meals[dt];
-  if(!day)return;
-  let cal=0,p=0,sf=0,fr=0,c=0;let descs=[];
-  ['b','l','d','s'].forEach(k=>{(day[k]||[]).forEach(it=>{cal+=it.cal||0;p+=it.p||0;sf+=it.sf||0;fr+=it.fr||0;c+=it.c||0;if(it.desc)descs.push(it.desc);});});
-  const keys={b:['bCal','bP','bSf','bFr','bC','bDesc'],l:['lCal','lP','lSf','lFr','lC','lDesc'],d:['dCal','dP','dSf','dFr','dC','dDesc']};
-  const ks=keys[_quickTarget];
-  if(ks){
-    [ks[0],ks[1],ks[2],ks[3],ks[4]].forEach((k,i)=>{
+  const items=(meals[dt]&&meals[dt][k])||[];
+  if(items.length===0)return;
+  let cal=0,p=0,sf=0,fr=0,c=0;const descs=[];
+  items.forEach(it=>{cal+=it.cal||0;p+=it.p||0;sf+=it.sf||0;fr+=it.fr||0;c+=it.c||0;if(it.desc)descs.push(it.desc);});
+  const mealName={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[k];
+  const dayLabel=dt.slice(5).replace('-','/');
+  if(_quickTarget==='s'){
+    // 目标为加餐：逐条直接入账今日加餐
+    const m2=getMeals();const today=getTodayStr();
+    if(!m2[today])m2[today]={b:[],l:[],d:[],s:[]};
+    items.forEach(it=>{m2[today].s.push({cal:it.cal||0,p:it.p||0,sf:it.sf||0,fr:it.fr||0,c:it.c||0,desc:(it.desc||'')+'['+dayLabel+mealName+']',time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});});
+    setMeals(m2);renderMealList('s');updateDietSummary();
+    if(typeof filterDiet==='function')filterDiet();
+    if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
+    refreshDeficitViews();
+  }else{
+    const keys={b:['bCal','bP','bSf','bFr','bC','bDesc'],l:['lCal','lP','lSf','lFr','lC','lDesc'],d:['dCal','dP','dSf','dFr','dC','dDesc']};
+    const ks=keys[_quickTarget];
+    [ks[0],ks[1],ks[2],ks[3],ks[4]].forEach((kk,i)=>{
       const vals=[cal,p,sf,fr,c];
-      const el=$(k);const cur=parseFloat(el.value)||0;
+      const el=$(kk);const cur=parseFloat(el.value)||0;
       el.value=Math.round((cur+vals[i])*10)/10;
     });
     const curDesc=$(ks[5]).value;
-    const dayLabel=dt.slice(5).replace('-','/')+'餐';
-    $(ks[5]).value=curDesc?curDesc+' + ['+dayLabel+']':'['+dayLabel+'] '+descs.slice(0,3).join('+');
+    $(ks[5]).value=curDesc?curDesc+' + ['+dayLabel+mealName+']':'['+dayLabel+mealName+'] '+descs.slice(0,3).join('+');
   }
-  document.querySelector('.modal-mask').remove();
-  flashHint('已填入'+dt.slice(5).replace('-','/')+'合计 '+cal+'kcal');
+  const mk=document.querySelector('.modal-mask');if(mk)mk.remove();
+  flashHint('已填入'+dayLabel+mealName+'合计 '+cal+'kcal');
 }
 function quickAddFood(idx){
   const f=QUICK_FOODS[idx];
