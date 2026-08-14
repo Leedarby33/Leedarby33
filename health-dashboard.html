@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260815d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260815e';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -619,7 +619,9 @@ document.querySelectorAll('.tab-item').forEach(t=>{
 });
 
 // ===== TAB 1: NAV =====
-function getTodayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+// 有效"现在"：凌晨5点前（睡觉日未结束）归属前一天；5:00起才算新的一天
+function getEffNow(){const d=new Date();if(d.getHours()<5)d.setDate(d.getDate()-1);return d;}
+function getTodayStr(){const d=getEffNow();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function getWeightLS(){try{return JSON.parse(localStorage.getItem('health_weight')||'{}');}catch(e){return{};}}
 function setWeightLS(data){localStorage.setItem('health_weight',JSON.stringify(data));}
 function mergeWeightLS(){
@@ -1495,7 +1497,7 @@ function updateDietSummary(){
   try{ renderTodayProgressBars(totalCal,totalP,totalSf,totalFr,totalC); }catch(e){}
   // Update remaining quota if on nav tab
   if(todayMeals&&(todayMeals.b.length>0||todayMeals.l.length>0||todayMeals.d.length>0||todayMeals.s.length>0)){
-    const _dow=new Date().getDay();
+    const _dow=getEffNow().getDay();
     const isTrainDay=_dow!==0&&_dow!==3; // 周日(0)和周三(3)为休息日
     const targetCal=isTrainDay?1400:1000;
     const targetC=isTrainDay?130:80;
@@ -1529,7 +1531,7 @@ function updateDietSummary(){
 function renderTodayProgressBars(cal,p,sf,fr,c){
   const el=$('todayProgressBars');
   if(!el)return;
-  const _dow=new Date().getDay();
+  const _dow=getEffNow().getDay();
   const isTrain=_dow!==0&&_dow!==3;
   const tCal=isTrain?1400:1000, tP=130, tC=isTrain?130:80, tSF=20;
   const bars=[
@@ -1569,7 +1571,7 @@ function saveTrainingItem(){
   const total=parseInt($('trTotal').value)||dyn;
   const hr=$('trHr').value||'';
   const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const today=new Date();
+  const today=getEffNow();
   const dayName=days[today.getDay()];
   const plan=ACTIONS[dayName];
   const type=plan?plan.name:'训练';
@@ -1637,7 +1639,7 @@ function updateTrainDailySummary(){
 }
 function initTrainingRecordInfo(){
   var days=['周日','周一','周二','周三','周四','周五','周六'];
-  var today=new Date();
+  var today=getEffNow();
   var dayName=days[today.getDay()];
   var plan=ACTIONS[dayName];
   var todayStr=getTodayStr();
@@ -1653,7 +1655,7 @@ function initTrainingRecordInfo(){
 function initNav(){
   const todayStr=getTodayStr();
   const todayDiet=DD.find(d=>d.date===todayStr);
-  const _dowNav=new Date().getDay();
+  const _dowNav=getEffNow().getDay();
   const isTrainDay=_dowNav!==0&&_dowNav!==3; // 周日(0)和周三(3)为休息日
   const bmr=1672;const nee=300;
   const targetCal=isTrainDay?1400:1000;
@@ -1692,7 +1694,7 @@ function initNav(){
 
   // Today's training plan (dynamic by day of week)
   const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const today=new Date();
+  const today=getEffNow();
   const dayName=days[today.getDay()];
   const plan=ACTIONS[dayName];
   
@@ -1836,7 +1838,7 @@ function initWeightCompare(todayStr){
   const curW=parseFloat(todayEntry?todayEntry.weight:(WD.length>0?WD[WD.length-1].weight:0))||0;
   const startW=89.85;
   // Current week: find Monday of current week
-  const now=new Date();const dow=now.getDay()||7;
+  const now=getEffNow();const dow=now.getDay()||7;
   const mon=new Date(now);mon.setDate(now.getDate()-(dow-1));
   const monStr=mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0');
   const sunStr=(()=>{const s=new Date(mon);s.setDate(mon.getDate()+6);return s.getFullYear()+'-'+String(s.getMonth()+1).padStart(2,'0')+'-'+String(s.getDate()).padStart(2,'0')})();
@@ -2134,7 +2136,7 @@ function calcPersonalCoef(){
   const coef=24500; // 默认值，基于历史数据
   // 尝试自动计算：近4周累计缺口 / (体重下降/0.73)
   try{
-    const now=new Date();
+    const now=getEffNow();
     const mondays=[];
     for(let i=4;i>=1;i--){mondays.push(mondayOfDate(addDays(now,-7*i)));}
     const start=mondays[0], end=new Date(now);
@@ -2179,7 +2181,7 @@ function calcPersonalCoef(){
 //   返回 {fatCoef:每kg脂肪需缺口, weightCoef:每kg体重需缺口}；数据不足/不可靠时返回null
 function rollingRates(){
   try{
-    const now=new Date();
+    const now=getEffNow();
     const mondays=[];
     for(let i=4;i>=1;i--){mondays.push(mondayOfDate(addDays(now,-7*i)));}
     const start=mondays[0];
@@ -2226,7 +2228,7 @@ function rollingRates(){
 
 // 根据当前日期取所处阶段
 function currentPhase(){
-  const now=new Date();
+  const now=getEffNow();
   for(const p of GOAL_CFG.phases){
     if(now>=parseD(p.from)&&now<parseD(p.to)) return p;
   }
@@ -2253,12 +2255,12 @@ function weekData(monday){
       days++;
     }
   }
-  return {deficit:Math.max(0,exp-intake), intake, exp, days, isCurrent:dstr(weekStart)<=dstr(new Date())};
+  return {deficit:Math.max(0,exp-intake), intake, exp, days, isCurrent:dstr(weekStart)<=getTodayStr()};
 }
 
 // 渲染周目标圆环
 function renderWeekTracker(){
-  const now=new Date();
+  const now=getEffNow();
   const thisMonday=mondayOfDate(now);
   const monday=addDays(thisMonday,_weekOffset*7);
   const wd=weekData(monday);
@@ -2294,7 +2296,7 @@ function renderWeekTracker(){
     // 动态预警：按近4周实测系数+周目标缺口，预测终点体重能否达标
     let warnHtml='';
     if(rates){
-      const now2=new Date();
+      const now2=getEffNow();
       const isPhase2=now2>=parseD('2026-12-01');
       const endD=parseD(isPhase2?'2027-02-01':'2026-12-01');
       const endW=isPhase2?GOAL_CFG.feb1W:GOAL_CFG.dec1W;
@@ -2368,7 +2370,7 @@ function weeklyLoss(monday){
 
 // 周内调节器：本周每日缺口明细 + 剩余调节
 function renderWeeklyAdjust(){
-  const now=new Date();
+  const now=getEffNow();
   const monday=mondayOfDate(now);
   let rows='';
   let cum=0;
@@ -2398,17 +2400,24 @@ function renderWeeklyAdjust(){
   // 本周累计 + 今日/剩余调节
   const wd=weekData(monday);
   const remain=target-wd.deficit;
-  const daysLeft=7-(now.getDay()||7);
+  // 剩余天数含"有效今天"：当天没过完（次日5:00前）就还有全天的调节空间，不能把当天算作已结束
+  const daysLeft=8-(now.getDay()||7);
   const perDay=Math.ceil(remain/Math.max(1,daysLeft));
+  const todayStrEff=dstr(now);
+  const todayDietRec=DD.find(x=>x.date===todayStrEff);
+  const todayNoRec=!(todayDietRec&&todayDietRec.t.cal>0);
   const totalRow='<div style="margin-top:12px;padding:12px;background:var(--inset);border-radius:12px">'+
     '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-2)">本周累计缺口</span><span style="font-weight:800;color:var(--orange)">'+wd.deficit.toLocaleString()+' / '+target.toLocaleString()+' kcal</span></div>'+
     '<div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+Math.min(100,wd.deficit/target*100).toFixed(1)+'%"></div></div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.6">'+
       (remain>0
         ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，目前已达成 <b>'+wd.deficit.toLocaleString()+'</b>，<br>'+
-         '还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>。<br>'+
-         '把还差的量均摊到剩余 '+daysLeft+' 天：每天需把当天缺口再做大约 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b>。'
-          +(perDay>1600
+         '还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>（含今天）。<br>'+
+         (daysLeft===1
+           ?'今天把缺口再做约 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b> 即可达成。'
+           :'把还差的量均摊到剩余 '+daysLeft+' 天：每天需把当天缺口再做大约 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b>。')+
+         (todayNoRec?'<br><span style="color:var(--blue)">ℹ️ 今天还没记录饮食/训练，上面的"已达成"暂不含今天，录入后会自动更新。</span>':'')+
+          (perDay>1600
             ?'<br><span style="color:var(--red);font-weight:700">⚠️ 每天'+perDay.toLocaleString()+'已超出单日现实上限（训练日缺口约1,200~1,500、休息日约970），本周目标无法完全达成——按正常节奏执行即可，缺口下周再补。</span>'
             :'')
         :'✅ 已达成周缺口目标，超出 <b style="color:var(--green)">'+(wd.deficit-target).toLocaleString()+' kcal</b>')+
@@ -2706,7 +2715,7 @@ function renderDietWeekly(data){
     const key=monday.toISOString().slice(0,10);
     if(!weeks[key])weeks[key]={cal:0,p:0,days:0,isCurrent:false};
     weeks[key].cal+=d.t.cal;weeks[key].p+=d.t.p;weeks[key].days++;
-    weeks[key].isCurrent=weeks[key].isCurrent||(key===mondayOfDate(new Date()).toISOString().slice(0,10));
+    weeks[key].isCurrent=weeks[key].isCurrent||(key===mondayOfDate(getEffNow()).toISOString().slice(0,10));
   });
   const keys=Object.keys(weeks).sort().reverse().slice(0,6);
   let h='<div style="font-size:10px;color:var(--text-3);margin-bottom:6px">📌 周预算 = 训练日1400×5 + 休息日1000×2 = <b style="color:var(--text-2)">9000 kcal</b>，给 <b style="color:var(--orange)">300kcal</b> 宽松额度（超一点点可通过多运动弥补，不必苛求每日不超）</div>';
@@ -3455,7 +3464,7 @@ function renderReviewSection(){
   function mondayOf(d){var r=new Date(d);var dow=r.getDay()||7;r.setDate(r.getDate()-(dow-1));r.setHours(0,0,0,0);return r;}
 
   // Get latest week's Monday
-  var latestMonday=mondayOf(new Date());
+  var latestMonday=mondayOf(getEffNow());
 
   // Build 4 recent weeks (latest first)
   var weeks=[];
@@ -3498,7 +3507,7 @@ function renderReviewSection(){
 
   // Build 3 recent months
   var months=[];
-  var now=new Date();
+  var now=getEffNow();
   for(var mi=0;mi<3;mi++){
     var mDate=new Date(now.getFullYear(),now.getMonth()-mi,1);
     var mStart=new Date(mDate.getFullYear(),mDate.getMonth(),1);
@@ -3580,6 +3589,13 @@ function renderReviewSection(){
 const _today=getTodayStr();
 ['trainEnd','dietEnd'].forEach(id=>{const el=$(id);if(el)el.value=_today;});
 const _editDateEl=$('editMealDate');if(_editDateEl)_editDateEl.value=_today;
+// 跨越凌晨5:00（新一天起点）自动刷新：页面长开时，过了5点自动reload进入新一天
+(function(){
+  let _anchor=getTodayStr();
+  setInterval(function(){
+    if(getTodayStr()!==_anchor){location.reload();}
+  },60000);
+})();
 </script>
 <script>
 // PWA Service Worker - 网络优先模式（修复v1 SW缓存优先导致的加载失败）
