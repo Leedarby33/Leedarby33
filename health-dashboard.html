@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2456,7 +2456,7 @@ function filterBody(){
   const dimFirst=DIM[0]||{};
   const refs=[
     {name:'体重',icon:'⚖️',cur:latest.weight,unit:'kg',ref:'≤70',target:70,base:baseline.weight,lower:true},
-    {name:'体脂率',icon:'📉',cur:latest.bf,unit:'%',ref:'13-15%',target:14,base:baseline.bf,lower:true},
+    {name:'体脂率',icon:'📉',cur:latest.bf,unit:'%',ref:'阶段21 · 终极<15',target:21,base:baseline.bf,lower:true},
     {name:'内脏脂肪',icon:'🫀',cur:latest.vf,unit:'级',ref:'≤7',target:7,base:baseline.vf,lower:true},
     {name:'腰围',icon:'📏',cur:latestDim?latestDim.waist:null,unit:'cm',ref:'76-80',target:78,base:dimFirst.waist,lower:true},
     {name:'肌肉量',icon:'💪',cur:latest.muscle,unit:'kg',ref:'维持>55',target:55,base:baseline.muscle,lower:false},
@@ -2485,7 +2485,7 @@ function filterBody(){
   $('refCompareArea').innerHTML=rc;
   
   // Achievement rate
-  const startW=89.85,targetW=70,targetBF=14;
+  const startW=89.85,targetW=70,targetBF=21;
   const curW=latest.weight,curBF=latest.bf;
   const lostW=startW-curW,needLoseW=startW-targetW;
   const lostBF=31.5-curBF,needLoseBF=31.5-targetBF;
@@ -2537,8 +2537,10 @@ function filterBody(){
 
 // ===== 各围度距目标差距 =====
 function renderBodyPartDistance(){
-  const bf=29.6; // 当前体脂率%
-  const tgtBF=14; // 目标体脂率%
+  // 当前体脂率动态取最新体测值
+  const latestRec=WD.filter(d=>d.bf!=null).pop()||{};
+  const bf=latestRec.bf!=null?latestRec.bf:28.9;
+  const tgtBF=21; // 目标体脂率%(用户确认单一目标)
   const parts=[
     {name:'腰围',icon:'📏',cur:94.5,tgt:78,coeff:0.08,dir:'fat-down'},
     {name:'臀围',icon:'🍑',cur:102.5,tgt:92,coeff:0.06,dir:'fat-down'},
