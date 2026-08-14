@@ -1812,11 +1812,13 @@ function initNav(){
   }
   $('todayPlan').innerHTML=html;
 
-  // Auto-fill today's weight if exists
+  // Auto-fill today's weight if exists (体重面板已删除，安全跳过)
   const todayWeight=WD.find(d=>d.date===todayStr);
   if(todayWeight){
-    document.getElementById('dailyWeightInput').value=todayWeight.weight;
-    document.getElementById('weightFeedback').innerHTML='<span style="color:var(--text-2)">今日已记录</span>';
+    const dwi=document.getElementById('dailyWeightInput');
+    if(dwi){dwi.value=todayWeight.weight;}
+    const wf=document.getElementById('weightFeedback');
+    if(wf){wf.innerHTML='<span style="color:var(--text-2)">今日已记录</span>';}
   }
 
   // Update header date
