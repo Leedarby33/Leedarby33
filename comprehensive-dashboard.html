@@ -12,7 +12,7 @@
 <script>
 // 强制缓存刷新：版本号变更时自动重载
 (function(){
-  var VER='20260808a';
+  var VER='20260814a';
   try{
     var s=sessionStorage.getItem('_cd_ver');
     if(s&&s!==VER){sessionStorage.removeItem('_cd_ver');location.reload(true);return;}
@@ -163,6 +163,18 @@ input::placeholder{color:var(--text-3)}
         <div style="display:flex;gap:8px">
           <button type="button" id="type-expense-btn" onclick="switchTxType('expense')" style="flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--red);color:#fff">💸 支出</button>
           <button type="button" id="type-income-btn" onclick="switchTxType('income')" style="flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text-2)">💰 收入</button>
+        </div>
+        <!-- 高频快捷记账：点击填入表单，金额可改，点保存走确认流程 -->
+        <div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:6px">⚡ 高频快捷 <span style="font-weight:400">点击填入 → 改金额 → 保存</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <button type="button" onclick="quickFill('停车费',11.5,'交通')" style="padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text)">🅿️ 停车 <b style="color:var(--text-2)">¥11.5</b></button>
+            <button type="button" onclick="quickFill('停车费（充电减免3元）',8.5,'交通')" style="padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text)">🅿️⚡ 停车 <b style="color:var(--text-2)">¥8.5</b></button>
+            <button type="button" onclick="quickFill('车辆充电',25.5,'交通')" style="padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text)">🔋 充电 <b style="color:var(--text-2)">¥25.5</b></button>
+            <button type="button" onclick="quickFill('扣子积分充值',100,'娱乐')" style="padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text)">🤖 扣子积分 <b style="color:var(--text-2)">¥100</b></button>
+            <button type="button" onclick="quickFill('WorkBuddy积分加量包',50,'娱乐')" style="padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text)">🎯 WB积分 <b style="color:var(--text-2)">¥50</b></button>
+            <button type="button" onclick="quickFill('B站充电',10,'娱乐')" style="padding:9px 4px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--inset);color:var(--text)">📺 B站 <b style="color:var(--text-2)">¥10</b></button>
+          </div>
         </div>
         <div style="display:flex;gap:10px">
           <div style="flex:1">
@@ -748,6 +760,31 @@ function renderDaigou() {
 function toggleAddForm() {
   var card = document.getElementById('add-card');
   card.style.display = card.style.display === 'none' ? 'block' : 'none';
+}
+
+// 本地时区今日字符串（避免toISOString的UTC偏移问题）
+function localTodayStr(){
+  var d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// 高频快捷记账：点击填入表单（可编辑状态），不直接入账
+function quickFill(item, amount, category) {
+  // 若记账卡收起则自动展开
+  var card=document.getElementById('add-card');
+  if(card.style.display==='none'){card.style.display='block';}
+  // 切到支出类型（会自动填充支出分类选项）
+  if(currentTxType!=='expense'){switchTxType('expense');}
+  document.getElementById('add-date').value=localTodayStr();
+  document.getElementById('add-item').value=item;
+  document.getElementById('add-category').value=category;
+  // 复位可能残留的确认区
+  document.getElementById('add-confirm').style.display='none';
+  document.getElementById('add-form').style.display='flex';
+  // 填入金额并聚焦全选，方便直接改（如停车费11.5→8.5）
+  var amt=document.getElementById('add-amount');
+  amt.value=amount;
+  amt.focus();amt.select();
 }
 
 // ========== TAB SWITCHING ==========
