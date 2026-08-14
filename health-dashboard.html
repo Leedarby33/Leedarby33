@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814g';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814h';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -940,6 +940,8 @@ function saveBodyComp(){
   if(typeof renderOverview==='function')renderOverview();
   if(typeof renderBody==='function')renderBody();
   initNav();
+
+  refreshDeficitViews();
 }
 
 // 页面加载时设置体成分日期为今天
@@ -1003,6 +1005,8 @@ function saveDailyWeight(){
   if(typeof renderOverview==='function')renderOverview();
   if(typeof renderBody==='function')renderBody();
   initNav();
+
+  refreshDeficitViews();
 }
 
 // ===== 数据备份/恢复 =====
@@ -1209,6 +1213,7 @@ function quickAddFood(idx){
     updateDietSummary();
     if(typeof filterDiet==='function')filterDiet();
   if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
+  refreshDeficitViews();
     flashHint('已添加到加餐：'+f[0]);
     return;
   }
@@ -1293,6 +1298,7 @@ function saveMealItem(key,label){
   updateDietSummary();
   if(typeof filterDiet==='function')filterDiet();
   if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
+  refreshDeficitViews();
 }
 function deleteMealItem(key,idx){
   const meals=getMeals();
@@ -1300,10 +1306,15 @@ function deleteMealItem(key,idx){
   if(meals[today]&&meals[today][key]){
     meals[today][key].splice(idx,1);
     setMeals(meals);
+    // 同步DD内存：今日还有餐→聚合覆盖；删空→移除今日条目
+    var stillHas=['b','l','d','s'].some(function(k){return (meals[today][k]||[]).length>0;});
+    if(typeof mergeDietLS==='function')mergeDietLS();
+    if(!stillHas){var di=DD.findIndex(function(d){return d.date===today;});if(di>=0)DD.splice(di,1);}
     renderMealList(key);
     updateDietSummary();
     if(typeof filterDiet==='function')filterDiet();
   if(typeof mergeDietLS==='function'){mergeDietLS();if(typeof renderReviewSection==='function')renderReviewSection();}
+  refreshDeficitViews();
   }
 }
 function renderMealList(key){
@@ -1402,13 +1413,18 @@ function saveEditMeal(dt,key,idx){
     updateDietSummary();
   }
   flashHint('已修改'+dt+' '+key.toUpperCase()+'#'+(idx+1));
+
+  refreshDeficitViews();
 }
 function deleteEditMeal(dt,key,idx){
   const meals=getMeals();
   if(!meals[dt]||!meals[dt][key])return;
   meals[dt][key].splice(idx,1);
   setMeals(meals);
+  // 同步DD内存：该日还有餐→聚合覆盖；删空→移除该日条目
+  var stillHas=['b','l','d','s'].some(function(k){return (meals[dt][k]||[]).length>0;});
   mergeDietLS();
+  if(!stillHas){var di=DD.findIndex(function(d){return d.date===dt;});if(di>=0)DD.splice(di,1);}
   loadEditMeals();
   if(typeof filterDiet==='function')filterDiet();
   if(typeof renderReviewSection==='function')renderReviewSection();
@@ -1416,6 +1432,7 @@ function deleteEditMeal(dt,key,idx){
     renderAllMeals();
     updateDietSummary();
   }
+  refreshDeficitViews();
 }
 function updateDietSummary(){
   const meals=getMeals();
@@ -1495,6 +1512,12 @@ function getTrainingRecords(){
   try{return JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){return{};}
 }
 function setTrainingRecords(data){localStorage.setItem('health_training',JSON.stringify(data));}
+// 保存记录后联动刷新缺口相关视图（周目标圆环/周内调节/总览累计），无需手动刷新页面
+function refreshDeficitViews(){
+  try{renderWeekTracker();}catch(e){}
+  try{renderWeeklyAdjust();}catch(e){}
+  try{initOverview();}catch(e){}
+}
 function saveTrainingItem(){
   const dur=parseInt($('trDur').value)||0;
   const dyn=parseInt($('trDyn').value)||0;
@@ -1517,6 +1540,8 @@ function saveTrainingItem(){
   updateTrainDailySummary();
   if(typeof filterTraining==='function')filterTraining();
   if(typeof renderReviewSection==='function')renderReviewSection();
+
+  refreshDeficitViews();
 }
 function deleteTrainingRecord(idx){
   const records=getTrainingRecords();
@@ -1525,9 +1550,13 @@ function deleteTrainingRecord(idx){
     records[todayStr].splice(idx,1);
     if(records[todayStr].length===0)delete records[todayStr];
     setTrainingRecords(records);
+    // 同步TD内存：今日LS还有训练→重新聚合覆盖；删空→移除今日条目（避免残留旧值）
+    if(records[todayStr]){mergeTrainingLS();}
+    else{const ti=TD.findIndex(d=>d.date===todayStr);if(ti>=0)TD.splice(ti,1);}
     renderTrainingList();
     updateTrainDailySummary();
     if(typeof filterTraining==='function')filterTraining();
+    refreshDeficitViews();
   }
 }
 function renderTrainingList(){
