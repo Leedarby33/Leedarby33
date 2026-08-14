@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260815a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260815b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1173,6 +1173,21 @@ function cartConfirm(){
   _cart=[];
   cartRender();
   flashHint('已入账'+{b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[_cartMeal]+'：'+cnt+'条');
+}
+
+// 自定义手动输入：填营养值直接加入暂存栏
+function addManualToCart(){
+  const desc=($('manualDesc').value||'').trim();
+  const cal=parseInt($('manualCal').value)||0;
+  const p=parseFloat($('manualP').value)||0;
+  const sf=parseFloat($('manualSf').value)||0;
+  const fr=parseFloat($('manualFr').value)||0;
+  const c=parseFloat($('manualC').value)||0;
+  if(cal===0&&p===0){flashHint('至少填热量或蛋白');return;}
+  _cart.push({type:'manual',cal:cal,p:p,sf:sf,fr:fr,c:c,desc:desc||'自定义'});
+  cartRender();
+  $('manualDesc').value='';$('manualCal').value='';$('manualP').value='';$('manualSf').value='';$('manualFr').value='';$('manualC').value='';
+  flashHint('已加入暂存栏：'+(desc||'自定义')+' ('+cal+'kcal)');
 }
 
 // ===== 旧函数兼容（蛋白粉勺数选择器保留，但改为加入暂存栏） =====
@@ -3586,14 +3601,24 @@ if('serviceWorker' in navigator){
 </div>
 </div>
 <div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">✏️ 自定义输入 <span style="font-size:10px;color:var(--text-3);font-weight:400">手动填营养值，加入暂存栏</span></div>
+<div style="margin-bottom:6px">
+<input type="text" id="manualDesc" placeholder="食物名称/描述（如：金枪鱼波奇碗）" style="width:100%;background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:8px 10px;font-size:12px;outline:none">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px;margin-bottom:8px">
+<input type="number" id="manualCal" placeholder="热量" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="manualP" placeholder="蛋白" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="manualSf" placeholder="饱和脂" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="manualFr" placeholder="果糖" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+<input type="number" id="manualC" placeholder="碳水" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
+</div>
+<button onclick="addManualToCart()" style="width:100%;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:600;cursor:pointer">+ 加入暂存栏</button>
+</div>
+<div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">⚡ 快捷食材 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击输入克数，加入暂存栏</span></div>
 <div id="foodButtons" style="display:flex;flex-wrap:wrap;gap:5px"></div>
 </div>
 <div id="dietDailySummary" style="font-size:11px;color:var(--orange);margin-bottom:8px"></div>
-<div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
-<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">✏️ 手动输入 <span style="font-size:10px;color:var(--text-3);font-weight:400">直接填营养值，不经过暂存栏</span></div>
-<div id="manualMealSlots"></div>
-</div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">📋 今日已记录</div>
 <div id="mealListB" style="margin-bottom:6px"></div>
