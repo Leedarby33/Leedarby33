@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814e';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814f';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -397,7 +397,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div style="font-size:10px;color:var(--text-3);margin-top:2px">预计减重</div>
 </div>
 </div>
-<div style="font-size:11px;color:var(--text-3);margin-bottom:6px;font-weight:600">📊 本周实际（体重/体脂实测）</div>
+<div style="font-size:11px;color:var(--text-3);margin-bottom:6px;font-weight:600">📊 本周实际（周均 vs 上周周均）</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
 <div style="font-size:20px;font-weight:900;color:var(--green)" id="actualFatLoss">—</div>
@@ -422,24 +422,6 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="big-sub" id="heatDeficitSub" style="color:var(--text-2)">—</div>
 <!-- 累计掉秤对比：按历史比率推算的预计 vs 实际 -->
 <div id="heatDeficitCompare" style="margin-top:12px;border-top:1px dashed rgba(255,90,0,0.25);padding-top:10px"></div>
-</div>
-<div class="card">
-<div class="card-title">📅 双进度对比</div>
-<div style="margin-bottom:14px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-<span style="font-size:12px;color:var(--text-2)">⏱ 时间进度</span>
-<span style="font-size:12px;font-weight:600;color:var(--blue)" id="timePctLabel">—</span>
-</div>
-<div class="progress-bar" style="height:10px"><div class="progress-fill" id="timeProgressBar" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--green))"></div></div>
-</div>
-<div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-<span style="font-size:12px;color:var(--text-2)">🏋️ 减脂进度</span>
-<span style="font-size:12px;font-weight:600;color:var(--orange)" id="fatPctLabel">—</span>
-</div>
-<div class="progress-bar" style="height:10px"><div class="progress-fill" id="fatProgressBar" style="width:0%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
-</div>
-<div id="dualProgressSub" style="margin-top:10px;font-size:11px;color:var(--text-3);text-align:center"></div>
 </div>
 <div class="kpi-grid" id="overviewKpis" style="margin-top:12px"></div>
 <div class="card">
@@ -542,10 +524,10 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div class="card-title">🎯 减脂达成率</div>
 <div id="achievementArea"></div>
 </div>
-<!-- 卡片2: 体重·体脂·腰围统一趋势图 -->
+<!-- 卡片2: 体重·体脂·腰围 独立走势图 -->
 <div class="card">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<div class="card-title" style="margin-bottom:0">⚖️ 体重·体脂·腰围趋势 <span class="energy-badge green">7日均线</span></div>
+<div class="card-title" style="margin-bottom:0">📈 身体测量走势</div>
 <div style="display:flex;gap:6px;align-items:center">
 <select id="bodyRecordSelect" onchange="showBodyRecord()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none;max-width:160px">
 <option value="">📋 查看历史记录</option>
@@ -554,7 +536,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 <div id="bodyTrendChart"></div>
 <div id="bodyRecordDetail" style="display:none;margin-top:10px;background:var(--inset);border-radius:10px;padding:12px"></div>
-<div style="font-size:10px;color:var(--text-3);margin-top:6px">📌 左轴=体重(kg) · 右轴=体脂率(%)/腰围(cm) · 横轴延伸至目标终点2027/2/1，虚线为当前趋势外推，可判断能否按此曲率达标</div>
+<div style="font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.7">📌 体重/体脂/腰围为三个独立走势图，各自独立纵轴；横轴统一延伸至目标终点2027/2/1。图中<b>色块=各指标的区间等级</b>（体脂对应减脂部位、腰围对应健康等级），红色虚线=目标值，橙色/虚线=当前趋势外推，可判断能否按此曲率达标。</div>
 </div>
 <!-- 静息心率 -->
 <div class="card">
@@ -1995,63 +1977,54 @@ function initOverview(){
   // 累计掉秤对比：按"近4周实测比率"推算的预计 vs 计划期实际
   //   预计减脂 = 累计缺口 ÷ 动态脂肪系数；预计减重 = 累计缺口 ÷ 动态体重系数
   const rates=rollingRates();
+  // 累计掉秤对比：累计缺口按历史整体比率推算的"应掉秤" vs 本周实际掉秤（周均 vs 上周周均）
+  //  预计（累计应得）= 累计缺口 ÷ 历史整体比率
+  //  实际（本周最新）= 本周周均 vs 上周周均
   const fCoef=rates?rates.fatCoef:GOAL_CFG.coef;
   const wCoef=rates?rates.weightCoef:GOAL_CFG.coef*GOAL_CFG.fatRatio;
   const estFat=deficit/fCoef, estW=deficit/wCoef;
-  // 实际减脂/减重（计划期起始 vs 当前）
-  const S_W=89.85,S_BF=31.5;
-  const lw=WD.length?WD[WD.length-1].weight:0;
-  const lb=WD.filter(d=>d.bf!=null).pop();
-  const curBf=lb&&lb.bf!=null?lb.bf:S_BF;
-  const fStart=S_W*S_BF/100, fNow=lw*curBf/100;
-  const actFat=Math.max(0,fStart-fNow), actW=S_W-lw;
+  // 实际：本周实际掉秤（周均对比）
+  const thisMonday=mondayOfDate(new Date());
+  const wl=weeklyLoss(thisMonday);
+  const actFat=(wl&&wl.fLoss!=null)?wl.fLoss:0;
+  const actW=(wl?wl.wLoss:0);
   const deltaFat=actFat-estFat, deltaW=actW-estW;
   const tipFat=deltaFat>0.05?'比预计多减':(deltaFat<-0.05?'比预计少减':'与预计相当');
   const tipW=deltaW>0.05?'比预计多减':(deltaW<-0.05?'比预计少减':'与预计相当');
   // 历史整体比率（计划期累计）作为参照
-  const fHist=actFat>0.05?deficit/actFat:0;
-  const wHist=actW>0.05?deficit/actW:0;
+  const latestF=WD.filter(d=>d.bf!=null).pop();
+  const curBfForHist=latestF?latestF.bf:31.5;
+  const curWForHist=WD.length?WD[WD.length-1].weight:89.85;
+  const actFatHist=Math.max(0,89.85*31.5/100-curWForHist*curBfForHist/100);
+  const actWHist=89.85-curWForHist;
+  const fHist=actFatHist>0.05?deficit/actFatHist:0;
+  const wHist=actWHist>0.05?deficit/actWHist:0;
   $('heatDeficitCompare').innerHTML=
-    '<div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px">📉 累计掉秤：按历史比率推算的预计 vs 实际</div>'+
+    '<div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px">📉 累计应掉秤 vs 本周实际掉秤</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
       '<div style="font-size:18px;font-weight:900;color:var(--orange)">'+estFat.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">预计减脂</div></div>'+
+      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计预计减脂</div></div>'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
       '<div style="font-size:18px;font-weight:900;color:var(--orange)">'+estW.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">预计减重</div></div>'+
+      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计预计减重</div></div>'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
       '<div style="font-size:18px;font-weight:900;color:var(--green)">'+actFat.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">实际已减脂肪</div></div>'+
+      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">本周实际减脂</div></div>'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
       '<div style="font-size:18px;font-weight:900;color:var(--green)">'+actW.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">实际已减体重</div></div>'+
+      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">本周实际减重</div></div>'+
     '</div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:8px;line-height:1.7;background:var(--card);border-radius:8px;padding:8px 10px;border-left:3px solid var(--green)">'+
-    '💡 脂肪实际 <b style="color:'+(deltaFat<0?'var(--red)':'var(--green)')+'">'+actFat.toFixed(1)+'</b> vs 按近4周比率预计 <b>'+estFat.toFixed(1)+'</b> kg（'+tipFat+' '+Math.abs(deltaFat).toFixed(1)+'）；'+
-    '体重实际 <b style="color:'+(deltaW<0?'var(--red)':'var(--green)')+'">'+actW.toFixed(1)+'</b> vs 预计 <b>'+estW.toFixed(1)+'</b> kg（'+tipW+' '+Math.abs(deltaW).toFixed(1)+'）<br>'+
-    '<span style="color:var(--text-3)">历史整体比率：每kg脂肪需 '+(fHist?Math.round(fHist).toLocaleString()+' kcal':'—')+'、每kg体重需 '+(wHist?Math.round(wHist).toLocaleString()+' kcal':'—')+'；近4周比率：每kg脂肪需 '+fCoef.toLocaleString()+'、每kg体重需 '+wCoef.toLocaleString()+'。近4周比率越高=掉秤越吃力（平台/代谢适应），越低=掉秤轻松。</span>'+
+    '💡 本周实际减脂 <b style="color:'+(actFat<0?'var(--red)':'var(--green)')+'">'+actFat.toFixed(1)+'</b>、减重 <b style="color:'+(actW<0?'var(--red)':'var(--green)')+'">'+actW.toFixed(1)+'</b> kg（本周周均 vs 上周周均）。<br>'+
+    '累计缺口 '+deficit.toLocaleString()+' kcal 按历史整体比率可换预计减脂 '+estFat.toFixed(1)+'、减重 '+estW.toFixed(1)+' kg。'+
+    '<span style="color:var(--text-3)">历史整体比率：每kg脂肪需 '+(fHist?Math.round(fHist).toLocaleString()+' kcal':'—')+'、每kg体重需 '+(wHist?Math.round(wHist).toLocaleString()+' kcal':'—')+'；近4周比率：每kg脂肪需 '+fCoef.toLocaleString()+'、每kg体重需 '+wCoef.toLocaleString()+'。近4周比率越高=掉秤越吃力。</span>'+
     '</div>';
   
-  // Dual progress bars - dynamic dates
-  const start=new Date('2026-05-31');const now=new Date();const end=new Date('2026-12-01');
-  const passed=Math.floor((now-start)/86400000);
-  const remain=Math.floor((end-now)/86400000);
-  const total=Math.floor((end-start)/86400000);
-  const timePct=Math.min(100,passed/total*100);
-  // Weight: use latest entry
-  const latestW=WD.length>0?WD[WD.length-1].weight:0;
-  const startW=89.85,targetW=75,needLose=startW-targetW;
-  const curW=latestW,lost=startW-curW;
-  const fatPct=Math.min(100,lost/needLose*100);
-  $('timeProgressBar').style.width=timePct.toFixed(1)+'%';
-  $('timePctLabel').textContent=timePct.toFixed(1)+'% ('+passed+'/'+total+'天)';
-  $('fatProgressBar').style.width=fatPct.toFixed(1)+'%';
-  $('fatPctLabel').textContent=fatPct.toFixed(1)+'% (减'+lost.toFixed(1)+'/'+needLose.toFixed(1)+'kg)';
-  const lead=fatPct-timePct;
-  $('dualProgressSub').textContent=lead>0?'✅ 减脂领先时间进度 '+lead.toFixed(1)+'%':'⚠️ 减脂落后时间进度 '+Math.abs(lead).toFixed(1)+'%';
+  // 双进度对比已移除（与体测Tab「减脂达成率」重复，达成率统一在体测Tab展示）
   
   // KPI cards
+  const curW=WD.length?WD[WD.length-1].weight:89.85;
   const latest=WD.filter(d=>d.bf!=null).pop();
   const latestDim2=DIM[DIM.length-1];
   const kpis=[
@@ -2246,18 +2219,12 @@ function renderWeekTracker(){
   const estW=wd.deficit/weightCoef;
   $('estFatLoss').textContent=estFat.toFixed(1)+' kg';
   $('estWeightLoss').textContent=estW.toFixed(1)+' kg';
-  // 实际减脂/减重：起始89.85kg/31.5%，最新体重(取最新记录) × 最新体脂率(取最近有bf的记录)
-  const START_W=89.85,START_BF=31.5;
-  const latestWrec=WD.length?WD[WD.length-1]:null;
-  const latestBfRec=WD.filter(d=>d.bf!=null).pop();
-  const curW=latestWrec?latestWrec.weight:0;
-  const curBF=latestBfRec&&latestBfRec.bf!=null?latestBfRec.bf:START_BF;
-  const fatStart=START_W*START_BF/100;
-  const fatNow=curW*curBF/100;
-  const actualFat=Math.max(0,fatStart-fatNow);
-  const actualW=START_W-curW;
-  $('actualFatLoss').textContent=actualFat.toFixed(1)+' kg';
-  $('actualWeightLoss').textContent=actualW.toFixed(1)+' kg';
+  // 实际减脂/减重（周均对比）：被查看周(本周)周均 vs 其上一周周均
+  //  实际减重 = 上周周均体重 - 本周周均体重；实际减脂肪 = 上周周均脂肪 - 本周周均脂肪
+  //  这样与"本周预计"才是同一口径，才能看出本周身体真实变化
+  const wl=weeklyLoss(monday);
+  $('actualFatLoss').textContent=(wl&&wl.fLoss!=null?wl.fLoss.toFixed(1):'—')+' kg';
+  $('actualWeightLoss').textContent=(wl?wl.wLoss.toFixed(1):'—')+' kg';
   // 阶段提示（简洁，具体缺口细节在下方"本周缺口&周内调节"）
   const phase=currentPhase();
   if(wd.isCurrent){
@@ -2288,6 +2255,38 @@ function makeRing(pct,val,target){
     '<text x="60" y="56" text-anchor="middle" fill="var(--text)" font-size="20" font-weight="900">'+Math.round(pct)+'%</text>'+
     '<text x="60" y="72" text-anchor="middle" fill="var(--text-3)" font-size="9">完成</text>'+
     '</svg>';
+}
+
+// 公共：计算指定周(周一起点) vs 上一周的 周均减重/减脂
+function weeklyLoss(monday){
+  function _wkStat(ws){
+    let sw=0,cw=0,sb=0,cb=0;
+    for(let d=new Date(ws);d<=addDays(ws,6);d=addDays(d,1)){
+      const rec=WD.find(x=>x.date===dstr(d));
+      if(rec&&rec.weight!=null){sw+=rec.weight;cw++;}
+      if(rec&&rec.bf!=null){sb+=rec.bf;cb++;}
+    }
+    if(!cw) return null;
+    return {wAvg:sw/cw, bfAvg:cb?sb/cb:null};
+  }
+  function _nearestBf(ws){
+    for(let d=new Date(ws);d<=addDays(ws,6);d=addDays(d,1)){
+      const rec=WD.find(x=>x.date===dstr(d));
+      if(rec&&rec.bf!=null) return rec.bf;
+    }
+    const bfRec=WD.filter(x=>x.bf!=null).pop();
+    return bfRec?bfRec.bf:null;
+  }
+  const cur=_wkStat(monday), prev=_wkStat(addDays(monday,-7));
+  if(!cur||!prev) return null;
+  const wLoss=prev.wAvg-cur.wAvg;
+  const curBf=cur.bfAvg!=null?cur.bfAvg:_nearestBf(monday);
+  const prevBf=prev.bfAvg!=null?prev.bfAvg:(curBf!=null?curBf:_nearestBf(addDays(monday,-7)));
+  let fLoss=null;
+  if(curBf!=null&&prevBf!=null){
+    fLoss=(prev.wAvg*prevBf/100)-(cur.wAvg*curBf/100);
+  }
+  return {fLoss, wLoss, curWAvg:cur.wAvg, prevWAvg:prev.wAvg};
 }
 
 // 周内调节器：本周每日缺口明细 + 剩余调节
@@ -2827,7 +2826,7 @@ function renderBodyTrendChart(s,e){
   if(!el)return;
   const END='2027-02-01'; // 目标终点
   const dayN=d=>new Date(d+'T00:00:00').getTime();
-  // 数据（仅在 s~e 内）
+  // 数据
   const wRecs=WD.filter(d=>d.date>=s&&d.date<=e&&d.weight!=null).sort((a,b)=>a.date.localeCompare(b.date));
   const bfRecs=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null).sort((a,b)=>a.date.localeCompare(b.date));
   const dimRecs=DIM.filter(d=>d.date>=s&&d.date<=e&&d.waist).sort((a,b)=>a.date.localeCompare(b.date));
@@ -2838,113 +2837,165 @@ function renderBodyTrendChart(s,e){
     let sum=0;for(let j=i-6;j<=i;j++)sum+=wRecs[j].weight;
     wMA.push({date:wRecs[i].date,v:+(sum/7).toFixed(1)});
   }
-  const chartW=470,chartH=240,pad={l:44,r:44,t:20,b:30};
+  // 横轴范围：数据起点~目标终点
+  const firstDate=wRecs.length?wRecs[0].date:(bfRecs.length?bfRecs[0].date:'2026-05-26');
+  const t0=dayN(firstDate),t1=dayN(END);
+  const chartW=450,chartH=150,pad={l:42,r:60,t:14,b:24};
   const cw=chartW-pad.l-pad.r,ch=chartH-pad.t-pad.b;
-  // 横轴范围
-  const t0=dayN(s),t1=dayN(END);
   const X=date=>pad.l+cw*Math.max(0,Math.min(1,(dayN(date)-t0)/(t1-t0)));
-  // 左轴(体重)范围
-  const wVals=wMA.length?wMA.map(p=>p.v):(wRecs.length?wRecs.map(d=>d.weight):[83]);
-  const wMin=Math.min(...wVals)-2,wMax=Math.max(...wVals)+1;
-  // 右轴(体脂+腰围)范围
-  const rVals=[...bfRecs.map(d=>d.bf),...dimRecs.map(d=>d.waist)];
-  const rMin=Math.min(...rVals,18)-2,rMax=Math.max(...rVals,101)+2;
-  const YW=v=>pad.t+ch*(1-(v-wMin)/(wMax-wMin)); // 体重
-  const YR=v=>pad.t+ch*(1-(v-rMin)/(rMax-rMin)); // 体脂/腰围
-  let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
-  // 网格（左轴）
-  for(let i=0;i<=4;i++){
-    const y=pad.t+ch*(1-i/4),vw=wMin+(wMax-wMin)*i/4,rv=rMin+(rMax-rMin)*i/4;
-    svg+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(chartW-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
-    svg+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="end">'+vw.toFixed(0)+'</text>';
-    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(y+3)+'" fill="#9aa1ad" font-size="8" text-anchor="start">'+rv.toFixed(0)+'</text>';
-  }
-  // 体脂减脂区间带（右侧体脂率轴），与备忘的减脂部位区间对应
-  const bfZones=[
-    {from:29,to:26,label:'四肢',color:'rgba(0,179,104,0.13)'},
-    {from:26,to:23,label:'胸肩',color:'rgba(255,180,0,0.14)'},
-    {from:23,to:20,label:'腹部开始',color:'rgba(255,138,0,0.16)'},
-    {from:20,to:18,label:'下腹',color:'rgba(255,45,85,0.16)'},
-    {from:18,to:12,label:'腹肌',color:'rgba(255,45,85,0.22)'}
-  ];
-  bfZones.forEach(b=>{
-    const yTop=YR(Math.min(b.from,rMax)),yBot=YR(Math.max(b.to,rMin));
-    if(yBot<=yTop)return;
-    svg+='<rect x="'+(chartW-pad.r-70)+'" y="'+yTop+'" width="70" height="'+(yBot-yTop)+'" fill="'+b.color+'"/>';
-    svg+='<text x="'+(chartW-pad.r-6)+'" y="'+(yTop+8)+'" fill="rgba(0,0,0,0.3)" font-size="7" text-anchor="end">'+b.label+' '+b.from+'→'+b.to+'</text>';
-  });
-  // 目标终点标记（2/1）：体重70、体脂21、腰围87
-  const now=new Date();
-  const todayStr=now.toISOString().slice(0,10);
-  const todayX=X(todayStr);
   const targetX=X(END);
-  // 目标垂线
-  svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>';
-  svg+='<text x="'+targetX+'" y="'+(pad.t-6)+'" fill="#FF2D55" font-size="8" font-weight="700" text-anchor="middle">2027/2/1 目标</text>';
-  // 目标点
-  const targetPts=[
-    {y:YW(70),c:'#FFB400',label:'70kg'},
-    {y:YR(21),c:'#00B368',label:'21%'},
-    {y:YR(87),c:'#2F6BFF',label:'87cm'}
-  ];
-  targetPts.forEach(p=>{
-    svg+='<circle cx="'+targetX+'" cy="'+p.y+'" r="4" fill="'+p.c+'" stroke="#fff" stroke-width="1.5"/>';
-    svg+='<text x="'+(targetX-6)+'" y="'+(p.y-5)+'" fill="'+p.c+'" font-size="9" font-weight="700" text-anchor="end">'+p.label+'</text>';
-  });
-  // 体重7日均线（橙色）
+  // 日期起点文本
+  const xTicks=(()=>{
+    const arr=[];const n=5;
+    for(let i=0;i<=n;i++){const tt=t0+(t1-t0)*i/n;const d=new Date(tt);arr.push({x:pad.l+cw*i/n,label:(d.getMonth()+1)+'/'+d.getDate()});}
+    return arr;
+  })();
+
+  function axisFrame(){
+    let g='';
+    xTicks.forEach(t=>{g+='<text x="'+t.x+'" y="'+(chartH-6)+'" fill="#9aa1ad" font-size="9" text-anchor="middle">'+t.label+'</text>';});
+    return g;
+  }
+  function gridAndTicks(minV,maxV,step,unit,color){
+    let g='';
+    for(let i=0;i<=4;i++){
+      const y=pad.t+ch*(1-i/4),v=minV+(maxV-minV)*i/4;
+      g+='<line x1="'+pad.l+'" y1="'+y+'" x2="'+(chartW-pad.r)+'" y2="'+y+'" stroke="rgba(0,0,0,0.05)"/>';
+      g+='<text x="'+(pad.l-4)+'" y="'+(y+3)+'" fill="'+(color||'#9aa1ad')+'" font-size="9" font-weight="700" text-anchor="end">'+v.toFixed(v<10?1:0)+'</text>';
+    }
+    return g;
+  }
+
+  let html='';
+
+  // ===== 图1 体重（7日均线） =====
   if(wMA.length>=2){
+    const wMin=Math.min(...wMA.map(p=>p.v))-2,wMax=Math.max(...wMA.map(p=>p.v))+1;
+    const YW=v=>pad.t+ch*(1-(v-wMin)/(wMax-wMin));
+    const lastW=wMA[wMA.length-1];
+    const a=wMA[wMA.length-2],b=wMA[wMA.length-1];
+    const slope=(b.v-a.v)/(dayN(b.date)-dayN(a.date));
+    const proj=b.v+slope*(t1-dayN(b.date))/86400000;
+    let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
+    svg+=gridAndTicks(wMin,wMax,0,'kg','#B8860B');
+    // 目标线 70kg
+    if(70>=wMin&&70<=wMax){
+      svg+='<line x1="'+pad.l+'" y1="'+YW(70)+'" x2="'+(chartW-pad.r)+'" y2="'+YW(70)+'" stroke="#FF2D55" stroke-width="1.4" stroke-dasharray="5,4"/>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+(YW(70)+3)+'" fill="#FF2D55" font-size="9" font-weight="800">目标70</text>';
+    }
+    // 目标终点垂线
+    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.2)" stroke-width="1" stroke-dasharray="3,3"/>';
     let pth='';
     wMA.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YW(p.v).toFixed(1);});
-    svg+='<path d="'+pth+'" fill="none" stroke="#FFB400" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
-    // 当前点标注
-    const lastW=wMA[wMA.length-1];
-    svg+='<circle cx="'+X(lastW.date)+'" cy="'+YW(lastW.v)+'" r="3.5" fill="#FFB400"/>';
-    svg+='<text x="'+(X(lastW.date)-8)+'" y="'+(YW(lastW.v)-6)+'" fill="#FFB400" font-size="9" font-weight="700" text-anchor="end">'+lastW.v+'kg</text>';
-    // 体重外推投影（从当前点斜率到目标70kg）
-    if(wMA.length>=2){
-      const a=wMA[wMA.length-2],b=wMA[wMA.length-1];
-      const slope=(b.v-a.v)/(dayN(b.date)-dayN(a.date)); // kg/day
-      const daysToEnd=(dayN(END)-dayN(b.date))/86400000;
-      const proj=b.v+slope*daysToEnd;
-      const projY=YW(Math.max(50,Math.min(120,proj)));
-      svg+='<line x1="'+X(b.date)+'" y1="'+YW(b.v)+'" x2="'+targetX+'" y2="'+projY+'" stroke="#FFB400" stroke-width="1.6" stroke-dasharray="5,4" opacity="0.6"/>';
-      svg+='<text x="'+(targetX-6)+'" y="'+(projY-5)+'" fill="#B8860B" font-size="8" text-anchor="end">外推'+(proj.toFixed(1))+'kg</text>';
-    }
+    svg+='<path d="'+pth+'" fill="none" stroke="#FFB400" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
+    // 外推虚线
+    const projY=YW(Math.max(wMin,Math.min(wMax,proj)));
+    svg+='<line x1="'+X(b.date)+'" y1="'+YW(b.v)+'" x2="'+targetX+'" y2="'+projY+'" stroke="#FFB400" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.55"/>';
+    svg+='<text x="'+(targetX-5)+'" y="'+(projY+12)+'" fill="#B8860B" font-size="9" font-weight="700" text-anchor="end">外推 '+proj.toFixed(1)+'</text>';
+    svg+='<circle cx="'+X(lastW.date)+'" cy="'+YW(lastW.v)+'" r="3.5" fill="#FFB400" stroke="#fff" stroke-width="1.2"/>';
+    svg+='<text x="'+(X(lastW.date)-7)+'" y="'+(YW(lastW.v)-7)+'" fill="#B8860B" font-size="11" font-weight="900" text-anchor="end">'+lastW.v+' kg</text>';
+    svg+=axisFrame();
+    svg+='</svg>';
+    html+='<div style="margin-bottom:4px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'
+      +'<div style="font-size:13px;font-weight:800;color:#B8860B">⚖️ 体重走势 <span style="font-size:10px;color:var(--text-3);font-weight:400">7日均线 · 单位kg</span></div>'
+      +'<div style="font-size:13px;font-weight:900;color:#B8860B">'+lastW.v+' kg</div></div>'
+      +svg+'</div>';
   }
-  // 体脂折线（绿色）
+
+  // ===== 图2 体脂率（含减脂区间色块） =====
   if(bfRecs.length>=2){
+    const vals=bfRecs.map(d=>d.bf);
+    let bMin=Math.min(...vals,17),bMax=Math.max(...vals)+1;
+    const YB=v=>pad.t+ch*(1-(v-bMin)/(bMax-bMin));
+    const lastBf=bfRecs[bfRecs.length-1];
+    // 减脂部位区间带（右侧）
+    const zones=[
+      {from:40,to:29,label:'内脏脂肪期',color:'rgba(120,120,128,0.10)'},
+      {from:29,to:26,label:'四肢减脂',color:'rgba(0,179,104,0.15)'},
+      {from:26,to:23,label:'胸肩减脂',color:'rgba(255,180,0,0.16)'},
+      {from:23,to:20,label:'腹部开始',color:'rgba(255,138,0,0.18)'},
+      {from:20,to:18,label:'下腹减脂',color:'rgba(255,45,85,0.16)'},
+      {from:18,to:12,label:'腹肌显现',color:'rgba(255,45,85,0.24)'}
+    ];
+    let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
+    // 区间带（画满整个绘图区宽）
+    zones.forEach(z=>{
+      const yTop=YB(Math.min(z.from,bMax)),yBot=YB(Math.max(z.to,bMin));
+      if(yBot<=yTop||yTop>pad.t+ch||yBot<pad.t)return;
+      const cyTop=Math.max(yTop,pad.t),cyBot=Math.min(yBot,pad.t+ch);
+      svg+='<rect x="'+pad.l+'" y="'+cyTop+'" width="'+cw+'" height="'+(cyBot-cyTop)+'" fill="'+z.color+'"/>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+((cyTop+cyBot)/2+3)+'" fill="rgba(0,0,0,0.4)" font-size="8.5" font-weight="700" text-anchor="start">'+z.label+'</text>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+((cyTop+cyBot)/2+13)+'" fill="rgba(0,0,0,0.3)" font-size="7.5" text-anchor="start">'+z.from+'-'+z.to+'%</text>';
+    });
+    svg+=gridAndTicks(bMin,bMax,0,'%','#00875A');
+    // 目标线 21%
+    if(21>=bMin&&21<=bMax){
+      svg+='<line x1="'+pad.l+'" y1="'+YB(21)+'" x2="'+(chartW-pad.r)+'" y2="'+YB(21)+'" stroke="#FF2D55" stroke-width="1.4" stroke-dasharray="5,4"/>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+(YB(21)-4)+'" fill="#FF2D55" font-size="9" font-weight="800" text-anchor="start" transform="translate(0,-38)">目标21%</text>';
+    }
+    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.2)" stroke-width="1" stroke-dasharray="3,3"/>';
     let pth='';
-    bfRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YR(p.bf).toFixed(1);});
-    svg+='<path d="'+pth+'" fill="none" stroke="#00B368" stroke-width="2" stroke-linejoin="round"/>';
+    bfRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YB(p.bf).toFixed(1);});
+    svg+='<path d="'+pth+'" fill="none" stroke="#00B368" stroke-width="2.4" stroke-linejoin="round"/>';
     bfRecs.forEach((p,i)=>{
-      svg+='<circle cx="'+X(p.date)+'" cy="'+YR(p.bf)+'" r="3" fill="#00B368"/>';
-      if(i===bfRecs.length-1) svg+='<text x="'+(X(p.date)-8)+'" y="'+(YR(p.bf)+12)+'" fill="#00B368" font-size="8" font-weight="700" text-anchor="end">'+p.bf+'%</text>';
+      svg+='<circle cx="'+X(p.date)+'" cy="'+YB(p.bf)+'" r="3" fill="#00B368" stroke="#fff" stroke-width="1"/>';
     });
+    svg+='<text x="'+(X(lastBf.date)-7)+'" y="'+(YB(lastBf.bf)-7)+'" fill="#00875A" font-size="11" font-weight="900" text-anchor="end">'+lastBf.bf+' %</text>';
+    svg+=axisFrame();
+    svg+='</svg>';
+    html+='<div style="margin:10px 0 4px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'
+      +'<div style="font-size:13px;font-weight:800;color:#00875A">📉 体脂率走势 <span style="font-size:10px;color:var(--text-3);font-weight:400">色块=减脂部位区间 · 单位%</span></div>'
+      +'<div style="font-size:13px;font-weight:900;color:#00875A">'+lastBf.bf+' %</div></div>'
+      +svg+'</div>';
   }
-  // 腰围折线（蓝色）
+
+  // ===== 图3 腰围 =====
   if(dimRecs.length>=2){
-    let pth='';
-    dimRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YR(p.waist).toFixed(1);});
-    svg+='<path d="'+pth+'" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linejoin="round"/>';
-    dimRecs.forEach((p,i)=>{
-      svg+='<circle cx="'+X(p.date)+'" cy="'+YR(p.waist)+'" r="3" fill="#2F6BFF"/>';
-      if(i===dimRecs.length-1){const whr=p.waist/174;svg+='<text x="'+(X(p.date)+8)+'" y="'+(YR(p.waist)-6)+'" fill="#2F6BFF" font-size="8" font-weight="700">'+p.waist+'cm('+whr.toFixed(2)+')</text>';}
+    const vals=dimRecs.map(d=>d.waist);
+    const dMin=Math.min(...vals,85)-2,dMax=Math.max(...vals)+1;
+    const YD=v=>pad.t+ch*(1-(v-dMin)/(dMax-dMin));
+    const lastDim=dimRecs[dimRecs.length-1];
+    let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
+    // 腰围区间带
+    const dzones=[
+      {from:110,to:96,label:'腹型肥胖',color:'rgba(255,45,85,0.12)'},
+      {from:96,to:90,label:'中心型',color:'rgba(255,138,0,0.14)'},
+      {from:90,to:85,label:'达标边缘',color:'rgba(255,180,0,0.16)'},
+      {from:85,to:75,label:'健康腰围',color:'rgba(0,179,104,0.16)'}
+    ];
+    dzones.forEach(z=>{
+      const yTop=YD(Math.min(z.from,dMax)),yBot=YD(Math.max(z.to,dMin));
+      if(yBot<=yTop||yTop>pad.t+ch||yBot<pad.t)return;
+      const cyTop=Math.max(yTop,pad.t),cyBot=Math.min(yBot,pad.t+ch);
+      svg+='<rect x="'+pad.l+'" y="'+cyTop+'" width="'+cw+'" height="'+(cyBot-cyTop)+'" fill="'+z.color+'"/>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+((cyTop+cyBot)/2+3)+'" fill="rgba(0,0,0,0.4)" font-size="8.5" font-weight="700" text-anchor="start">'+z.label+'</text>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+((cyTop+cyBot)/2+13)+'" fill="rgba(0,0,0,0.3)" font-size="7.5" text-anchor="start">'+z.from+'-'+z.to+'</text>';
     });
+    svg+=gridAndTicks(dMin,dMax,0,'cm','#2F5BD8');
+    if(87>=dMin&&87<=dMax){
+      svg+='<line x1="'+pad.l+'" y1="'+YD(87)+'" x2="'+(chartW-pad.r)+'" y2="'+YD(87)+'" stroke="#FF2D55" stroke-width="1.4" stroke-dasharray="5,4"/>';
+      svg+='<text x="'+(chartW-pad.r+3)+'" y="'+(YD(87)-4)+'" fill="#FF2D55" font-size="9" font-weight="800">目标87</text>';
+    }
+    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.2)" stroke-width="1" stroke-dasharray="3,3"/>';
+    let pth='';
+    dimRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YD(p.waist).toFixed(1);});
+    svg+='<path d="'+pth+'" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-linejoin="round"/>';
+    dimRecs.forEach(p=>{svg+='<circle cx="'+X(p.date)+'" cy="'+YD(p.waist)+'" r="3" fill="#2F6BFF" stroke="#fff" stroke-width="1"/>';});
+    const whr=(lastDim.waist/1.74).toFixed(2);
+    svg+='<text x="'+(X(lastDim.date)-7)+'" y="'+(YD(lastDim.waist)-7)+'" fill="#2F5BD8" font-size="11" font-weight="900" text-anchor="end">'+lastDim.waist+'cm</text>';
+    svg+=axisFrame();
+    svg+='</svg>';
+    html+='<div style="margin:10px 0 4px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">'
+      +'<div style="font-size:13px;font-weight:800;color:#2F5BD8">📏 腰围走势 <span style="font-size:10px;color:var(--text-3);font-weight:400">色块=健康区间 · 腰高比 '+whr+'</span></div>'
+      +'<div style="font-size:13px;font-weight:900;color:#2F5BD8">'+lastDim.waist+' cm</div></div>'
+      +svg+'</div>';
   }
-  // x轴日期刻度
-  const nTicks=6;
-  for(let i=0;i<=nTicks;i++){
-    const tt=t0+(t1-t0)*i/nTicks;
-    const d=new Date(tt);
-    const label=(d.getMonth()+1)+'/'+d.getDate();
-    svg+='<text x="'+X(d.toISOString().slice(0,10))+'" y="'+(chartH-8)+'" fill="#9aa1ad" font-size="8" text-anchor="middle">'+label+'</text>';
-  }
-  // 图例
-  svg+='<line x1="'+pad.l+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+16)+'" y2="'+(pad.t+8)+'" stroke="#FFB400" stroke-width="2.5"/><text x="'+(pad.l+20)+'" y="'+(pad.t+11)+'" fill="#B8860B" font-size="9" font-weight="700">体重(7日均线)</text>';
-  svg+='<line x1="'+(pad.l+120)+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+136)+'" y2="'+(pad.t+8)+'" stroke="#00B368" stroke-width="2"/><text x="'+(pad.l+140)+'" y="'+(pad.t+11)+'" fill="#00B368" font-size="9" font-weight="700">体脂%</text>';
-  svg+='<line x1="'+(pad.l+200)+'" y1="'+(pad.t+8)+'" x2="'+(pad.l+216)+'" y2="'+(pad.t+8)+'" stroke="#2F6BFF" stroke-width="2"/><text x="'+(pad.l+220)+'" y="'+(pad.t+11)+'" fill="#2F6BFF" font-size="9" font-weight="700">腰围cm</text>';
-  svg+='</svg>';
-  el.innerHTML=svg;
+
+  if(!html)html='<div style="color:var(--text-3);text-align:center;padding:20px">暂无趋势数据</div>';
+  el.innerHTML=html;
   // 填充历史下拉
   const sel=$('bodyRecordSelect');
   if(sel){
