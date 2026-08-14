@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260815b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260815c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -739,8 +739,7 @@ function saveBodyComp(){
   var vf=parseFloat(document.getElementById('compVF').value);
   var bmr=parseFloat(document.getElementById('compBMR').value);
   if(!w||w<50||w>150){fb.innerHTML='<span style="color:var(--red)">体重为必填项(50-150kg)</span>';return;}
-  // 至少要填体脂率或肌肉量，否则只是个体重记录
-  if(!bf&&!muscle&&!ffm&&!vf&&!bmr){fb.innerHTML='<span style="color:var(--red)">请至少填写一项体成分指标</span>';return;}
+  // 只填体重也可以（纯体重记录）；填了体脂率等则一起记
   // 自动计算BMI（身高取已有数据或默认175）
   var h=1.75;
   for(var i=WD.length-1;i>=0;i--){if(WD[i].height){h=WD[i].height;break;}}
@@ -3579,6 +3578,8 @@ if('serviceWorker' in navigator){
 <button onclick="switchEntryType('dim')" id="etDim" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📏 围度</button>
 <button onclick="switchEntryType('rhr')" id="etRhr" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">💓 心率</button>
 <button onclick="switchEntryType('weight')" id="etWeight" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">⚖️ 体重</button>
+<button onclick="switchEntryType('history')" id="etHistory" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">📝 历史编辑</button>
+<button onclick="switchEntryType('backup')" id="etBackup" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer">💾 备份</button>
 </div>
 
 <!-- 饮食录入面板 -->
@@ -3664,7 +3665,7 @@ if('serviceWorker' in navigator){
 <input type="date" id="compDate" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
 <button onclick="saveBodyComp()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:7px 18px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">💾 保存体成分</button>
 </div>
-<div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.5">💡 体重必填，其余按体脂秤显示填写。BMI自动计算。已记录的日期再次保存会覆盖。</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.5">💡 体重必填，只填体重=纯体重记录；填了体脂率等=完整体成分。BMI自动计算。已记录日期再保存会覆盖。</div>
 </div>
 </div>
 
@@ -3710,6 +3711,31 @@ if('serviceWorker' in navigator){
 <div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 只记体重时用这个；有完整体脂秤数据请切换到「体成分」面板</div>
 </div>
 
+<!-- 历史编辑面板 -->
+<div id="entryHistory" style="display:none">
+<div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">
+<button onclick="setHistType('diet')" id="htDiet" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer">饮食</button>
+<button onclick="setHistType('train')" id="htTrain" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer">训练</button>
+<button onclick="setHistType('bodycomp')" id="htBodycomp" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer">体成分</button>
+<button onclick="setHistType('dim')" id="htDim" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-size:11px;cursor:pointer">围度</button>
+</div>
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:10px">
+<span style="font-size:12px;color:var(--text-2)">选择日期</span>
+<input type="date" id="histDate" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none" onchange="loadHistData()">
+</div>
+<div id="histContent" style="font-size:12px;color:var(--text-3)">选择日期查看当日记录</div>
+</div>
+
+<!-- 备份面板 -->
+<div id="entryBackup" style="display:none">
+<div style="font-size:12px;color:var(--text-2);margin-bottom:10px">导出所有本地数据（体重/饮食/训练/体测/围度）为文件，换设备前请导出并妥善保存</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button onclick="exportBackup()" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer">📤 导出备份</button>
+<label style="background:var(--blue);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer">📥 导入备份<input type="file" accept=".json" onchange="importBackup(event)" style="display:none"></label>
+</div>
+<div id="backupFeedback" style="font-size:12px;margin-top:8px"></div>
+</div>
+
 </div>
 </div>
 
@@ -3729,9 +3755,9 @@ function closeDataEntry(){
   document.getElementById('dataEntryMask').style.display='none';
 }
 function switchEntryType(t){
-  var types=['diet','train','bodycomp','dim','rhr','weight'];
-  var labels={diet:'etDiet',train:'etTrain',bodycomp:'etBodycomp',dim:'etDim',rhr:'etRhr',weight:'etWeight'};
-  var panels={diet:'entryDiet',train:'entryTrain',bodycomp:'entryBodycomp',dim:'entryDim',rhr:'entryRhr',weight:'entryWeight'};
+  var types=['diet','train','bodycomp','dim','rhr','weight','history','backup'];
+  var labels={diet:'etDiet',train:'etTrain',bodycomp:'etBodycomp',dim:'etDim',rhr:'etRhr',weight:'etWeight',history:'etHistory',backup:'etBackup'};
+  var panels={diet:'entryDiet',train:'entryTrain',bodycomp:'entryBodycomp',dim:'entryDim',rhr:'entryRhr',weight:'entryWeight',history:'entryHistory',backup:'entryBackup'};
   types.forEach(function(tp){
     var btn=document.getElementById(labels[tp]);
     var pan=document.getElementById(panels[tp]);
@@ -3741,6 +3767,258 @@ function switchEntryType(t){
   if(t==='train'){if(typeof initTrainingRecordInfo==='function')initTrainingRecordInfo();if(typeof renderTrainingList==='function')renderTrainingList();}
   if(t==='bodycomp'){if(typeof initBodyCompDate==='function')initBodyCompDate();}
   if(t==='rhr'){var rd=document.getElementById('rhrDate');if(rd&&!rd.value)rd.value=getTodayStr();}
+  if(t==='history'){var hd=document.getElementById('histDate');if(hd&&!hd.value)hd.value=getTodayStr();loadHistData();}
+}
+// 历史编辑器：数据类型切换
+var _histType='diet';
+function setHistType(t){
+  _histType=t;
+  var types=['diet','train','bodycomp','dim'];
+  var labels={diet:'htDiet',train:'htTrain',bodycomp:'htBodycomp',dim:'htDim'};
+  types.forEach(function(tp){
+    var btn=document.getElementById(labels[tp]);
+    if(tp===t){btn.style.background='var(--orange)';btn.style.color='#fff';btn.style.border='none';btn.style.fontWeight='700';}
+    else{btn.style.background='var(--inset)';btn.style.color='var(--text-2)';btn.style.border='1px solid var(--bdr)';btn.style.fontWeight='400';}
+  });
+  loadHistData();
+}
+function loadHistData(){
+  var dtEl=document.getElementById('histDate');
+  var el=document.getElementById('histContent');
+  if(!dtEl||!el)return;
+  var dt=dtEl.value;
+  if(!dt){el.innerHTML='请选择日期';return;}
+  if(_histType==='diet')loadHistDiet(dt,el);
+  else if(_histType==='train')loadHistTrain(dt,el);
+  else if(_histType==='bodycomp')loadHistBody(dt,el);
+  else if(_histType==='dim')loadHistDim(dt,el);
+}
+function loadHistDiet(dt,el){
+  // 复用现有loadEditMeals逻辑，但渲染到histContent
+  var meals=getMeals();
+  var day=meals[dt];
+  if(!day||(['b','l','d','s'].every(function(k){return !day[k]||day[k].length===0;}))){
+    el.innerHTML='<span style="color:var(--text-3)">该日无饮食记录</span>';return;
+  }
+  var labels={b:'🌅早餐',l:'☀️午餐',d:'🌙晚餐',s:'🍎加餐'};
+  var h='';var dayCal=0,dayP=0;
+  ['b','l','d','s'].forEach(function(k){
+    var items=day[k]||[];
+    if(items.length===0)return;
+    h+='<div style="margin-bottom:10px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:4px">'+labels[k]+'</div>';
+    items.forEach(function(item,i){
+      dayCal+=item.cal||0;dayP+=item.p||0;
+      h+='<div style="background:var(--inset);border-radius:8px;padding:8px;margin-bottom:4px">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h+='<span style="font-size:11px;color:var(--text)">'+(item.desc||'未备注')+' <span style="color:var(--text-3);font-size:10px">'+(item.time||'')+'</span></span>';
+      h+='<span onclick="deleteHistDiet(\''+dt+'\',\''+k+'\','+i+')" style="color:var(--red);font-size:14px;cursor:pointer;padding:0 4px">×</span>';
+      h+='</div>';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px">';
+      var fields=[['cal','热量',item.cal],['p','蛋白',item.p],['sf','饱和脂',item.sf],['fr','果糖',item.fr],['c','碳水',item.c]];
+      fields.forEach(function(f){
+        h+='<div><div style="font-size:9px;color:var(--text-3);margin-bottom:2px">'+f[1]+'</div>';
+        h+='<input type="number" step="0.1" value="'+f[2]+'" id="edit_'+k+'_'+i+'_'+f[0]+'" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:4px;padding:4px;font-size:11px;width:100%;text-align:center;outline:none"></div>';
+      });
+      h+='</div>';
+      h+='<div style="margin-top:4px;text-align:right">';
+      h+='<button onclick="saveHistDiet(\''+dt+'\',\''+k+'\','+i+')" style="background:var(--blue);color:#fff;border:none;border-radius:4px;padding:3px 10px;font-size:10px;font-weight:600;cursor:pointer">保存</button>';
+      h+='</div></div>';
+    });
+    h+='</div>';
+  });
+  h+='<div style="margin-top:8px;padding:8px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;text-align:center">';
+  h+='<span style="font-size:11px;color:var(--text-3)">日合计：</span>';
+  h+='<span style="color:var(--orange);font-weight:600;font-size:12px">'+Math.round(dayCal)+'kcal</span>';
+  h+='<span style="color:var(--green);margin-left:6px;font-size:11px">P'+Math.round(dayP)+'g</span></div>';
+  el.innerHTML=h;
+}
+function saveHistDiet(dt,key,idx){
+  var meals=getMeals();
+  if(!meals[dt]||!meals[dt][key]||!meals[dt][key][idx])return;
+  var item=meals[dt][key][idx];
+  ['cal','p','sf','fr','c'].forEach(function(f){
+    var el=document.getElementById('edit_'+key+'_'+idx+'_'+f);
+    if(el){item[f]=parseFloat(el.value)||0;}
+  });
+  setMeals(meals);mergeDietLS();
+  loadHistData();
+  if(typeof filterDiet==='function')filterDiet();
+  if(typeof renderReviewSection==='function')renderReviewSection();
+  if(dt===getTodayStr()){renderAllMeals();updateDietSummary();}
+  refreshDeficitViews();
+  flashHint('已修改'+dt+' '+key.toUpperCase()+'#'+(idx+1));
+}
+function deleteHistDiet(dt,key,idx){
+  var meals=getMeals();
+  if(!meals[dt]||!meals[dt][key])return;
+  meals[dt][key].splice(idx,1);
+  setMeals(meals);
+  var stillHas=['b','l','d','s'].some(function(k){return (meals[dt][k]||[]).length>0;});
+  mergeDietLS();
+  if(!stillHas){var di=DD.findIndex(function(d){return d.date===dt;});if(di>=0)DD.splice(di,1);}
+  loadHistData();
+  if(typeof filterDiet==='function')filterDiet();
+  if(typeof renderReviewSection==='function')renderReviewSection();
+  if(dt===getTodayStr()){renderAllMeals();updateDietSummary();}
+  refreshDeficitViews();
+}
+function loadHistTrain(dt,el){
+  var tr={};try{tr=JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){}
+  var items=tr[dt]||[];
+  if(items.length===0){el.innerHTML='<span style="color:var(--text-3)">该日无训练记录</span>';return;}
+  var h='';
+  items.forEach(function(item,i){
+    h+='<div style="background:var(--inset);border-radius:8px;padding:8px;margin-bottom:4px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    h+='<span style="font-size:11px;color:var(--blue);font-weight:600">'+(item.type||'训练')+'</span>';
+    h+='<span onclick="deleteHistTrain(\''+dt+'\','+i+')" style="color:var(--red);font-size:14px;cursor:pointer;padding:0 4px">×</span>';
+    h+='</div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">';
+    var fields=[['dur','时长(min)',item.dur],['dyn','动态消耗',item.dyn],['total','总消耗',item.total]];
+    fields.forEach(function(f){
+      h+='<div><div style="font-size:9px;color:var(--text-3);margin-bottom:2px">'+f[1]+'</div>';
+      h+='<input type="number" step="1" value="'+f[2]+'" id="edit_tr_'+i+'_'+f[0]+'" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:4px;padding:4px;font-size:11px;width:100%;text-align:center;outline:none"></div>';
+    });
+    h+='</div>';
+    h+='<div style="margin-top:4px;text-align:right">';
+    h+='<button onclick="saveHistTrain(\''+dt+'\','+i+')" style="background:var(--blue);color:#fff;border:none;border-radius:4px;padding:3px 10px;font-size:10px;font-weight:600;cursor:pointer">保存</button>';
+    h+='</div></div>';
+  });
+  el.innerHTML=h;
+}
+function saveHistTrain(dt,idx){
+  var tr={};try{tr=JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){}
+  if(!tr[dt]||!tr[dt][idx])return;
+  var item=tr[dt][idx];
+  ['dur','dyn','total'].forEach(function(f){
+    var el=document.getElementById('edit_tr_'+idx+'_'+f);
+    if(el){item[f]=parseInt(el.value)||0;}
+  });
+  localStorage.setItem('health_training',JSON.stringify(tr));
+  mergeTrainingLS();
+  loadHistData();
+  if(typeof filterTraining==='function')filterTraining();
+  if(dt===getTodayStr()){renderTrainingList();updateTrainDailySummary();}
+  refreshDeficitViews();
+  flashHint('已修改'+dt+' 训练#'+(idx+1));
+}
+function deleteHistTrain(dt,idx){
+  var tr={};try{tr=JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){}
+  if(!tr[dt])return;
+  tr[dt].splice(idx,1);
+  if(tr[dt].length===0)delete tr[dt];
+  localStorage.setItem('health_training',JSON.stringify(tr));
+  if(tr[dt]){mergeTrainingLS();}
+  else{var ti=TD.findIndex(function(d){return d.date===dt;});if(ti>=0)TD.splice(ti,1);}
+  loadHistData();
+  if(typeof filterTraining==='function')filterTraining();
+  if(dt===getTodayStr()){renderTrainingList();updateTrainDailySummary();}
+  refreshDeficitViews();
+}
+function loadHistBody(dt,el){
+  var wls=getWeightLS();
+  var entry=wls[dt];
+  if(!entry||typeof entry!=='object'){el.innerHTML='<span style="color:var(--text-3)">该日无体成分记录</span>';return;}
+  var h='<div style="background:var(--inset);border-radius:8px;padding:12px">';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
+  var fields=[['weight','体重(kg)',entry.weight],['bf','体脂率(%)',entry.bf],['muscle','肌肉量(kg)',entry.muscle],['ffm','去脂体重(kg)',entry.ffm],['vf','内脏脂肪(级)',entry.vf],['bmr','BMR(kcal)',entry.bmr]];
+  fields.forEach(function(f){
+    h+='<div><div style="font-size:9px;color:var(--text-3);margin-bottom:2px">'+f[1]+'</div>';
+    h+='<input type="number" step="0.1" value="'+(f[2]||'')+'" id="edit_bc_'+f[0]+'" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:4px;padding:6px;font-size:11px;width:100%;text-align:center;outline:none"></div>';
+  });
+  h+='</div>';
+  h+='<div style="display:flex;gap:6px">';
+  h+='<button onclick="saveHistBody(\''+dt+'\')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:11px;font-weight:600;cursor:pointer">保存</button>';
+  h+='<button onclick="deleteHistBody(\''+dt+'\')" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:11px;font-weight:600;cursor:pointer">删除该日</button>';
+  h+='</div></div>';
+  el.innerHTML=h;
+}
+function saveHistBody(dt){
+  var wls=getWeightLS();
+  var entry=wls[dt]||{};
+  ['weight','bf','muscle','ffm','vf','bmr'].forEach(function(f){
+    var el=document.getElementById('edit_bc_'+f);
+    if(el&&el.value){entry[f]=parseFloat(el.value);}
+  });
+  wls[dt]=entry;
+  setWeightLS(wls);
+  // 同步WD
+  var idx=WD.findIndex(function(d){return d.date===dt;});
+  if(idx>=0){Object.keys(entry).forEach(function(k){WD[idx][k]=entry[k];});}
+  loadHistData();
+  if(typeof initOverview==='function')initOverview();
+  if(typeof filterBody==='function')filterBody();
+  refreshDeficitViews();
+  flashHint('已修改'+dt+' 体成分');
+}
+function deleteHistBody(dt){
+  var wls=getWeightLS();
+  delete wls[dt];
+  setWeightLS(wls);
+  var idx=WD.findIndex(function(d){return d.date===dt;});
+  if(idx>=0){
+    // 如果云端有该日数据，只清LS覆盖值（保留云端原始）
+    var cloudRec=WD.find(function(d){return d.date===dt;});
+    if(cloudRec){/* 云端有，恢复云端值 */mergeWeightLS();}
+    else{WD.splice(idx,1);}
+  }
+  loadHistData();
+  if(typeof initOverview==='function')initOverview();
+  if(typeof filterBody==='function')filterBody();
+  refreshDeficitViews();
+  flashHint('已删除'+dt+' 体成分');
+}
+function loadHistDim(dt,el){
+  var ls=getDimLS();
+  var entry=ls.find(function(d){return d.date===dt;});
+  if(!entry){el.innerHTML='<span style="color:var(--text-3)">该日无围度记录</span>';return;}
+  var h='<div style="background:var(--inset);border-radius:8px;padding:12px">';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
+  var fields=[['waist','腰围',entry.waist],['hip','臀围',entry.hip],['chest','胸围',entry.chest],['thigh','大腿',entry.thigh],['armFlex','手臂绷紧',entry.armFlex],['armRelax','手臂放松',entry.armRelax]];
+  fields.forEach(function(f){
+    h+='<div><div style="font-size:9px;color:var(--text-3);margin-bottom:2px">'+f[1]+'</div>';
+    h+='<input type="number" step="0.5" value="'+(f[2]||'')+'" id="edit_dim_'+f[0]+'" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:4px;padding:6px;font-size:11px;width:100%;text-align:center;outline:none"></div>';
+  });
+  h+='</div>';
+  h+='<input type="text" id="edit_dim_note" value="'+(entry.note||'')+'" placeholder="备注" style="width:100%;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:6px 10px;font-size:11px;margin-bottom:8px;outline:none">';
+  h+='<div style="display:flex;gap:6px">';
+  h+='<button onclick="saveHistDim(\''+dt+'\')" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:11px;font-weight:600;cursor:pointer">保存</button>';
+  h+='<button onclick="deleteHistDim(\''+dt+'\')" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:11px;font-weight:600;cursor:pointer">删除该日</button>';
+  h+='</div></div>';
+  el.innerHTML=h;
+}
+function saveHistDim(dt){
+  var ls=getDimLS();
+  var idx=ls.findIndex(function(d){return d.date===dt;});
+  if(idx<0)return;
+  ['waist','hip','chest','thigh','armFlex','armRelax'].forEach(function(f){
+    var el=document.getElementById('edit_dim_'+f);
+    if(el&&el.value){ls[idx][f]=parseFloat(el.value);}
+  });
+  var ne=document.getElementById('edit_dim_note');
+  if(ne)ls[idx].note=ne.value;
+  setDimLS(ls);
+  // 同步DIM
+  var di=DIM.findIndex(function(d){return d.date===dt;});
+  if(di>=0){DIM[di]=ls[idx];}
+  loadHistData();
+  if(typeof filterBody==='function')filterBody();
+  if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
+  flashHint('已修改'+dt+' 围度');
+}
+function deleteHistDim(dt){
+  var ls=getDimLS();
+  var idx=ls.findIndex(function(d){return d.date===dt;});
+  if(idx<0)return;
+  ls.splice(idx,1);
+  setDimLS(ls);
+  var di=DIM.findIndex(function(d){return d.date===dt;});
+  if(di>=0)DIM.splice(di,1);
+  loadHistData();
+  if(typeof filterBody==='function')filterBody();
+  if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
+  flashHint('已删除'+dt+' 围度');
 }
 // 餐次标签更新
 var _origSetQuickTarget=setQuickTarget;
