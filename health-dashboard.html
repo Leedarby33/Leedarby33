@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260814c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260814d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -204,14 +204,31 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="backupFeedback" style="font-size:12px;margin-top:8px"></div>
 </div>
 <div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-<div class="card-title" style="margin-bottom:0">🍽️ 今日饮食记录</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div class="card-title" style="margin-bottom:0">📋 历史饮食编辑</div>
 <div style="display:flex;gap:6px;align-items:center">
-<span id="dietDailySummary" style="font-size:11px;color:var(--orange)"></span>
-<div onclick="toggleDietSection()" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px" id="dietToggle">+</div>
+<input type="date" id="editMealDate" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none" onchange="loadEditMeals()">
 </div>
 </div>
-<div id="dietContent" style="display:none">
+<div id="editMealList" style="font-size:12px;color:var(--text-3)">选择日期查看当日饮食记录，点击数值可直接修改</div>
+</div>
+<div class="card">
+<div class="card-title">💪 今日训练计划</div>
+<div id="todayPlan"></div>
+</div>
+<div class="card" style="background:linear-gradient(135deg,#fff8e1,#f5f5f7)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<div class="card-title" style="margin-bottom:0">📝 今日记录中心</div>
+<select id="recordType" onchange="switchRecordType()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
+<option value="diet">🍽️ 饮食记录</option>
+<option value="train">🏋️ 训练记录</option>
+<option value="bodycomp">📊 体成分</option>
+<option value="dim">📏 围度</option>
+<option value="rhr">💓 静息心率</option>
+</select>
+</div>
+<div id="dietRecordBox">
+<div id="dietDailySummary" style="font-size:11px;color:var(--orange);margin-bottom:8px"></div>
 <div style="background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">⚡ 快捷食物 <span style="font-size:10px;color:var(--text-3);font-weight:400">点击填入当前餐次，可点多次累加</span></div>
 <div id="quickFoods" style="display:flex;flex-wrap:wrap;gap:5px"></div>
@@ -279,30 +296,9 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="mealListS" style="margin-top:6px"></div>
 </div>
 </div>
-</div>
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-<div class="card-title" style="margin-bottom:0">📋 历史饮食编辑</div>
-<div style="display:flex;gap:6px;align-items:center">
-<input type="date" id="editMealDate" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none" onchange="loadEditMeals()">
-</div>
-</div>
-<div id="editMealList" style="font-size:12px;color:var(--text-3)">选择日期查看当日饮食记录，点击数值可直接修改</div>
-</div>
-<div class="card">
-<div class="card-title">💪 今日训练计划</div>
-<div id="todayPlan"></div>
-</div>
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-<div class="card-title" style="margin-bottom:0">🏋️ 今日训练记录</div>
-<div style="display:flex;gap:6px;align-items:center">
-<span id="trainDailySummary" style="font-size:11px;color:var(--blue)"></span>
-<div onclick="toggleTrainingSection()" style="width:28px;height:28px;border-radius:8px;background:var(--inset);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px" id="trainToggle">+</div>
-</div>
-</div>
-<div id="trainRecordInfo" style="font-size:12px;color:var(--text-3);margin:8px 0 0"></div>
-<div id="trainRecordContent" style="display:none;margin-top:12px">
+<div id="trainRecordBox" style="display:none">
+<div id="trainRecordInfo" style="font-size:12px;color:var(--text-3);margin:0 0 8px"></div>
+<div id="trainDailySummary" style="font-size:11px;color:var(--blue);margin-bottom:8px"></div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
 <input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
@@ -316,18 +312,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 <div id="trainRecordList" style="margin-top:6px"></div>
 </div>
-</div>
-<!-- 记录中心：体成分/围度/心率 统一录入 -->
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-<div class="card-title" style="margin-bottom:0">📝 记录中心</div>
-<select id="recordType" onchange="switchRecordType()" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:12px;outline:none">
-<option value="bodycomp">📊 体成分（周称重）</option>
-<option value="dim">📏 围度记录</option>
-<option value="rhr">💓 静息心率</option>
-</select>
-</div>
-<div id="bodycompRecordBox">
+<div id="bodycompRecordBox" style="display:none">
 <div id="bodyCompFeedback" style="font-size:12px;color:var(--text-2);margin-bottom:8px"></div>
 <div style="background:var(--inset);border-radius:8px;padding:12px">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
@@ -382,6 +367,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 
 
+
 <!-- TAB 2: 总览 -->
 <div class="tab-content" id="tab-overview">
 <!-- ===== 周目标跟踪（核心）===== -->
@@ -400,9 +386,21 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div style="margin-top:6px;font-size:14px;font-weight:900;color:var(--text)"><span id="weekDeficitBig" class="flame-text">—</span><span style="font-size:11px;color:var(--text-3)"> / <span id="weekDeficitTarget">—</span> kcal</span></div>
 </div>
 <div>
-<div style="display:grid;grid-template-columns:1fr;gap:8px">
+<div style="font-size:11px;color:var(--text-3);margin-bottom:6px;font-weight:600">📈 本周已累计缺口 → 预计掉秤</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
 <div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
-<div style="font-size:20px;font-weight:900;color:var(--orange)" id="actualFatLoss">—</div>
+<div style="font-size:20px;font-weight:900;color:var(--orange)" id="estFatLoss">—</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:2px">预计减脂</div>
+</div>
+<div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+<div style="font-size:20px;font-weight:900;color:var(--orange)" id="estWeightLoss">—</div>
+<div style="font-size:10px;color:var(--text-3);margin-top:2px">预计减重</div>
+</div>
+</div>
+<div style="font-size:11px;color:var(--text-3);margin-bottom:6px;font-weight:600">📊 本周实际（体重/体脂实测）</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+<div style="font-size:20px;font-weight:900;color:var(--green)" id="actualFatLoss">—</div>
 <div style="font-size:10px;color:var(--text-3);margin-top:2px">实际已减脂肪</div>
 </div>
 <div style="background:var(--card);border-radius:12px;padding:10px 12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
@@ -980,9 +978,14 @@ function initBodyCompDate(){
 // 记录中心：切换录入类型
 function switchRecordType(){
   const t=$('recordType').value;
+  $('dietRecordBox').style.display=(t==='diet')?'block':'none';
+  $('trainRecordBox').style.display=(t==='train')?'block':'none';
   $('bodycompRecordBox').style.display=(t==='bodycomp')?'block':'none';
   $('dimRecordBox').style.display=(t==='dim')?'block':'none';
   $('rhrRecordBox').style.display=(t==='rhr')?'block':'none';
+  // 切入对应类型时刷新一次数据展示
+  if(t==='diet'){if(typeof renderAllMeals==='function')renderAllMeals();if(typeof updateDietSummary==='function')updateDietSummary();}
+  if(t==='train'){if(typeof initTrainingRecordInfo==='function')initTrainingRecordInfo();if(typeof renderTrainingList==='function')renderTrainingList();if(typeof updateTrainDailySummary==='function')updateTrainDailySummary();}
 }
 
 // 静息心率记录
@@ -1272,11 +1275,6 @@ function getMeals(){
   try{return JSON.parse(localStorage.getItem('health_meals')||'{}');}catch(e){return{};}
 }
 function setMeals(data){localStorage.setItem('health_meals',JSON.stringify(data));}
-function toggleDietSection(){
-  const c=$('dietContent'),t=$('dietToggle');
-  if(c.style.display==='none'){c.style.display='block';t.textContent='−';renderAllMeals();}
-  else{c.style.display='none';t.textContent='+';}
-}
 let snackSlotCount=0;
 function addSnackSlot(){
   snackSlotCount++;
@@ -1524,11 +1522,6 @@ function getTrainingRecords(){
   try{return JSON.parse(localStorage.getItem('health_training')||'{}');}catch(e){return{};}
 }
 function setTrainingRecords(data){localStorage.setItem('health_training',JSON.stringify(data));}
-function toggleTrainingSection(){
-  const c=$('trainRecordContent'),t=$('trainToggle');
-  if(c.style.display==='none'){c.style.display='block';t.textContent='−';renderTrainingList();}
-  else{c.style.display='none';t.textContent='+';}
-}
 function saveTrainingItem(){
   const dur=parseInt($('trDur').value)||0;
   const dyn=parseInt($('trDyn').value)||0;
@@ -2107,6 +2100,56 @@ function calcPersonalCoef(){
   return coef;
 }
 
+// 动态倒推最近4周的真实"缺口→掉秤"比率：
+//   用近4周累计实际缺口 ÷ 近4周实际掉秤，算出每掉1kg脂肪/1kg体重分别需要多少缺口
+//   返回 {fatCoef:每kg脂肪需缺口, weightCoef:每kg体重需缺口}；数据不足/不可靠时返回null
+function rollingRates(){
+  try{
+    const now=new Date();
+    const mondays=[];
+    for(let i=4;i>=1;i--){mondays.push(mondayOfDate(addDays(now,-7*i)));}
+    const start=mondays[0];
+    // 近4周累计实际缺口
+    let deficit=0, dietDays=0;
+    for(let d=new Date(start);d<=now;d=addDays(d,1)){
+      const ds=dstr(d);
+      const diet=DD.find(x=>x.date===ds);
+      const train=TD.find(x=>x.date===ds);
+      if(diet&&diet.t.cal>0){
+        deficit+=(1672+300+(train?train.total:0))-diet.t.cal;
+        dietDays++;
+      }
+    }
+    // 周均体重（同时统计采样天数，保证可靠性）
+    function wkAvg(ws,we){
+      let sum=0,cnt=0;
+      for(let d=new Date(ws);d<=we;d=addDays(d,1)){
+        const ds=dstr(d);
+        const rec=WD.find(x=>x.date===ds);
+        if(rec&&rec.weight){sum+=rec.weight;cnt++;}
+      }
+      return cnt?{avg:sum/cnt,cnt:cnt}:null;
+    }
+    const a1=wkAvg(start,addDays(start,6));                 // 起点周（4周前那完整周：周一~周日）
+    const a2=wkAvg(mondayOfDate(now),now);                  // 终点周（本周一至今天）
+    // 可靠性校验：近4周需有足够缺口记录(≥14天)，起点/终点周各至少2天体重
+    if(deficit>0&&dietDays>=14&&a1&&a2&&a1.cnt>=2&&a2.cnt>=2){
+      const weightLoss=a1.avg-a2.avg;      // 近4周实际体重下降
+      // 合理区间：4周掉秤 0.05~3.5kg
+      if(weightLoss>0.05&&weightLoss<3.5){
+        const fatLoss=weightLoss*GOAL_CFG.fatRatio;   // 按掉速构成估脂肪下降
+        const fatCoef=deficit/fatLoss;                // 每kg脂肪需缺口
+        const weightCoef=deficit/weightLoss;          // 每kg体重需缺口
+        // 合理区间：每kg脂肪约1.2万~5万，每kg体重约0.9万~3.6万
+        if(fatCoef>12000&&fatCoef<50000&&weightCoef>8000&&weightCoef<36000){
+          return {fatCoef:Math.round(fatCoef), weightCoef:Math.round(weightCoef)};
+        }
+      }
+    }
+  }catch(e){}
+  return null;
+}
+
 // 根据当前日期取所处阶段
 function currentPhase(){
   const now=new Date();
@@ -2152,6 +2195,15 @@ function renderWeekTracker(){
   $('weekDeficitBig').textContent=wd.deficit.toLocaleString();
   // 环形图
   $('weekDeficitRing').innerHTML=makeRing(pct,wd.deficit,target);
+  // 预计减脂/减重：本周累计缺口按"近4周实际缺口÷实际掉秤"动态倒推的比率折算
+  //  rates.fatCoef = 近4周每掉1kg脂肪需多少缺口；rates.weightCoef = 每掉1kg体重需多少缺口
+  const rates=rollingRates();
+  const fatCoef=rates?rates.fatCoef:GOAL_CFG.coef;               // 无数据时用默认24500
+  const weightCoef=rates?rates.weightCoef:GOAL_CFG.coef*GOAL_CFG.fatRatio; // 默认≈17885/kg体重
+  const estFat=wd.deficit/fatCoef;
+  const estW=wd.deficit/weightCoef;
+  $('estFatLoss').textContent=estFat.toFixed(1)+' kg';
+  $('estWeightLoss').textContent=estW.toFixed(1)+' kg';
   // 实际减脂/减重：起始89.85kg/31.5%，最新体重(取最新记录) × 最新体脂率(取最近有bf的记录)
   const START_W=89.85,START_BF=31.5;
   const latestWrec=WD.length?WD[WD.length-1]:null;
@@ -2167,9 +2219,12 @@ function renderWeekTracker(){
   // 阶段提示（简洁，具体缺口细节在下方"本周缺口&周内调节"）
   const phase=currentPhase();
   if(wd.isCurrent){
+    const rateNote=rates
+      ? '，预计掉秤按近4周实测倒推（每kg脂肪需'+fatCoef.toLocaleString()+' kcal缺口）'
+      : '，预计按默认换算系数折算';
     $('weekRemainHint').innerHTML=
       '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b>（'+phase.weekFat.toFixed(2)+'kg脂肪/周）<br>'+
-      '💡 本周具体还差多少、每天需补多少缺口，请看下方「本周缺口 & 周内调节」';
+      '💡 预计减脂/减重 = 本周累计缺口 ÷ 近4周实测掉秤比率'+rateNote+'；具体还差多少、每天需补多少，请看下方「本周缺口 & 周内调节」';
   }else{
     $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 <b style="color:var(--orange)">'+wd.deficit.toLocaleString()+' kcal</b>，目标 '+target.toLocaleString()+' kcal';
   }
