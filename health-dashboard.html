@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260815e';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260815f';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -871,7 +871,7 @@ function importBackup(event){
       var data=JSON.parse(e.target.result);
       var fb=document.getElementById('backupFeedback');
       if(data.weight&&Array.isArray(data.weight)){
-        // 写入localStorage
+        // 写入localStorage（对象格式，保留体成分字段）
         var wls={};
         data.weight.forEach(function(w){
           if(w.date){
@@ -886,12 +886,31 @@ function importBackup(event){
             wls[w.date]=entry;
           }
         });
+        // 如果_ls里有更完整的体重数据，合并进来（_ls优先，因为可能含页面录入的最新值）
+        if(data._ls&&data._ls.health_weight){
+          var lsW=typeof data._ls.health_weight==='string'?JSON.parse(data._ls.health_weight):data._ls.health_weight;
+          if(lsW&&typeof lsW==='object'){
+            Object.keys(lsW).forEach(function(dt){wls[dt]=lsW[dt];});
+          }
+        }
         setWeightLS(wls);
       }
       if(data._ls&&data._ls.health_meals)setMeals(data._ls.health_meals);
       if(data._ls&&data._ls.health_training)setTrainingRecords(data._ls.health_training);
-      if(data._ls&&data._ls.health_dim)setDimLS(data._ls.health_dim);
-      if(fb){fb.innerHTML='<span style="color:var(--green)">✓ 导入成功！页面即将刷新...</span>';}
+      // 围度：优先用top-level dimensions（历史完整），再合并_ls.health_dim（页面录入的最新值）
+      var dimArr=[];
+      if(data.dimensions&&Array.isArray(data.dimensions))dimArr=dimArr.concat(data.dimensions);
+      if(data._ls&&data._ls.health_dim){
+        var lsD=typeof data._ls.health_dim==='string'?JSON.parse(data._ls.health_dim):data._ls.health_dim;
+        if(Array.isArray(lsD)){
+          lsD.forEach(function(d){
+            var idx=dimArr.findIndex(function(x){return x.date===d.date;});
+            if(idx>=0)dimArr[idx]=d;else dimArr.push(d);
+          });
+        }
+      }
+      if(dimArr.length)setDimLS(dimArr);
+      if(fb){fb.innerHTML='<span style="color:var(--green)">✓ 导入成功！'+(data.weight?data.weight.length+'条体测 ':'')+(dimArr.length?dimArr.length+'条围度 ':'')+'页面即将刷新...</span>';}
       setTimeout(function(){location.reload(true);},1500);
     }catch(err){
       var fb=document.getElementById('backupFeedback');
@@ -2857,30 +2876,27 @@ function renderBodyPartDistance(){
   const latestRec=WD.filter(d=>d.bf!=null).pop()||{};
   const bf=latestRec.bf!=null?latestRec.bf:28.9;
   const tgtBF=21; // 目标体脂率%(用户确认单一目标)
+  // 围度动态取最新一条 DIM 记录
+  const latestDim=DIM.length?DIM[DIM.length-1]:{};
+  const firstDim=DIM.length?DIM[0]:{};
   const parts=[
-    {name:'腰围',icon:'📏',cur:94.5,tgt:78,coeff:0.08,dir:'fat-down'},
-    {name:'臀围',icon:'🍑',cur:102.5,tgt:92,coeff:0.06,dir:'fat-down'},
-    {name:'胸围',icon:'🫁',cur:104.5,tgt:103,coeff:0.05,dir:'muscle-up'},
-    {name:'上臂围',icon:'💪',cur:35.5,tgt:37,coeff:0.04,dir:'muscle-up'},
-    {name:'大腿围',icon:'🦵',cur:50.5,tgt:51,coeff:0.05,dir:'muscle-up'}
+    {name:'腰围',icon:'📏',cur:latestDim.waist,tgt:78,coeff:0.08,dir:'fat-down',initKey:'waist'},
+    {name:'臀围',icon:'🍑',cur:latestDim.hip,tgt:92,coeff:0.06,dir:'fat-down',initKey:'hip'},
+    {name:'胸围',icon:'🫁',cur:latestDim.chest,tgt:103,coeff:0.05,dir:'muscle-up',initKey:'chest'},
+    {name:'上臂围',icon:'💪',cur:latestDim.armFlex,tgt:37,coeff:0.04,dir:'muscle-up',initKey:'armFlex'},
+    {name:'大腿围',icon:'🦵',cur:latestDim.thigh,tgt:51,coeff:0.05,dir:'muscle-up',initKey:'thigh'}
   ];
   let h='<div class="ring-grid">';
   parts.forEach(p=>{
+    if(p.cur==null)return; // 无数据则跳过该部位
     const curFat=+(p.cur*bf/100*p.coeff).toFixed(2);
     const tgtFat=+(p.tgt*tgtBF/100*p.coeff).toFixed(2);
     const curMuscle=+(p.cur-curFat*2).toFixed(1);
     const tgtMuscle=+(p.tgt-tgtFat*2).toFixed(1);
-    // Achievement rate: for fat-down, progress = how much already lost vs total needed
-    // For muscle-up, progress = how much already gained vs total needed
-    // Simplified: use overall gap closure percentage
-    const totalGap=Math.abs(p.cur-p.tgt);
-    const startGap=p.dir==='fat-down'?(94.5-78):(35.5-37); // approximate start gaps
-    // Better approach: achievement = 1 - (current gap / initial gap)
-    // For fat-down parts: initial = DIM[0] values, current = p.cur
-    const initialVals={腰围:101.5,臀围:101.5,胸围:108.5,上臂围:34.5,大腿围:48.5};
-    const initialVal=initialVals[p.name]||p.cur;
-    const totalChange=Math.abs(p.tgt-initialVal);
-    const achieved=Math.abs(p.cur-initialVal);
+    // 达成率：以首条DIM记录为起点
+    const initialVal=firstDim[p.initKey];
+    const totalChange=(initialVal!=null)?Math.abs(p.tgt-initialVal):0;
+    const achieved=(initialVal!=null)?Math.abs(p.cur-initialVal):0;
     let pct=totalChange>0?Math.min(100,Math.round(achieved/totalChange*100)):0;
     if(p.dir==='muscle-up' && p.cur<p.tgt) pct=Math.min(pct,100);
     const ringColor=p.dir==='fat-down'?'#F59E0B':'#34D399';
@@ -3019,7 +3035,6 @@ function renderBodyTrendChart(s,e){
     svg+='<path d="'+pth+'" fill="none" stroke="#FFB400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
     svg+=projLine(ext,YW,70,'#FFB400');
     svg+='<circle cx="'+X(lastW.date)+'" cy="'+YW(lastW.v)+'" r="4" fill="#FFB400" stroke="#fff" stroke-width="1.5"/>';
-    svg+='<text x="'+(X(lastW.date)-9)+'" y="'+(YW(lastW.v)-11)+'" fill="#B8860B" font-size="15" font-weight="900" text-anchor="end">'+lastW.v+' kg</text>';
     svg+=axisFrame();
     svg+='</svg>';
     html+=sectionHead('⚖️ 体重走势','7日均线·kg · 虚线=外推至2/1','#B8860B',lastW.v+' kg','0')+svg;
@@ -3051,7 +3066,6 @@ function renderBodyTrendChart(s,e){
     svg+='<path d="'+pth+'" fill="none" stroke="#00B368" stroke-width="2.8" stroke-linejoin="round"/>';
     bfRecs.forEach(p=>{svg+='<circle cx="'+X(p.date)+'" cy="'+YB(p.bf)+'" r="3.2" fill="#00B368" stroke="#fff" stroke-width="1.2"/>';});
     svg+=projLine(ext,YB,21,'#00B368');
-    svg+='<text x="'+(X(lastBf.date)-9)+'" y="'+(YB(lastBf.bf)-11)+'" fill="#00875A" font-size="15" font-weight="900" text-anchor="end">'+lastBf.bf+' %</text>';
     svg+=axisFrame();
     svg+='</svg>';
     html+=sectionHead('📉 体脂率走势','色块=减脂部位区间 · % · 虚线=外推至2/1','#00875A',lastBf.bf+' %')+svg;
@@ -3081,7 +3095,6 @@ function renderBodyTrendChart(s,e){
     svg+='<path d="'+pth+'" fill="none" stroke="#2F6BFF" stroke-width="2.8" stroke-linejoin="round"/>';
     dimRecs.forEach(p=>{svg+='<circle cx="'+X(p.date)+'" cy="'+YD(p.waist)+'" r="3.2" fill="#2F6BFF" stroke="#fff" stroke-width="1.2"/>';});
     svg+=projLine(ext,YD,87,'#2F6BFF');
-    svg+='<text x="'+(X(lastDim.date)-9)+'" y="'+(YD(lastDim.waist)-11)+'" fill="#2F5BD8" font-size="15" font-weight="900" text-anchor="end">'+lastDim.waist+' cm</text>';
     svg+=axisFrame();
     svg+='</svg>';
     const whr=(lastDim.waist/1.74).toFixed(2);
@@ -3122,7 +3135,6 @@ function renderBodyTrendChart(s,e){
     svg+='<path d="'+pth+'" fill="none" stroke="#FF2D55" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>';
     hist.forEach((p,i)=>{
       svg+='<circle cx="'+X(p.date)+'" cy="'+YR(p.hr)+'" r="3.2" fill="#FF2D55" stroke="#fff" stroke-width="1.2"/>';
-      if(i===hist.length-1) svg+='<text x="'+(X(p.date)-9)+'" y="'+(YR(p.hr)-11)+'" fill="#FF2D55" font-size="15" font-weight="900" text-anchor="end">'+p.hr+' bpm</text>';
     });
     svg+=axisFrame();
     svg+='</svg>';
