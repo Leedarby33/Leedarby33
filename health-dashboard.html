@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260815f';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260816a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -197,7 +197,13 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 
 <div class="card">
-<div class="card-title">💪 今日训练计划</div>
+<div class="card-title">💪 训练计划</div>
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+<input type="date" id="planDate" onchange="renderPlanForDate(this.value)" style="background:var(--inset);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:5px 8px;font-size:12px;outline:none">
+<button onclick="shiftPlanDate(-1)" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer">‹ 前一天</button>
+<button onclick="shiftPlanDate(1)" style="background:var(--inset);color:var(--text-2);border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer">后一天 ›</button>
+<button onclick="setPlanToday()" style="background:var(--orange);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer">今天</button>
+</div>
 <div id="todayPlan"></div>
 </div>
 
@@ -1583,6 +1589,110 @@ function refreshDeficitViews(){
   try{renderWeeklyAdjust();}catch(e){}
   try{initOverview();}catch(e){}
 }
+
+// 训练计划：按指定日期渲染（支持查看往日/未来计划）
+function renderPlanForDate(dateStr){
+  const el=$('todayPlan');
+  if(!el)return;
+  const days=['周日','周一','周二','周三','周四','周五','周六'];
+  const d=new Date(dateStr+'T00:00:00');
+  const dayName=days[d.getDay()];
+  const plan=ACTIONS[dayName];
+  if(!plan){el.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">无该日计划</div>';return;}
+  const mt=plan.mt||{};
+  const modules=[];
+  let totalMt=0;
+  if(plan.warmup && (typeof plan.warmup==='string'?plan.warmup:plan.warmup.length>0)){modules.push('热身'+(mt.warmup?mt.warmup+'min':''));totalMt+=mt.warmup||0;}
+  if(plan.w.length>0){modules.push('主项'+(mt.w?mt.w+'min':''));totalMt+=mt.w||0;}
+  if(plan.zone2){modules.push('Zone2'+(mt.zone2?mt.zone2+'min':''));totalMt+=mt.zone2||0;}
+  if((plan.scapula && plan.scapula.length>0) || (plan.note && plan.note.includes('肩胛协议'))){modules.push('肩胛'+(mt.scapula?mt.scapula+'min':''));totalMt+=mt.scapula||0;}
+  if(plan.core && plan.core.length>0){modules.push('核心'+(mt.core?mt.core+'min':''));totalMt+=mt.core||0;}
+  if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){modules.push('HIIT'+(mt.hiit?mt.hiit+'min':''));totalMt+=mt.hiit||0;}
+  if(plan.rehab && plan.rehab.length>0){modules.push('康复'+(mt.rehab?mt.rehab+'min':''));totalMt+=mt.rehab||0;}
+  if(plan.cd && (typeof plan.cd==='string'?plan.cd:plan.cd.length>0)){modules.push('冷身'+(mt.cd?mt.cd+'min':''));totalMt+=mt.cd||0;}
+  let html='';
+  if(modules.length>0){
+    html+='<div style="font-size:12px;color:var(--text-3);margin-bottom:10px;padding:8px;background:var(--inset);border-radius:8px">';
+    html+='<span style="color:var(--text-2);font-weight:600">模块组成：</span>';
+    html+='<span style="color:var(--orange)">'+modules.join(' + ')+'</span>';
+    if(totalMt>0) html+='<span style="color:var(--text-2);margin-left:6px">≈ '+totalMt+'min</span>';
+    html+='</div>';
+  }
+  const todayStr=getTodayStr();
+  const isToday=dateStr===todayStr;
+  const isPast=dateStr<todayStr;
+  const dateLabel=dateStr.slice(5).replace('-','/')+' '+dayName+(isToday?' (今天)':(isPast?' (已过)':' (待执行)'));
+  html+='<div style="font-size:13px;color:var(--blue);margin-bottom:8px">'+dateLabel+' · '+plan.name+'</div>';
+  const isRestDay=plan.w.length===0 && !plan.zone2 && (!plan.scapula||plan.scapula.length===0) && (!plan.core||plan.core.length===0) && (!plan.hiit||(typeof plan.hiit==='string'?!plan.hiit:plan.hiit.length===0));
+  if(isRestDay){
+    html+='<div style="font-size:14px;color:var(--text-2);text-align:center;padding:20px">🛌 休息日'+(plan.note?' · '+plan.note:'')+'</div>';
+  }else{
+    if(plan.warmup && (typeof plan.warmup==='string'?plan.warmup:plan.warmup.length>0)){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px">🔥 热身'+(mt.warmup?' ('+mt.warmup+'min)':'')+'</div>';
+      if(typeof plan.warmup==='string'){
+        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--radius-sm)">'+plan.warmup+'</div>';
+      }else{
+        plan.warmup.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';});
+      }
+    }
+    if(plan.w.length>0){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--orange);margin:10px 0 6px">🏋️ 主项'+(mt.w?' ('+mt.w+'min)':'')+'</div>';
+      plan.w.forEach(a=>{html+='<div class="action-card"><div class="action-name">'+a.n+'</div><div class="action-meta">'+a.s+' | '+(a.w||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
+    }
+    if(plan.scapula && plan.scapula.length>0){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议'+(mt.scapula?' ('+mt.scapula+'min)':' (20min)')+'</div>';
+      plan.scapula.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
+    } else if(plan.note && plan.note.includes('肩胛协议')){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议'+(mt.scapula?' ('+mt.scapula+'min)':' (20min)')+'</div>';
+      if(typeof SCAP_PROTOCOL!=='undefined')SCAP_PROTOCOL.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
+    }
+    if(plan.core && plan.core.length>0){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 6px">🎯 核心训练'+(mt.core?' ('+mt.core+'min)':'')+'</div>';
+      plan.core.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
+    }
+    if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">⚡ HIIT'+(mt.hiit?' ('+mt.hiit+'min)':'')+'</div>';
+      if(typeof plan.hiit==='string'){
+        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(74,158,255,0.06);border-radius:var(--radius-sm)">'+plan.hiit+'</div>';
+      }else{
+        plan.hiit.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
+      }
+    }
+    if(plan.zone2){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🏃 Zone2有氧 ('+plan.zone2.dur+')</div>';
+      html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+plan.zone2.note+'</div></div>';
+    }
+    if(plan.cd && (typeof plan.cd==='string'?plan.cd:plan.cd.length>0)){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 6px">🧘 冷身拉伸'+(mt.cd?' ('+mt.cd+'min)':'')+'</div>';
+      if(typeof plan.cd==='string'){
+        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--radius-sm)">'+plan.cd+'</div>';
+      }else{
+        plan.cd.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';});
+      }
+    }
+    if(plan.rehab && plan.rehab.length>0){
+      html+='<div style="font-size:12px;font-weight:600;color:var(--orange);margin:10px 0 6px">🔧 关节康复'+(mt.rehab?' ('+mt.rehab+'min)':'')+'</div>';
+      plan.rehab.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--orange)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
+    }
+    if(plan.note) html+='<div class="note-box">⚠️ '+plan.note+'</div>';
+  }
+  el.innerHTML=html;
+}
+function shiftPlanDate(delta){
+  const el=document.getElementById('planDate');
+  if(!el||!el.value)return;
+  const d=new Date(el.value+'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  const ns=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  el.value=ns;
+  renderPlanForDate(ns);
+}
+function setPlanToday(){
+  const todayStr=getTodayStr();
+  const el=document.getElementById('planDate');
+  if(el)el.value=todayStr;
+  renderPlanForDate(todayStr);
+}
 function saveTrainingItem(){
   const dur=parseInt($('trDur').value)||0;
   const dyn=parseInt($('trDyn').value)||0;
@@ -1711,127 +1821,10 @@ function initNav(){
   // Weight comparison
   initWeightCompare(todayStr);
 
-  // Today's training plan (dynamic by day of week)
-  const days=['周日','周一','周二','周三','周四','周五','周六'];
-  const today=getEffNow();
-  const dayName=days[today.getDay()];
-  const plan=ACTIONS[dayName];
-  
-  // Build module composition with time
-  const mt=plan.mt||{};
-  const modLabels={warmup:'热身',w:'主项',scapula:'肩胛协议',core:'核心',hiit:'HIIT',cd:'冷身拉伸',zone2:'Zone2',rehab:'康复'};
-  const modules=[];
-  let totalMt=0;
-  if(plan.warmup && (typeof plan.warmup==='string'?plan.warmup:plan.warmup.length>0)){modules.push('热身'+(mt.warmup?mt.warmup+'min':''));totalMt+=mt.warmup||0;}
-  if(plan.w.length>0){modules.push('主项'+(mt.w?mt.w+'min':''));totalMt+=mt.w||0;}
-  if(plan.zone2){modules.push('Zone2'+(mt.zone2?mt.zone2+'min':''));totalMt+=mt.zone2||0;}
-  if((plan.scapula && plan.scapula.length>0) || (plan.note && plan.note.includes('肩胛协议'))){modules.push('肩胛'+(mt.scapula?mt.scapula+'min':''));totalMt+=mt.scapula||0;}
-  if(plan.core && plan.core.length>0){modules.push('核心'+(mt.core?mt.core+'min':''));totalMt+=mt.core||0;}
-  if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){modules.push('HIIT'+(mt.hiit?mt.hiit+'min':''));totalMt+=mt.hiit||0;}
-  if(plan.rehab && plan.rehab.length>0){modules.push('康复'+(mt.rehab?mt.rehab+'min':''));totalMt+=mt.rehab||0;}
-  if(plan.cd && (typeof plan.cd==='string'?plan.cd:plan.cd.length>0)){modules.push('冷身'+(mt.cd?mt.cd+'min':''));totalMt+=mt.cd||0;}
-  
-  let html='';
-  // Module composition overview with time
-  if(modules.length>0){
-    html+='<div style="font-size:12px;color:var(--text-3);margin-bottom:10px;padding:8px;background:var(--inset);border-radius:8px">';
-    html+='<span style="color:var(--text-2);font-weight:600">模块组成：</span>';
-    html+='<span style="color:var(--orange)">'+modules.join(' + ')+'</span>';
-    if(totalMt>0) html+='<span style="color:var(--text-2);margin-left:6px">≈ '+totalMt+'min</span>';
-    html+='</div>';
-  }
-  
-  html+='<div style="font-size:13px;color:var(--blue);margin-bottom:8px">'+todayStr+' '+dayName+' · '+plan.name+'</div>';
-  
-  // 判断是否为休息日（w为空且无zone2且无scapula且无core且无hiit）
-  const isRestDay=plan.w.length===0 && !plan.zone2 && (!plan.scapula||plan.scapula.length===0) && (!plan.core||plan.core.length===0) && (!plan.hiit||(typeof plan.hiit==='string'?!plan.hiit:plan.hiit.length===0));
-  
-  if(isRestDay){
-    html+='<div style="font-size:14px;color:var(--text-2);text-align:center;padding:20px">🛌 休息日'+(plan.note?' · '+plan.note:'')+'</div>';
-  }else{
-    // 1. 热身
-    if(plan.warmup && (typeof plan.warmup==='string'?plan.warmup:plan.warmup.length>0)){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px">🔥 热身'+(mt.warmup?' ('+mt.warmup+'min)':'')+'</div>';
-      if(typeof plan.warmup==='string'){
-        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--radius-sm)">'+plan.warmup+'</div>';
-      }else{
-        plan.warmup.forEach(a=>{
-          html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
-        });
-      }
-    }
-    
-    // 2. 主项
-    if(plan.w.length>0){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--orange);margin:10px 0 6px">🏋️ 主项'+(mt.w?' ('+mt.w+'min)':'')+'</div>';
-      plan.w.forEach(a=>{
-        html+='<div class="action-card"><div class="action-name">'+a.n+'</div><div class="action-meta">'+a.s+' | '+(a.w||'')+'</div><div class="action-detail">'+a.t+'</div></div>';
-      });
-    }
-    
-    // 3. 肩胛协议（从 scapula 数组或 note 中提取）
-    if(plan.scapula && plan.scapula.length>0){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议'+(mt.scapula?' ('+mt.scapula+'min)':' (20min)')+'</div>';
-      plan.scapula.forEach(a=>{
-        html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';
-      });
-    } else if(plan.note && plan.note.includes('肩胛协议')){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议'+(mt.scapula?' ('+mt.scapula+'min)':' (20min)')+'</div>';
-      SCAP_PROTOCOL.forEach(a=>{
-        html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';
-      });
-    }
-    
-    // 4. 核心训练
-    if(plan.core && plan.core.length>0) {
-      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 6px">🎯 核心训练'+(mt.core?' ('+mt.core+'min)':'')+'</div>';
-      plan.core.forEach(a=>{
-        html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';
-      });
-    }
-    
-    // 5. HIIT
-    if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">⚡ HIIT'+(mt.hiit?' ('+mt.hiit+'min)':'')+'</div>';
-      if(typeof plan.hiit==='string'){
-        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(74,158,255,0.06);border-radius:var(--radius-sm)">'+plan.hiit+'</div>';
-      }else{
-        plan.hiit.forEach(a=>{
-          html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';
-        });
-      }
-    }
-    
-    // 6. Zone2有氧
-    if(plan.zone2){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🏃 Zone2有氧 ('+plan.zone2.dur+')</div>';
-      html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+plan.zone2.note+'</div></div>';
-    }
-    
-    // 7. 冷身拉伸
-    if(plan.cd && (typeof plan.cd==='string'?plan.cd:plan.cd.length>0)){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:10px 0 6px">🧘 冷身拉伸'+(mt.cd?' ('+mt.cd+'min)':'')+'</div>';
-      if(typeof plan.cd==='string'){
-        html+='<div style="font-size:12px;color:var(--text-2);padding:8px;background:rgba(52,211,153,0.06);border-radius:var(--radius-sm)">'+plan.cd+'</div>';
-      }else{
-        plan.cd.forEach(a=>{
-          html+='<div class="action-card" style="border-left:3px solid var(--green)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-detail">'+a.t+'</div></div>';
-        });
-      }
-    }
-    
-    // 8. 关节康复
-    if(plan.rehab && plan.rehab.length>0){
-      html+='<div style="font-size:12px;font-weight:600;color:var(--orange);margin:10px 0 6px">🔧 关节康复'+(mt.rehab?' ('+mt.rehab+'min)':'')+'</div>';
-      plan.rehab.forEach(a=>{
-        html+='<div class="action-card" style="border-left:3px solid var(--orange)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';
-      });
-    }
-    
-    // 备注
-    if(plan.note) html+='<div class="note-box">⚠️ '+plan.note+'</div>';
-  }
-  $('todayPlan').innerHTML=html;
+  // Today's training plan
+  const planDateEl=document.getElementById('planDate');
+  if(planDateEl&&!planDateEl.value)planDateEl.value=todayStr;
+  renderPlanForDate(todayStr);
 
   // Auto-fill today's weight if exists (体重面板已删除，安全跳过)
   const todayWeight=WD.find(d=>d.date===todayStr);
@@ -2425,22 +2418,36 @@ function renderWeeklyAdjust(){
   const todayStrEff=dstr(now);
   const todayDietRec=DD.find(x=>x.date===todayStrEff);
   const todayNoRec=!(todayDietRec&&todayDietRec.t.cal>0);
+  // 拆解：剩余天数里正常饮食贡献的缺口 + 还需运动补的部分
+  // 剩余天数里按训练日/休息日分布，估算"吃满额度"的饮食缺口
+  let restDaysLeft=0, trainDaysLeft=0;
+  for(let i=0;i<daysLeft;i++){
+    const dd=addDays(now,i);
+    const dow=dd.getDay()||7;
+    if(dow===0||dow===3) restDaysLeft++; else trainDaysLeft++;
+  }
+  const bmr=1672,nee=300;
+  const dietGapTrain=bmr+nee-1400;           // 训练日吃满1400的缺口=572
+  const dietGapRest=bmr+nee-1000;            // 休息日吃满1000的缺口=972
+  const dietGapTotal=trainDaysLeft*dietGapTrain+restDaysLeft*dietGapRest;
+  const sportNeeded=Math.max(0,remain-dietGapTotal); // 饮食缺口不够的部分靠运动补
+  const sportPerTrain=trainDaysLeft>0?Math.ceil(sportNeeded/trainDaysLeft):0;
   const totalRow='<div style="margin-top:12px;padding:12px;background:var(--inset);border-radius:12px">'+
     '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-2)">本周累计缺口</span><span style="font-weight:800;color:var(--orange)">'+wd.deficit.toLocaleString()+' / '+target.toLocaleString()+' kcal</span></div>'+
     '<div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+Math.min(100,wd.deficit/target*100).toFixed(1)+'%"></div></div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.6">'+
       (remain>0
-        ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，目前已达成 <b>'+wd.deficit.toLocaleString()+'</b>，<br>'+
-         '还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>（含今天）。<br>'+
-         (daysLeft===1
-           ?'今天把缺口再做约 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b> 即可达成。'
-           :'把还差的量均摊到剩余 '+daysLeft+' 天：每天需把当天缺口再做大约 <b style="color:var(--orange)">'+perDay.toLocaleString()+' kcal</b>。')+
-         (todayNoRec?'<br><span style="color:var(--blue)">ℹ️ 今天还没记录饮食/训练，上面的"已达成"暂不含今天，录入后会自动更新。</span>':'')+
+        ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，已达成 <b>'+wd.deficit.toLocaleString()+'</b>，还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>（含今天'+(trainDaysLeft>0?'· '+trainDaysLeft+'训练日':'')+(restDaysLeft>0?(trainDaysLeft>0?'、':'')+restDaysLeft+'休息日':'')+'）。<br>'+
+         '<span style="color:var(--green)">🥗 正常吃满额度（训练日1400/休息日1000）可贡献饮食缺口约 <b>'+dietGapTotal.toLocaleString()+' kcal</b></span>'+
+         (sportNeeded>0
+           ?'<br><span style="color:var(--blue)">🏃 还需运动补充约 <b>'+sportNeeded.toLocaleString()+' kcal</b>'+(trainDaysLeft>0?'，均摊到剩余 '+trainDaysLeft+' 个训练日约 <b>'+sportPerTrain.toLocaleString()+' kcal/次</b>（≈'+Math.round(sportPerTrain/8)+'min中高强度）':'（本周剩余无训练日，需在休息日加练或下周补）')+'</span>'
+           :'<br><span style="color:var(--green)">✅ 仅靠饮食缺口即可覆盖，不需要额外运动补充</span>')+
+         (todayNoRec?'<br><span style="color:var(--blue)">ℹ️ 今天还没记录饮食/训练，录入后自动更新。</span>':'')+
           (perDay>1600
             ?'<br><span style="color:var(--red);font-weight:700">⚠️ 每天'+perDay.toLocaleString()+'已超出单日现实上限（训练日缺口约1,200~1,500、休息日约970），本周目标无法完全达成——按正常节奏执行即可，缺口下周再补。</span>'
             :'')
         :'✅ 已达成周缺口目标，超出 <b style="color:var(--green)">'+(wd.deficit-target).toLocaleString()+' kcal</b>')+
-    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：这是从"当前已达成缺口"反推的差额，不是在你日常缺口基础上额外叠加。</div>'+
+    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：饮食缺口=BMR(1672)+NEAT(300)−摄入额度；运动补充=剩余缺口−饮食缺口。BMR/NEAT取自你的体测数据。</div>'+
     '</div></div>';
   $('weekAdjustBox').innerHTML=totalRow+rows;
 }
