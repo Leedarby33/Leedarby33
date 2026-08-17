@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260816b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1150,6 +1150,64 @@ function confirmComboPicker(idx){
   cartRender();
   const pm2=document.querySelector('.picker-mask');if(pm2)pm2.remove();
   flashHint('已加入暂存栏：'+desc+' ('+cal+'kcal)');
+}
+
+// ===== 调用近期 =====
+// 弹出最近若干天的饮食记录，点击某餐把该餐所有食物条目复制进暂存栏（入账前可编辑）
+function openHistoryPicker(){
+  const meals=getMeals();
+  const dates=Object.keys(meals).sort().reverse().slice(0,10);
+  const dayName={0:'周日',1:'周一',2:'周二',3:'周三',4:'周四',5:'周五',6:'周六'};
+  const mealName={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'};
+  let listHtml='';
+  if(dates.length===0){
+    listHtml='<div style="color:var(--text-3);text-align:center;padding:24px;font-size:13px">暂无近期饮食记录<br><span style="font-size:11px;opacity:.7">先去录入或导入备份，这里就能调取历史餐次</span></div>';
+  }
+  dates.forEach(dt=>{
+    const m=meals[dt]||{};
+    let dayCal=0;
+    ['b','l','d','s'].forEach(k=>{(m[k]||[]).forEach(it=>{dayCal+=(it.cal||0);});});
+    let dtLabel=dt;
+    try{const o=new Date(dt+'T12:00:00');if(!isNaN(o))dtLabel=dt+' '+dayName[o.getDay()];}catch(e){}
+    listHtml+='<div style="margin-bottom:14px">'
+      +'<div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">'+dtLabel+' <span style="color:var(--orange);font-size:11px">共 '+Math.round(dayCal)+'kcal</span></div>';
+    ['b','l','d','s'].forEach(k=>{
+      const items=(m[k]||[]);
+      if(items.length===0)return;
+      const mealCal=items.reduce((s,it)=>s+(it.cal||0),0);
+      const descs=items.map(it=>it.desc||'').filter(Boolean).join('、');
+      listHtml+='<div style="display:flex;justify-content:space-between;align-items:center;background:var(--inset);border:1px solid var(--bdr);border-radius:6px;padding:6px 8px;margin-bottom:4px;cursor:pointer;transition:border-color .15s" '
+        +'onclick="applyHistoryMeal(\''+dt+'\',\''+k+'\')" onmouseover="this.style.borderColor=\'var(--orange)\'" onmouseout="this.style.borderColor=\'var(--bdr)\'">'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:11px;font-weight:700;color:var(--orange)">'+mealName[k]+' <span style="color:var(--text-3);font-weight:400;font-size:10px">'+items.length+'条</span></div>'
+        +'<div style="font-size:10px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+descs+'</div>'
+        +'</div>'
+        +'<span style="font-size:11px;color:var(--text);font-weight:600;margin-left:8px">'+Math.round(mealCal)+'kcal</span>'
+        +'</div>';
+    });
+    listHtml+='</div>';
+  });
+  const mask=document.createElement('div');
+  mask.className='modal-mask picker-mask';
+  mask.innerHTML='<div class="modal-box" style="position:relative;max-width:460px;max-height:80vh;display:flex;flex-direction:column">'
+    +'<button class="modal-close" onclick="this.closest(\'.modal-mask\').remove()">×</button>'
+    +'<div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:2px">🕘 调用近期饮食</div>'
+    +'<div style="font-size:11px;color:var(--text-3);margin-bottom:12px">点击某餐，自动加入下方「暂存栏」，确认入账前可自行编辑/删除</div>'
+    +'<div style="overflow-y:auto;flex:1;padding-right:4px">'+listHtml+'</div>'
+    +'</div>';
+  document.body.appendChild(mask);
+}
+function applyHistoryMeal(dt,k){
+  const meals=getMeals();
+  const items=(meals[dt]&&meals[dt][k])||[];
+  if(items.length===0)return;
+  items.forEach(it=>{
+    _cart.push({type:'food',idx:-1,qty:0,grams:0,cal:it.cal||0,p:it.p||0,sf:it.sf||0,fr:it.fr||0,c:it.c||0,desc:it.desc||('（无描述）')});
+  });
+  cartRender();
+  const mName={b:'早餐',l:'午餐',d:'晚餐',s:'加餐'}[k]||k;
+  flashHint('已把 '+dt+' '+mName+' 的 '+items.length+' 条加入暂存栏');
+  const pm=document.querySelector('.picker-mask');if(pm)pm.remove();
 }
 
 // ===== 暂存栏渲染 =====
