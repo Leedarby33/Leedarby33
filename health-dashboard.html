@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -3100,6 +3100,19 @@ function renderBodyTrendChart(s,e){
     svg+='<line x1="'+pad.l+'" y1="'+YB(21)+'" x2="'+(chartW-pad.r)+'" y2="'+YB(21)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
     svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YB(21)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标21</text>';
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
+    // 分阶段参考线：对应当前进度预估，到该时间体脂率应降到对应水平（竖直虚线+目标点）
+    const bfMilestones=[
+      {d:'2026-09-15',v:26.0,label:'9月中 26'},
+      {d:'2026-10-15',v:24.0,label:'10月中 24'},
+      {d:'2026-11-15',v:22.5,label:'11月中 22.5'}
+    ];
+    bfMilestones.forEach(m=>{
+      const mx=X(m.d), my=YB(m.v);
+      if(mx<=pad.l||mx>=targetX)return;
+      svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(0,179,104,0.28)" stroke-width="1.4" stroke-dasharray="4,4"/>';
+      svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#00B368" stroke="#fff" stroke-width="1.1"/>';
+      svg+='<text x="'+(mx-4).toFixed(1)+'" y="'+(my-6).toFixed(1)+'" fill="#00B368" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+    });
     let pth='';
     bfRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YB(p.bf).toFixed(1);});
     svg+='<path d="'+pth+'" fill="none" stroke="#00B368" stroke-width="2.8" stroke-linejoin="round"/>';
