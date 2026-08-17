@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817f';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817g';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -453,7 +453,7 @@ const SCAP_PROTOCOL=[
 {n:"弹力带肩胛后缩",s:"3组×15次",w:"弹力带10磅",t:"与面拉同一固定点。手臂全程伸直前举握带，不弯肘，纯靠肩胛发力把带子往后拉，两块肩胛骨往中间夹2秒→慢放。感觉：两块肩胛骨互相靠近"},
 {n:"耸肩下沉",s:"3组×12次",w:"哑铃7.5kg/手",t:"持铃自然下垂→轻耸肩到顶(1秒，只是行程起点)→主动发力下沉到最低，像把肩膀从耳朵边拽下来→最低点停2秒感受上背收缩→慢回。重心在下沉阶段的发力控制，不吃重量"},
 {n:"弹力带肩外旋",s:"2组×15次/侧",w:"弹力带5磅",t:"手肘贴身屈90°，弹力带固定肘高→前臂向外转开(外旋)→慢回。感觉：肩后侧小肌肉(肩袖)收紧"},
-{n:"胸椎俯卧伸展(Sphinx)",s:"2组×8次",t:"俯卧，手肘撑在肩正下方→胸口向前向上顶离地面，胸骨往斜上方顶，胸腔打开，肩膀往后往下沉→顶开瞬间深吸气(气会进一步撑开胸腔)停2秒→呼气回落。感觉：上腹压地、内衣带高度被顶开拉长。与眼镜蛇同方向，对抗哈腰圆肩——若做完感觉胸口闷着=做反了"}
+{n:"侧卧翻书式(Open Book·B版)",s:"2组×10次/侧",t:"侧卧屈膝90°双膝并拢压死地面(全程不许抬，膝盖一动=腰椎代偿开始)，躯干放松、不收腹不夹臀。下面的手臂伸直枕在头下(毛巾垫头也行，颈椎与脊柱成直线，是枕不是撑)。上面手轻触耳后、手肘指前方→呼气靠胸椎旋转把手肘带向天花板再转向身后地面，眼睛跟肘走→末端深吸气把转开的胸腔再撑开一格停2秒→回位。旋转感必须在两肩胛骨之间的脊柱段，腰部零感觉；末端手肘不勉强碰地。进阶(2-3周熟练后)：换A版伸直手臂画弧，手背找身后地面"}
 ];
 let WD=[],DD=[],TD=[],DIM=[];
 async function loadData(){
@@ -517,15 +517,17 @@ warmup:UPPER_WARMUP,cd:[
 {n:"跨胸后束拉伸",t:"单臂伸直横过胸前，另一手勾住肘部向胸部拉，感受肩后部拉伸，每侧20秒"},
 {n:"踝关节画圈",t:"单脚离地，脚尖画圈，顺逆时针各10圈，放松踝关节"}
 ],mt:{warmup:6,w:36,core:3,cd:5},note:"伐木已砍（与周四Pallof重叠且刺激不足），面拉移入周内肩胛板块（一/三/五做）。顺序：激活→主项→次项→辅助。HIIT已停"},
-"周三":{name:"肩胛协议 + 康复 + Zone2（轻活动日）",dur:"~63min",w:[],
+"周三":{name:"肩胛协议 + 康复 + Zone2（轻活动日）",dur:"~66min",w:[],
 zone2:{dur:"45min",note:"心率110-128bpm稳态有氧，椭圆机/骑行/慢走。轻活动日：促进乳酸清除+线粒体建设，负担极低不占恢复资源。以'能说一句话但不想连续聊'为准"},
 hiit:[],
 warmup:[],
-scapula:SCAP_PROTOCOL,
+scapula:SCAP_PROTOCOL.concat([
+{n:"蟹式伸展(Crab Reach)",s:"2组×6次/侧",t:"坐地双手撑身后与肩同宽、指尖朝前(腕不适可稍朝侧)，双脚踩地与髋同宽→顶髋抬离地面→一侧手臂向上向后伸展过头，同时对侧腿伸直抬起，眼睛跟手→顶端胸腔打开、肩前侧+胸椎有牵拉感，停2秒→回落换侧。对抗圆肩的前侧链打开动作，与翻书式一后一前夹击。臀腿撑不住可降低顶髋高度，优先保证胸腔打开"}
+]),
 rehab:[
 {n:"髋关节画圈",s:"每侧10次",t:"不追求幅度，不疼为准（右髋保护）"},
 {n:"踝关节绕圈",s:"左踝45秒/方向×2",t:"刺痛保护，不负重，坐着转"}
-],cd:[],mt:{scapula:12,rehab:6,zone2:45},note:"轻活动日，不安排力量。顺序：肩胛→康复→Zone2。自测指标：热身画圈弹响频率（变少=肩胛稳定在变好）"},
+],cd:[],mt:{scapula:15,rehab:6,zone2:45},note:"轻活动日，不安排力量。顺序：肩胛→康复→Zone2。自测指标：热身画圈弹响频率（变少=肩胛稳定在变好）"},
 "周四":{name:"下肢 + 核心",dur:"~74min",w:[
 {n:"高脚杯深蹲",s:"4组×12次",w:"12.5kg哑铃",t:"10→12.5kg。蹲到底部停2秒再起（别靠反弹弹起），会明显变难。定位是分腿蹲的神经准备+下肢大复合，不追求炸裂感"},
 {n:"保加利亚分腿蹲（主项）",s:"4组×10次/侧",w:"5kg/手",t:"主项，下肢最强刺激。后脚搭凳，前脚多迈一步，躯干直立。平衡难=核心+足弓弱，会随训练改善，可扶墙。左踝注意保护"},
