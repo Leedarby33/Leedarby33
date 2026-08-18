@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817k';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817l';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1737,14 +1737,17 @@ function saveTrainingItem(){
   const today=getEffNow();
   const dayName=days[today.getDay()];
   const plan=ACTIONS[dayName];
-  const type=plan?plan.name:'训练';
+  const defaultType=plan?plan.name:'训练';
+  const typeInput=($('trType').value||'').trim();
+  const type=typeInput||defaultType; // 手动输入优先，空则用计划默认
   const todayStr=getTodayStr();
   const records=getTrainingRecords();
   if(!records[todayStr])records[todayStr]=[];
   records[todayStr].push({type:type,dur:dur,dyn:dyn,total:total,hr:hr,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})});
   setTrainingRecords(records);
   mergeTrainingLS();
-  ['trDur','trDyn','trTotal','trHr'].forEach(id=>$(id).value='');
+  ['trType','trDur','trDyn','trTotal','trHr'].forEach(id=>$(id).value='');
+  fillDefaultTrainType(); // 清空后重新预填默认类型
   renderTrainingList();
   updateTrainDailySummary();
   if(typeof filterTraining==='function')filterTraining();
@@ -1813,6 +1816,31 @@ function initTrainingRecordInfo(){
   }
   updateTrainDailySummary();
   renderTrainingList();
+}
+
+// 预填训练类型：默认取当天计划名，用户可手动覆盖
+function fillDefaultTrainType(){
+  const el=$('trType');
+  if(!el)return;
+  const days=['周日','周一','周二','周三','周四','周五','周六'];
+  const today=getEffNow();
+  const dayName=days[today.getDay()];
+  const plan=ACTIONS[dayName];
+  el.value=plan?plan.name:'训练';
+  el.placeholder=plan?plan.name:'训练';
+}
+// 快捷训练类型标签
+const QUICK_TRAIN_TYPES=['Zone2有氧','推力量','拉力量','下肢','肩胛协议','核心','HIIT','康复','拉伸','散步'];
+function initTrainTypeQuick(){
+  const el=$('trTypeQuick');
+  if(!el)return;
+  el.innerHTML=QUICK_TRAIN_TYPES.map(t=>
+    '<span onclick="setTrainType(\''+t.replace(/'/g,"\\'")+'\')" style="background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--text-2);cursor:pointer;user-select:none">'+t+'</span>'
+  ).join('');
+}
+function setTrainType(t){
+  const el=$('trType');
+  if(el){el.value=t;el.focus();}
 }
 
 function initNav(){
@@ -3943,6 +3971,10 @@ if('serviceWorker' in navigator){
 <div id="trainRecordInfo" style="font-size:12px;color:var(--text-3);margin:0 0 8px"></div>
 <div id="trainDailySummary" style="font-size:11px;color:var(--blue);margin-bottom:8px"></div>
 <div style="background:var(--inset);border-radius:8px;padding:12px;margin-bottom:10px">
+<div style="display:flex;gap:6px;margin-bottom:6px">
+<input type="text" id="trType" placeholder="训练类型(可改)" style="flex:1;background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 10px;font-size:12px;outline:none">
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px" id="trTypeQuick"></div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
 <input type="number" id="trDur" placeholder="时长(min)" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
 <input type="number" id="trDyn" placeholder="动态消耗" style="background:var(--card);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:7px 4px;font-size:12px;width:100%;text-align:center;outline:none">
@@ -4063,7 +4095,7 @@ function switchEntryType(t){
     if(tp===t){btn.style.background='var(--orange)';btn.style.color='#fff';btn.style.border='none';btn.style.fontWeight='700';pan.style.display='block';}
     else{btn.style.background='var(--inset)';btn.style.color='var(--text-2)';btn.style.border='1px solid var(--bdr)';btn.style.fontWeight='400';pan.style.display='none';}
   });
-  if(t==='train'){if(typeof initTrainingRecordInfo==='function')initTrainingRecordInfo();if(typeof renderTrainingList==='function')renderTrainingList();}
+  if(t==='train'){if(typeof initTrainingRecordInfo==='function')initTrainingRecordInfo();if(typeof renderTrainingList==='function')renderTrainingList();if(typeof initTrainTypeQuick==='function')initTrainTypeQuick();if(typeof fillDefaultTrainType==='function')fillDefaultTrainType();}
   if(t==='bodycomp'){if(typeof initBodyCompDate==='function')initBodyCompDate();}
   if(t==='rhr'){var rd=document.getElementById('rhrDate');if(rd&&!rd.value)rd.value=getTodayStr();}
   if(t==='history'){var hd=document.getElementById('histDate');if(hd&&!hd.value)hd.value=getTodayStr();loadHistData();}
