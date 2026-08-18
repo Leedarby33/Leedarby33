@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817i';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817j';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2989,6 +2989,31 @@ function renderBodyTrendChart(s,e){
   const cw=chartW-pad.l-pad.r,ch=chartH-pad.t-pad.b;
   const X=date=>pad.l+cw*Math.max(0,Math.min(1,(dayN(date)-t0)/(t1-t0)));
   const targetX=X(END);
+  // 参考线标签布局：交替上下 + 相邻碰撞推开，避免密集节点重叠
+  function placeMilestoneLabels(ms,Y){
+    const nodes=[];
+    ms.forEach((m,i)=>{
+      const mx=Math.min(X(m.d),targetX), my=Y(m.v);
+      if(mx<=pad.l || m.d===END) return;
+      nodes.push({m,mx,my,idx:i});
+    });
+    nodes.forEach((n,i)=>{ n.below=(i%2===1); });
+    nodes.forEach(n=>{
+      if(n.below && n.my>chartH*0.80) n.below=false;
+      if(!n.below && n.my<chartH*0.20) n.below=true;
+    });
+    nodes.forEach(n=>{ n.ty=n.my+(n.below?22:-14); });
+    for(let k=1;k<nodes.length;k++){
+      const a=nodes[k-1], b=nodes[k];
+      if(b.mx-a.mx>=70) continue;
+      if(Math.abs(b.ty-a.ty)<22){
+        const mid=(a.ty+b.ty)/2;
+        a.ty=mid-11; b.ty=mid+11;
+      }
+    }
+    nodes.forEach(n=>{ n.ty=Math.max(12,Math.min(chartH-12,n.ty)); });
+    return new Map(nodes.map(n=>[n.m,n]));
+  }
   const xTicks=(()=>{
     const arr=[];const n=6;
     for(let i=0;i<=n;i++){const tt=t0+(t1-t0)*i/n;const d=new Date(tt);arr.push({x:pad.l+cw*i/n,label:(d.getMonth()+1)+'/'+d.getDate()});}
@@ -3071,22 +3096,37 @@ function renderBodyTrendChart(s,e){
     svg+='<line x1="'+pad.l+'" y1="'+YW(70)+'" x2="'+(chartW-pad.r)+'" y2="'+YW(70)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
     svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YW(70)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标70</text>';
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
-    // 分阶段参考线：体重阶段目标（按用户硬指标：12月初75kg, 2/1春节前70kg）
+    // 分阶段参考线：体重阶段目标（前快后慢衰减模型，终点对齐70硬杠杆）
     const wMilestones=[
       {d:'2026-09-15',v:80.8,label:'9月中 80.8'},
-      {d:'2026-10-15',v:78.5,label:'10月中 78.5'},
-      {d:'2026-11-15',v:76.1,label:'11月中 76.1'},
-      {d:'2026-12-01',v:75.0,label:'12月初 75'},
-      {d:'2026-12-15',v:73.9,label:'12月中 73.9'},
+      {d:'2026-10-15',v:78.2,label:'10月中 78.2'},
+      {d:'2026-11-15',v:75.7,label:'11月中 75.7'},
+      {d:'2026-12-15',v:73.4,label:'12月中 73.4'},
+      {d:'2027-01-15',v:71.1,label:'1月中 71.1'},
       {d:'2027-02-01',v:70.0,label:'2/1春节 70'}
     ];
-    wMilestones.forEach(m=>{
+    const wLabels=placeMilestoneLabels(wMilestones,YW);
+    wMilestones.forEach((m,i)=>{
       const mx=Math.min(X(m.d),targetX), my=YW(m.v);
       if(mx<=pad.l)return;
       svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(184,134,11,0.30)" stroke-width="1.4" stroke-dasharray="4,4"/>';
       svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#B8860B" stroke="#fff" stroke-width="1.1"/>';
       const atEnd=m.d==='2027-02-01';
-      svg+='<text x="'+(atEnd?(mx-2):(mx-4)).toFixed(1)+'" y="'+(atEnd?(chartH-10):(my-6)).toFixed(1)+'" fill="#B8860B" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+      if(atEnd){
+        // 终点节点：标签放图表底部，右对齐贴右边界
+        svg+='<text x="'+(mx-6).toFixed(1)+'" y="'+(chartH-10).toFixed(1)+'" fill="#B8860B" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+      }else{
+        // 非终点节点：按奇偶交替上下，相邻过近时自动推开
+        const n=wLabels.get(m);
+        let ty=n?n.ty:(my+(i%2===1?22:-14));
+        ty=Math.max(12,Math.min(chartH-12,ty));
+        const nearEnd=(targetX-mx)<45;
+        if(nearEnd){
+          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#B8860B" font-size="9" font-weight="800" text-anchor="middle" transform="rotate(-25,'+mx.toFixed(1)+','+ty.toFixed(1)+')">'+m.label+'</text>';
+        }else{
+          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#B8860B" font-size="10.5" font-weight="800" text-anchor="middle">'+m.label+'</text>';
+        }
+      }
     });
     let pth='';
     wMA.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YW(p.v).toFixed(1);});
@@ -3119,22 +3159,36 @@ function renderBodyTrendChart(s,e){
     svg+='<line x1="'+pad.l+'" y1="'+YB(21)+'" x2="'+(chartW-pad.r)+'" y2="'+YB(21)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
     svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YB(21)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标21</text>';
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
-    // 分阶段参考线：体脂率按体重硬指标推算的自然值（70kg时约18-20%）
+    // 分阶段参考线：体脂率从体重推导（保肌肉减脂，前快后慢）
     const bfMilestones=[
       {d:'2026-09-15',v:27.2,label:'9月中 27.2'},
-      {d:'2026-10-15',v:25.4,label:'10月中 25.4'},
-      {d:'2026-11-15',v:23.5,label:'11月中 23.5'},
-      {d:'2026-12-01',v:22.5,label:'12月初 22.5'},
-      {d:'2026-12-15',v:21.5,label:'12月中 21.5'},
-      {d:'2027-02-01',v:20.0,label:'2/1春节 20'}
+      {d:'2026-10-15',v:25.5,label:'10月中 25.5'},
+      {d:'2026-11-15',v:24.1,label:'11月中 24.1'},
+      {d:'2026-12-15',v:22.5,label:'12月中 22.5'},
+      {d:'2027-01-15',v:21.3,label:'1月中 21.3'},
+      {d:'2027-02-01',v:20.4,label:'2/1春节 20.4'}
     ];
-    bfMilestones.forEach(m=>{
+    const bfLabels=placeMilestoneLabels(bfMilestones,YB);
+    bfMilestones.forEach((m,i)=>{
       const mx=Math.min(X(m.d),targetX), my=YB(m.v);
       if(mx<=pad.l)return;
       svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(0,179,104,0.28)" stroke-width="1.4" stroke-dasharray="4,4"/>';
       svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#00B368" stroke="#fff" stroke-width="1.1"/>';
       const atEnd=m.d==='2027-02-01';
-      svg+='<text x="'+(atEnd?(mx-2):(mx-4)).toFixed(1)+'" y="'+(atEnd?(chartH-10):(my-6)).toFixed(1)+'" fill="#00B368" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+      if(atEnd){
+        svg+='<text x="'+(mx-6).toFixed(1)+'" y="'+(chartH-10).toFixed(1)+'" fill="#00B368" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+      }else{
+        // 非终点节点：按奇偶交替上下，相邻过近时自动推开
+        const n=bfLabels.get(m);
+        let ty=n?n.ty:(my+(i%2===1?22:-14));
+        ty=Math.max(12,Math.min(chartH-12,ty));
+        const nearEnd=(targetX-mx)<45;
+        if(nearEnd){
+          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#00B368" font-size="9" font-weight="800" text-anchor="middle" transform="rotate(-25,'+mx.toFixed(1)+','+ty.toFixed(1)+')">'+m.label+'</text>';
+        }else{
+          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#00B368" font-size="10.5" font-weight="800" text-anchor="middle">'+m.label+'</text>';
+        }
+      }
     });
     let pth='';
     bfRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YB(p.bf).toFixed(1);});
@@ -3165,18 +3219,36 @@ function renderBodyTrendChart(s,e){
     svg+='<line x1="'+pad.l+'" y1="'+YD(87)+'" x2="'+(chartW-pad.r)+'" y2="'+YD(87)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
     svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YD(87)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标87</text>';
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
-    // 分阶段参考线：腰围阶段目标（指数衰减，前期快后期慢；87目标线已覆盖后段）
+    // 分阶段参考线：腰围从体重推导（历史腰围/体重回归），前快后慢
     const dMilestones=[
-      {d:'2026-09-15',v:91.3,label:'9月中 91.3'},
-      {d:'2026-10-15',v:89.6,label:'10月中 89.6'},
-      {d:'2026-11-15',v:88.3,label:'11月中 88.3'}
+      {d:'2026-09-15',v:90.3,label:'9月中 90.3'},
+      {d:'2026-10-15',v:87.3,label:'10月中 87.3'},
+      {d:'2026-11-15',v:84.5,label:'11月中 84.5'},
+      {d:'2026-12-15',v:81.8,label:'12月中 81.8'},
+      {d:'2027-01-15',v:79.2,label:'1月中 79.2'},
+      {d:'2027-02-01',v:77.8,label:'2/1春节 77.8'}
     ];
-    dMilestones.forEach(m=>{
+    const dLabels=placeMilestoneLabels(dMilestones,YD);
+    dMilestones.forEach((m,i)=>{
       const mx=Math.min(X(m.d),targetX), my=YD(m.v);
       if(mx<=pad.l)return;
       svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(47,91,216,0.30)" stroke-width="1.4" stroke-dasharray="4,4"/>';
       svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#2F5BD8" stroke="#fff" stroke-width="1.1"/>';
-      svg+='<text x="'+(mx-4).toFixed(1)+'" y="'+(my-6).toFixed(1)+'" fill="#2F5BD8" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+      const atEnd=m.d==='2027-02-01';
+      if(atEnd){
+        svg+='<text x="'+(mx-6).toFixed(1)+'" y="'+(chartH-10).toFixed(1)+'" fill="#2F5BD8" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
+      }else{
+        // 非终点节点：按奇偶交替上下，相邻过近时自动推开
+        const n=dLabels.get(m);
+        let ty=n?n.ty:(my+(i%2===1?22:-14));
+        ty=Math.max(12,Math.min(chartH-12,ty));
+        const nearEnd=(targetX-mx)<45;
+        if(nearEnd){
+          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#2F5BD8" font-size="9" font-weight="800" text-anchor="middle" transform="rotate(-25,'+mx.toFixed(1)+','+ty.toFixed(1)+')">'+m.label+'</text>';
+        }else{
+          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#2F5BD8" font-size="10.5" font-weight="800" text-anchor="middle">'+m.label+'</text>';
+        }
+      }
     });
     let pth='';
     dimRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YD(p.waist).toFixed(1);});
