@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817j';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817k';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1820,7 +1820,7 @@ function initNav(){
   const todayDiet=DD.find(d=>d.date===todayStr);
   const _dowNav=getEffNow().getDay();
   const isTrainDay=_dowNav!==0&&_dowNav!==3; // 周日(0)和周三(3)为休息日
-  const bmr=1672;const nee=300;
+  const bmr=getLatestBMR();const nee=getNEAT();
   const targetCal=isTrainDay?1400:1000;
   const targetC=isTrainDay?130:80;
   const targetSF=20;
@@ -2079,9 +2079,9 @@ function initOverview(){
   const days=DD.filter(d=>d.t.cal>0).length;
   const totalIntake=DD.reduce((s,d)=>s+d.t.cal,0);
   const trainDays=TD.length;
-  const trainCal=TD.reduce((s,t)=>s+t.total,0);
-  const bmrTotal=1672*days;
-  const neeTotal=300*days;
+  const trainCal=TD.reduce((s,t)=>s+(t.dyn||t.total||0),0);
+  const bmrTotal=getLatestBMR()*days;
+  const neeTotal=getNEAT()*days;
   const totalExp=bmrTotal+neeTotal+trainCal;
   const deficit=totalExp-totalIntake;
   $('heatDeficit').innerHTML=deficit.toLocaleString()+'<span class="unit"> kcal</span>';
@@ -2150,6 +2150,34 @@ function initOverview(){
   try{ renderWeeklyAdjust(); }catch(e){ console.warn('周内调节渲染失败:',e.message); }
 }
 
+// ===== 动态代谢基础值：BMR / NEAT（以最新录入为准，避免写死） =====
+// getLatestBMR(): 读体重记录里最近一次录入的 bmr；完全没有时用 Mifflin 公式(身高174cm+动态年龄)兜底
+// getNEAT(): 动态非运动消耗，随体重变化
+const MIF_HEIGHT=174; // 用户身高固定174cm
+function currentAge(){
+  const y=new Date().getFullYear();
+  return 36+(y-2026); // 2026年为36岁，跨年后自动+1
+}
+function latestBMRRecord(){
+  // WD 按日期排序，从后往前找第一条带 bmr 的
+  for(let i=WD.length-1;i>=0;i--){
+    if(WD[i].bmr) return WD[i].bmr;
+  }
+  return null;
+}
+function getLatestBMR(){
+  const m=latestBMRRecord();
+  if(m) return m;
+  // Mifflin-St Jeor 男性: BMR=10*体重+6.25*身高-5*年龄+5
+  const w=WD.length?WD[WD.length-1].weight:83;
+  return Math.round(10*w+6.25*MIF_HEIGHT-5*currentAge()+5);
+}
+function getNEAT(){
+  // NEAT 动态化：随体重变化（体重kg × 3.6），83kg→~300，越轻NEAT越小
+  const w=WD.length?WD[WD.length-1].weight:83;
+  return Math.max(180,Math.round(w*3.6));
+}
+
 // ===== 热血目标体系：个人化系数 + 周目标 + 非线性曲线 =====
 // 参数：当前体重/目标/体脂率目标/掉速构成/个人化系数
 const GOAL_CFG = {
@@ -2205,10 +2233,10 @@ function calcPersonalCoef(){
         const ds=dstr(d);
         const diet=DD.find(x=>x.date===ds);
         const train=TD.find(x=>x.date===ds);
-        const bmr=1672;
+        const bmr=getLatestBMR();
         if(diet&&diet.t.cal>0){
           const intake=diet.t.cal;
-          const exp=bmr+300+(train?train.total:0);
+          const exp=bmr+getNEAT()+(train?(train.dyn||train.total||0):0);
           deficit+=(exp-intake);
         }
       }
@@ -2238,7 +2266,7 @@ function rollingRates(){
       const diet=DD.find(x=>x.date===ds);
       const train=TD.find(x=>x.date===ds);
       if(diet&&diet.t.cal>0){
-        deficit+=(1672+300+(train?train.total:0))-diet.t.cal;
+        deficit+=(getLatestBMR()+getNEAT()+(train?(train.dyn||train.total||0):0))-diet.t.cal;
         dietDays++;
       }
     }
@@ -2281,10 +2309,29 @@ function currentPhase(){
   return GOAL_CFG.phases[GOAL_CFG.phases.length-1];
 }
 
-// 本周目标缺口（固定阶梯值；掉速换算交给动态系数，见rollingRates）
+// 本周目标缺口（动态）：= 当前阶段掉速目标(kg/周) × 动态系数(每kg体重需缺口)
+//   掉速目标来自参考线的"前快后慢"分阶段速率；动态系数来自近4周实测倒推(rollingRates)
+//   无动态系数时用理论默认系数(GOAL_CFG.coef×fatRatio)
+const RATE_STAGES=[ // 掉速目标 kg/周，随体脂下降前快后慢
+  {from:'2026-08-14',to:'2026-09-15',rate:0.621},
+  {from:'2026-09-15',to:'2026-10-15',rate:0.595},
+  {from:'2026-10-15',to:'2026-11-15',rate:0.569},
+  {from:'2026-11-15',to:'2026-12-15',rate:0.543},
+  {from:'2026-12-15',to:'2027-01-15',rate:0.517},
+  {from:'2027-01-15',to:'2027-02-01',rate:0.491}
+];
+function currentRateTarget(){
+  const now=getEffNow();
+  for(const s of RATE_STAGES){
+    if(now>=parseD(s.from)&&now<parseD(s.to)) return s.rate;
+  }
+  return RATE_STAGES[RATE_STAGES.length-1].rate;
+}
 function weekDeficitTarget(){
-  const p=currentPhase();
-  return p.weekDeficit;
+  const rate=currentRateTarget();
+  const rates=rollingRates();
+  const wCoef=rates?rates.weightCoef:(GOAL_CFG.coef*GOAL_CFG.fatRatio);
+  return Math.round(rate*wCoef); // 超物理上限时直接显示更高值(不做9200封顶)
 }
 
 // 获取某周(周一起点)的累计缺口和明细
@@ -2297,7 +2344,7 @@ function weekData(monday){
     const train=TD.find(x=>x.date===ds);
     if(diet&&diet.t.cal>0){
       intake+=diet.t.cal;
-      exp+=(1672+300+(train?train.total:0));
+      exp+=(getLatestBMR()+getNEAT()+(train?(train.dyn||train.total||0):0));
       days++;
     }
   }
@@ -2335,7 +2382,7 @@ function renderWeekTracker(){
   // 阶段提示 + 动态达标预警（目标固定，动态系数只做监测）
   const phase=currentPhase();
   if(wd.isCurrent){
-    const theoW=target/(GOAL_CFG.coef*GOAL_CFG.fatRatio); // 理论掉速kg体重/周
+    const theoW=currentRateTarget(); // 当前阶段掉速目标 kg体重/周
     const rateNote=rates
       ? '，每kg体重需'+weightCoef.toLocaleString()+' kcal缺口（近4周实测倒推）'
       : '（数据不足时按理论系数折算）';
@@ -2357,7 +2404,7 @@ function renderWeekTracker(){
         '</div>';
     }
     $('weekRemainHint').innerHTML=
-      '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b> · 周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>（≈'+theoW.toFixed(2)+'kg体重/周·理论系数）<br>'+
+      '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b> · 周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>（≈'+theoW.toFixed(2)+'kg体重/周·目标掉速）<br>'+
       '💡 预计减脂/减重 = 本周累计缺口 ÷ 实测掉秤比率'+rateNote+'；缺口明细见下方「本周缺口 & 周内调节」'+warnHtml;
   }else{
     $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 <b style="color:var(--orange)">'+wd.deficit.toLocaleString()+' kcal</b>，目标 '+target.toLocaleString()+' kcal';
@@ -2430,7 +2477,7 @@ function renderWeeklyAdjust(){
     const isFuture=ds>dstr(now);
     const isRest=(new Date(d).getDay()===0||new Date(d).getDay()===3);
     let cal=0,exp=0;
-    if(diet&&diet.t.cal>0){cal=diet.t.cal;exp=1672+300+(train?train.total:0);}
+    if(diet&&diet.t.cal>0){cal=diet.t.cal;exp=getLatestBMR()+getNEAT()+(train?(train.dyn||train.total||0):0);}
     cum+=Math.max(0,exp-cal);
     const dayDef=Math.max(0,exp-cal);
     const limit=isRest?1000:1400;
@@ -2460,7 +2507,7 @@ function renderWeeklyAdjust(){
     const dow=dd.getDay()||7;
     if(dow===0||dow===3) restDaysLeft++; else trainDaysLeft++;
   }
-  const bmr=1672,nee=300;
+  const bmr=getLatestBMR(),nee=getNEAT();
   const dietGapTrain=bmr+nee-1400;           // 训练日吃满1400的缺口=572
   const dietGapRest=bmr+nee-1000;            // 休息日吃满1000的缺口=972
   const dietGapTotal=trainDaysLeft*dietGapTrain+restDaysLeft*dietGapRest;
@@ -2481,7 +2528,7 @@ function renderWeeklyAdjust(){
             ?'<br><span style="color:var(--red);font-weight:700">⚠️ 每天'+perDay.toLocaleString()+'已超出单日现实上限（训练日缺口约1,200~1,500、休息日约970），本周目标无法完全达成——按正常节奏执行即可，缺口下周再补。</span>'
             :'')
         :'✅ 已达成周缺口目标，超出 <b style="color:var(--green)">'+(wd.deficit-target).toLocaleString()+' kcal</b>')+
-    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：饮食缺口=BMR(1672)+NEAT(300)−摄入额度；运动补充=剩余缺口−饮食缺口。BMR/NEAT取自你的体测数据。</div>'+
+    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：饮食缺口=BMR('+bmr+')+NEAT('+nee+')−摄入额度；运动补充=剩余缺口−饮食缺口。BMR/NEAT取最近体测录入。</div>'+
     '</div></div>';
   $('weekAdjustBox').innerHTML=totalRow+rows;
 }
@@ -2500,9 +2547,9 @@ function filterTraining(){
   const totalAll=combined.reduce(function(s,t){return s+t.total;},0);
   // Full-caliber total = BMR + NEAT + all training (TD already includes LS)
   const dietDays=DD.filter(function(d){return d.t.cal>0;}).length;
-  const bmrTotal=1672*dietDays;
-  const neeTotal=300*dietDays;
-  const tdAllTotal=TD.reduce(function(s,t){return s+t.total;},0);
+  const bmrTotal=getLatestBMR()*dietDays;
+  const neeTotal=getNEAT()*dietDays;
+  const tdAllTotal=TD.reduce(function(s,t){return s+(t.dyn||t.total||0);},0);
   const fullTotal=bmrTotal+neeTotal+tdAllTotal;
   $('totalExpBig').innerHTML=fullTotal.toLocaleString()+'<span class="unit"> kcal</span>';
   $('totalExpSub').textContent='BMR '+bmrTotal.toLocaleString()+' + NEAT '+neeTotal.toLocaleString()+' + 训练 '+tdAllTotal.toLocaleString();
@@ -2512,9 +2559,9 @@ function filterTraining(){
   $('totalCal').innerHTML=totalAll.toLocaleString()+'<span class="unit"> kcal</span>';
   
   // Pie
-  const bmrEst=1700*totalDays;const nee=300*totalDays;
+  const bmrEst=getLatestBMR()*totalDays;const nee=getNEAT()*totalDays;
   $('calPieChart').innerHTML=makePieChart([
-    {label:'BMR',value:bmrEst},{label:'NEAT',value:nee},{label:'训练',value:totalAll}
+    {label:'BMR',value:bmrEst},{label:'NEAT',value:nee},{label:'训练',value:totalDyn}
   ],300,200);
   
   // Table
