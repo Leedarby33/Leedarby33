@@ -3203,7 +3203,8 @@ function renderBodyTrendChart(s,e){
   // ===== 图3 腰围（区间色块，纵轴含87cm目标） =====
   if(dimRecs.length>=2){
     const vals=dimRecs.map(d=>d.waist);
-    const dMin=Math.min(...vals,84.2), dMax=Math.max(...vals)+1.5;
+    // y轴下限须覆盖参考线终点77.8（含下方标签空间），避免标签落到横轴以下
+    const dMin=Math.min(...vals,77), dMax=Math.max(...vals,90.3)+1.5;
     const YD=v=>pad.t+ch*(1-(v-dMin)/(dMax-dMin));
     const lastDim=dimRecs[dimRecs.length-1];
     const ext=extrapolate(dimRecs.map(d=>({date:d.date,v:d.waist})));
