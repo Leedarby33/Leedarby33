@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817l';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260817m';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2490,6 +2490,24 @@ function weeklyLoss(monday){
 }
 
 // 周内调节器：本周每日缺口明细 + 剩余调节
+// 近14天(不含当天)按训练日/休息日分类的平均摄入；只统计有记录的日子，无记录时退回默认参考值(训练日1200/休息日1000)
+function recentAvgIntake(){
+  const now=getEffNow(), todayStr=dstr(now);
+  let trSum=0,trN=0,reSum=0,reN=0;
+  for(let i=1;i<=14;i++){
+    const d=addDays(now,-i), ds=dstr(d);
+    const diet=DD.find(x=>x.date===ds);
+    if(!(diet&&diet.t.cal>0)) continue;
+    const isRest=(d.getDay()===0||d.getDay()===3);
+    if(isRest){reSum+=diet.t.cal;reN++;}
+    else{trSum+=diet.t.cal;trN++;}
+  }
+  return {
+    trainAvg:trN?Math.round(trSum/trN):1200,
+    restAvg:reN?Math.round(reSum/reN):1000,
+    trN,reN
+  };
+}
 function renderWeeklyAdjust(){
   const now=getEffNow();
   const monday=mondayOfDate(now);
@@ -2527,36 +2545,44 @@ function renderWeeklyAdjust(){
   const todayStrEff=dstr(now);
   const todayDietRec=DD.find(x=>x.date===todayStrEff);
   const todayNoRec=!(todayDietRec&&todayDietRec.t.cal>0);
+  const todayTrainRec=TD.find(x=>x.date===todayStrEff);       // 今天是否已记录训练
+  const todayTrained=!!(todayTrainRec&&(todayTrainRec.dyn||todayTrainRec.total||todayTrainRec.dur));
+  // 近期平均摄入（近14天，不含当天），按训练日/休息日分类
+  const avg=recentAvgIntake();
   // 拆解：剩余天数里正常饮食贡献的缺口 + 还需运动补的部分
-  // 剩余天数里按训练日/休息日分布，估算"吃满额度"的饮食缺口
-  let restDaysLeft=0, trainDaysLeft=0;
+  // 剩余天数按训练日/休息日分布（周日/周三=休息日，其余=训练日）
+  // 训练日默认吃 avg.trainAvg、休息日吃 avg.restAvg，估算"按近期节奏吃"的饮食缺口
+  let restDaysLeft=0, trainDaysLeft=0, todayIsTrainDay=false;
   for(let i=0;i<daysLeft;i++){
     const dd=addDays(now,i);
     const dow=dd.getDay()||7;
-    if(dow===0||dow===3) restDaysLeft++; else trainDaysLeft++;
+    const isRestDay=(dow===0||dow===3);
+    if(isRestDay) restDaysLeft++; else { trainDaysLeft++; if(i===0) todayIsTrainDay=true; }
   }
+  // 今天还没运动：今天也仍是"待运动"的训练日，需计入需运动部分；已训练则今天从"待补运动"里剔除
+  const sportTrainDaysLeft=trainDaysLeft-(todayIsTrainDay&&todayTrained?1:0);
   const bmr=getLatestBMR(),nee=getNEAT();
-  const dietGapTrain=bmr+nee-1400;           // 训练日吃满1400的缺口=572
-  const dietGapRest=bmr+nee-1000;            // 休息日吃满1000的缺口=972
+  const dietGapTrain=bmr+nee-avg.trainAvg;      // 训练日按近期平均摄入吃→缺口
+  const dietGapRest=bmr+nee-avg.restAvg;        // 休息日按近期平均摄入吃→缺口
   const dietGapTotal=trainDaysLeft*dietGapTrain+restDaysLeft*dietGapRest;
   const sportNeeded=Math.max(0,remain-dietGapTotal); // 饮食缺口不够的部分靠运动补
-  const sportPerTrain=trainDaysLeft>0?Math.ceil(sportNeeded/trainDaysLeft):0;
+  const sportPerTrain=sportTrainDaysLeft>0?Math.ceil(sportNeeded/sportTrainDaysLeft):0;
   const totalRow='<div style="margin-top:12px;padding:12px;background:var(--inset);border-radius:12px">'+
     '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text-2)">本周累计缺口</span><span style="font-weight:800;color:var(--orange)">'+wd.deficit.toLocaleString()+' / '+target.toLocaleString()+' kcal</span></div>'+
     '<div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+Math.min(100,wd.deficit/target*100).toFixed(1)+'%"></div></div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.6">'+
       (remain>0
         ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，已达成 <b>'+wd.deficit.toLocaleString()+'</b>，还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>（含今天'+(trainDaysLeft>0?'· '+trainDaysLeft+'训练日':'')+(restDaysLeft>0?(trainDaysLeft>0?'、':'')+restDaysLeft+'休息日':'')+'）。<br>'+
-         '<span style="color:var(--green)">🥗 正常吃满额度（训练日1400/休息日1000）可贡献饮食缺口约 <b>'+dietGapTotal.toLocaleString()+' kcal</b></span>'+
+         '<span style="color:var(--green)">🥗 按近期平均摄入（训练日 '+avg.trainAvg.toLocaleString()+'/'+(avg.trN?('近'+avg.trN+'天均值'):'默认')+'、休息日 '+avg.restAvg.toLocaleString()+'/'+(avg.reN?('近'+avg.reN+'天均值'):'默认')+'，不含今天）可贡献饮食缺口约 <b>'+dietGapTotal.toLocaleString()+' kcal</b></span>'+
          (sportNeeded>0
-           ?'<br><span style="color:var(--blue)">🏃 还需运动补充约 <b>'+sportNeeded.toLocaleString()+' kcal</b>'+(trainDaysLeft>0?'，均摊到剩余 '+trainDaysLeft+' 个训练日约 <b>'+sportPerTrain.toLocaleString()+' kcal/次</b>（≈'+Math.round(sportPerTrain/8)+'min中高强度）':'（本周剩余无训练日，需在休息日加练或下周补）')+'</span>'
+           ?'<br><span style="color:var(--blue)">🏃 还需运动补充约 <b>'+sportNeeded.toLocaleString()+' kcal</b>'+(sportTrainDaysLeft>0?'，均摊到剩余 '+sportTrainDaysLeft+' 个待运动训练日约 <b>'+sportPerTrain.toLocaleString()+' kcal/次</b>（≈'+Math.round(sportPerTrain/8)+'min中高强度）':'（本周剩余无待运动训练日，需在休息日加练或下周补）')+(todayIsTrainDay&&todayTrained?'（今天已训练，从待运动日中剔除）':(todayIsTrainDay?'（今天未记录训练，已计入待运动日）':''))+'</span>'
            :'<br><span style="color:var(--green)">✅ 仅靠饮食缺口即可覆盖，不需要额外运动补充</span>')+
-         (todayNoRec?'<br><span style="color:var(--blue)">ℹ️ 今天还没记录饮食/训练，录入后自动更新。</span>':'')+
+         (todayNoRec?'<br><span style="color:var(--blue)">ℹ️ 今天还没记录饮食，录入后自动更新。</span>':'')+
           (perDay>1600
             ?'<br><span style="color:var(--red);font-weight:700">⚠️ 每天'+perDay.toLocaleString()+'已超出单日现实上限（训练日缺口约1,200~1,500、休息日约970），本周目标无法完全达成——按正常节奏执行即可，缺口下周再补。</span>'
             :'')
         :'✅ 已达成周缺口目标，超出 <b style="color:var(--green)">'+(wd.deficit-target).toLocaleString()+' kcal</b>')+
-    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：饮食缺口=BMR('+bmr+')+NEAT('+nee+')−摄入额度；运动补充=剩余缺口−饮食缺口。BMR/NEAT取最近体测录入。</div>'+
+    '<div style="font-size:10px;color:var(--text-3);margin-top:4px">注：饮食缺口=BMR('+bmr+')+NEAT('+nee+')−近期平均摄入；运动补充=剩余缺口−饮食缺口；待运动训练日=剩余训练日−已训练今天。BMR/NEAT取最近体测录入，平均摄入取近14天(不含当天)。</div>'+
     '</div></div>';
   $('weekAdjustBox').innerHTML=totalRow+rows;
 }
