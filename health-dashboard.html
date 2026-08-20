@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260817m';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260820a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1929,11 +1929,18 @@ function initWeightCompare(todayStr){
   const weekChange=lastWeekAvg>0?(thisWeekAvg-lastWeekAvg):0;
   let weekNote=lastWeekAvg>0?'('+lastWeekAvg.toFixed(2)+')':'';
   if(thisWeekData.length<7)weekNote+=' 目前'+thisWeekData.length+'天';
+  // 本周目标体重（按当前阶段掉速目标从锚点推算）
+  const wTarget=weekWeightTarget();
+  const vsTarget=thisWeekAvg>0?(thisWeekAvg-wTarget):0;
+  // 本周剩余天数测算：剩余需补掉=当前本周均值-目标，摊到剩余天数
+  const daysLeftInWeek=Math.max(1,(sunStr.localeCompare(dstr(now))>=0)?(Math.round((parseD(sunStr)-parseD(dstr(now)))/86400000)+1):0);
+  const needDrop=Math.max(0,thisWeekAvg-wTarget);
+  const needAvg=needDrop>0?(thisWeekAvg-needDrop/daysLeftInWeek):wTarget;
   let h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
-  h+='<div class="kpi-item"><div class="kpi-value" style="color:var(--orange)">'+curW.toFixed(1)+'<span class="unit"> kg</span></div><div class="kpi-label">今日体重</div></div>';
-  h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(curW<=startW?'var(--green)':'var(--red)')+'">'+(curW-startW>0?'+':'')+(curW-startW).toFixed(1)+'<span class="unit"> kg</span></div><div class="kpi-label">较起始(89.85)</div></div>';
   h+='<div class="kpi-item"><div class="kpi-value">'+thisWeekAvg.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">本周均值('+thisWeekData.length+'次)</div></div>';
   h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(weekChange<=0?'var(--green)':'var(--red)')+'">'+(weekChange>0?'+':'')+weekChange.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">周均较上周'+weekNote+'</div></div>';
+  h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(vsTarget<=0?'var(--green)':'var(--orange)')+'">'+(vsTarget>0?'+':'')+vsTarget.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">较本周目标('+wTarget.toFixed(2)+')</div></div>';
+  h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(needDrop>0?'var(--orange)':'var(--green)')+'">≤'+needAvg.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">'+(needDrop>0?('剩'+daysLeftInWeek+'天需均值低于'):'已低于本周目标')+'</div></div>';
   h+='</div>';
   $('weightCompare').innerHTML=h;
 }
@@ -1990,14 +1997,14 @@ function makePieChart(slices,w,h){
   const total=slices.reduce((s,d)=>s+d.value,0);
   let svg='<svg viewBox="0 0 '+w+' '+h+'" class="chart-svg">';
   let angle=-Math.PI/2;
-  const colors=['#F59E0B','#EF4444','#F59E0B','#34D399','#4A9EFF','#4A9EFF'];
+  const colors=['#FF5A00','#2F6BFF','#00B368','#FFB400','#FF2D55','#8B5CF6'];
   slices.forEach((s,i)=>{
     const pct=s.value/total;
     const a1=angle,a2=angle+pct*Math.PI*2;
     const large=pct>0.5?1:0;
     const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
     const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
-    if(pct>0) svg+='<path d="M'+cx+','+cy+' L'+x1+','+y1+' A'+r+','+r+' 0 '+large+' 1 '+x2+','+y2+' Z" fill="'+colors[i%colors.length]+'" fill-opacity="0.8"/>';
+    if(pct>0) svg+='<path d="M'+cx+','+cy+' L'+x1+','+y1+' A'+r+','+r+' 0 '+large+' 1 '+x2+','+y2+' Z" fill="'+colors[i%colors.length]+'" fill-opacity="0.85" stroke="#fff" stroke-width="1.5"/>';
     // Label
     const ma=(a1+a2)/2;
     const lx=cx+(r*0.65)*Math.cos(ma),ly=cy+(r*0.65)*Math.sin(ma);
@@ -2114,44 +2121,38 @@ function initOverview(){
   const deficit=totalExp-totalIntake;
   $('heatDeficit').innerHTML=deficit.toLocaleString()+'<span class="unit"> kcal</span>';
   $('heatDeficitSub').textContent='总消耗 '+totalExp.toLocaleString()+' - 总摄入 '+totalIntake.toLocaleString();
-  // 累计掉秤对比：口径统一 —— 累计预计 ↔ 累计实际
-  //  预计 = 累计缺口 ÷ 近4周实测动态比率（rollingRates；无数据时用理论系数）
-  //  实际 = 起始(89.85kg/31.5%) → 当前最新体测 的累计减脂/减重
-  const rates=rollingRates();
-  const fCoef=rates?rates.fatCoef:GOAL_CFG.coef;
-  const wCoef=rates?rates.weightCoef:GOAL_CFG.coef*GOAL_CFG.fatRatio;
-  const estFat=deficit/fCoef, estW=deficit/wCoef;
-  // 累计实际（起始→最新体测）
+  // 累计减重构成：起始(89.85kg/31.5%) → 当前最新体测
   const lastBfRec=WD.filter(d=>d.bf!=null).pop();
   const curWAll=WD.length?WD[WD.length-1].weight:89.85;
   const curBfAll=lastBfRec?lastBfRec.bf:31.5;
   const actFat=Math.max(0,89.85*31.5/100-curWAll*curBfAll/100);
   const actW=Math.max(0,89.85-curWAll);
-  const deltaFat=actFat-estFat;
+  const actLean=Math.max(0,actW-actFat);           // 肌肉+水分糖原=减重-减脂
+  const fatPct=actW>0.05?actFat/actW:0;             // 脂肪占比
+  // 评级：脂肪占比越高越好（减掉的绝大部分是脂肪）
+  let grade,gradeC;
+  if(actW<=0.05){grade='—';gradeC='var(--text-3)';}
+  else if(fatPct>=0.8){grade='优';gradeC='var(--green)';}
+  else if(fatPct>=0.65){grade='良';gradeC='#00A868';}
+  else if(fatPct>=0.5){grade='中';gradeC='var(--orange)';}
+  else{grade='差';gradeC='var(--red)';}
   // 历史整体比率（累计缺口÷累计实际掉秤）作为身体状态参照
   const fHist=actFat>0.05?deficit/actFat:0;
   const wHist=actW>0.05?deficit/actW:0;
   $('heatDeficitCompare').innerHTML=
-    '<div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px">📉 累计应掉秤 vs 累计实际掉秤（起始→现在）</div>'+
+    '<div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px">📉 累计减重构成（起始89.85kg/31.5% → 当前'+curWAll+'kg/'+curBfAll+'%）</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
-      '<div style="font-size:18px;font-weight:900;color:var(--orange)">'+estFat.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计预计减脂</div></div>'+
+      '<div style="font-size:18px;font-weight:900;color:var(--orange)">'+actW.toFixed(1)+'<span class="unit"> kg</span></div>'+
+      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计减重</div></div>'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
-      '<div style="font-size:18px;font-weight:900;color:var(--orange)">'+estW.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计预计减重</div></div>'+
-    '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
-      '<div style="font-size:18px;font-weight:900;color:var(--green)">'+actFat.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计实际减脂</div></div>'+
-    '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
-      '<div style="font-size:18px;font-weight:900;color:var(--green)">'+actW.toFixed(1)+'<span class="unit"> kg</span></div>'+
-      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">累计实际减重</div></div>'+
+      '<div style="font-size:18px;font-weight:900;color:'+gradeC+'">'+(actW>0.05?(fatPct*100).toFixed(1)+'%':'—')+'<span class="unit"> '+grade+'</span></div>'+
+      '<div style="font-size:10px;color:var(--text-3);margin-top:1px">脂肪占比</div></div>'+
     '</div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:8px;line-height:1.7;background:var(--card);border-radius:8px;padding:8px 10px;border-left:3px solid var(--green)">'+
-    '💡 累计实际：减脂 <b style="color:var(--green)">'+actFat.toFixed(1)+'</b>、减重 <b style="color:var(--green)">'+actW.toFixed(1)+'</b> kg（起始89.85kg/31.5% → 当前'+curWAll+'kg/'+curBfAll+'%）。<br>'+
-    '累计缺口 '+deficit.toLocaleString()+' kcal 按近4周比率可换预计减脂 '+estFat.toFixed(1)+'、减重 '+estW.toFixed(1)+' kg'+
-    (deltaFat>0.05?'（实际比预计多减，状态好）':(deltaFat<-0.05?'（实际比预计少减，掉秤吃力）':'（与预计相当）'))+'。'+
-    '<span style="color:var(--text-3)">历史整体比率：每kg脂肪需 '+(fHist?Math.round(fHist).toLocaleString()+' kcal':'—')+'、每kg体重需 '+(wHist?Math.round(wHist).toLocaleString()+' kcal':'—')+'；近4周比率：每kg脂肪需 '+fCoef.toLocaleString()+'、每kg体重需 '+wCoef.toLocaleString()+'。近4周比率比历史高=掉秤变吃力，反之变顺。</span>'+
+    '💡 累计减重 <b style="color:var(--orange)">'+actW.toFixed(1)+' kg</b> = 脂肪 <b style="color:var(--green)">'+actFat.toFixed(1)+'</b> + 肌肉+水分糖原 <b style="color:var(--blue)">'+actLean.toFixed(1)+' kg</b>。'+
+    ' 减掉部分脂肪占比 <b style="color:'+gradeC+'">'+(actW>0.05?(fatPct*100).toFixed(1)+'%':'—')+'</b>（评级 <b style="color:'+gradeC+'">'+grade+'</b>：≥80%优、65-80%良、50-65%中、<50%差）。<br>'+
+    '<span style="color:var(--text-3)">历史整体比率：每kg脂肪需 '+(fHist?Math.round(fHist).toLocaleString()+' kcal':'—')+'、每kg体重需 '+(wHist?Math.round(wHist).toLocaleString()+' kcal':'—')+'。</span>'+
     '</div>';
   
   // 双进度对比已移除（与体测Tab「减脂达成率」重复，达成率统一在体测Tab展示）
@@ -2354,6 +2355,17 @@ function currentRateTarget(){
     if(now>=parseD(s.from)&&now<parseD(s.to)) return s.rate;
   }
   return RATE_STAGES[RATE_STAGES.length-1].rate;
+}
+// 本周目标体重：以当前阶段锚点体重为起点，按当前阶段掉速目标(kg/周)推算到本周日应达到的体重
+function weekWeightTarget(){
+  const now=getEffNow();
+  const anchor=GOAL_CFG.startW;              // 锚点体重(8/14=83.05)
+  const anchorD=parseD(GOAL_CFG.startWDate||'2026-08-14'); // 锚点日期
+  const rate=currentRateTarget();            // 当前阶段掉速 kg/周
+  const sunday=addDays(mondayOfDate(now),6); // 本周日
+  const days=(sunday-anchorD)/86400000;      // 锚点→本周日天数
+  const loss=Math.max(0,(days/7)*rate);      // 累计应掉
+  return anchor-loss;
 }
 function weekDeficitTarget(){
   const rate=currentRateTarget();
@@ -2645,8 +2657,6 @@ function filterTraining(){
       typeCount[key]=(typeCount[key]||0)+t.total;
     });
     const slices=Object.keys(typeCount).map(k=>({label:k,value:typeCount[k]}));
-    const colors=['#FF5A00','#2F6BFF','#00B368','#FFB400','#FF2D55'];
-    slices.forEach((s,i)=>s.color=colors[i%colors.length]);
     if(slices.length>1){
       typeEl.innerHTML=makePieChart(slices,280,180);
     }else{typeEl.innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">数据不足</div>';}
@@ -3762,10 +3772,10 @@ function renderReviewSection(){
       var wAvg=wdInRange.reduce(function(s,d){return s+d.weight;},0)/wdInRange.length;
       if(wdPrevRange.length>0){
         var wPrevAvg=wdPrevRange.reduce(function(s,d){return s+d.weight;},0)/wdPrevRange.length;
-        wChange=(wAvg-wPrevAvg).toFixed(1);
-        wRange='均'+wAvg.toFixed(1)+' vs '+wPrevAvg.toFixed(1);
+        wChange=(wAvg-wPrevAvg).toFixed(2);
+        wRange='均'+wAvg.toFixed(2)+' vs '+wPrevAvg.toFixed(2);
       }else{
-        wChange='0.0';wRange='均'+wAvg.toFixed(1);
+        wChange='0.00';wRange='均'+wAvg.toFixed(2);
       }
     }
     // Training
@@ -3804,10 +3814,10 @@ function renderReviewSection(){
       var mAvg=wdInMonth.reduce(function(s,d){return s+d.weight;},0)/wdInMonth.length;
       if(wdInPrevMonth.length>0){
         var mPrevAvg=wdInPrevMonth.reduce(function(s,d){return s+d.weight;},0)/wdInPrevMonth.length;
-        mwChange=(mAvg-mPrevAvg).toFixed(1);
-        mwRange='均'+mAvg.toFixed(1)+' vs '+mPrevAvg.toFixed(1);
+        mwChange=(mAvg-mPrevAvg).toFixed(2);
+        mwRange='均'+mAvg.toFixed(2)+' vs '+mPrevAvg.toFixed(2);
       }else{
-        mwChange='0.0';mwRange='均'+mAvg.toFixed(1);
+        mwChange='0.00';mwRange='均'+mAvg.toFixed(2);
       }
     }
     // Training
