@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260820c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260820d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2128,12 +2128,12 @@ function initOverview(){
   const actW=Math.max(0,87.8-curWAll);
   const actLean=Math.max(0,actW-actFat);           // 肌肉+水分糖原=减重-减脂
   const fatPct=actW>0.05?actFat/actW:0;             // 脂肪占比
-  // 评级：脂肪占比越高越好（减掉的绝大部分是脂肪）
+  // 评级（激进减脂口径）：脂肪占比越高越好
   let grade,gradeC;
   if(actW<=0.05){grade='—';gradeC='var(--text-3)';}
-  else if(fatPct>=0.8){grade='优';gradeC='var(--green)';}
-  else if(fatPct>=0.65){grade='良';gradeC='#00A868';}
-  else if(fatPct>=0.5){grade='中';gradeC='var(--orange)';}
+  else if(fatPct>=0.75){grade='极好';gradeC='var(--green)';}
+  else if(fatPct>=0.65){grade='好';gradeC='#00A868';}
+  else if(fatPct>=0.55){grade='平均水平';gradeC='var(--orange)';}
   else{grade='差';gradeC='var(--red)';}
   // 历史整体比率（累计缺口÷累计实际掉秤）作为身体状态参照
   const fHist=actFat>0.05?deficit/actFat:0;
@@ -2150,7 +2150,7 @@ function initOverview(){
     '</div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:8px;line-height:1.7;background:var(--card);border-radius:8px;padding:8px 10px;border-left:3px solid var(--green)">'+
     '💡 累计减重 <b style="color:var(--orange)">'+actW.toFixed(1)+' kg</b> = 脂肪 <b style="color:var(--green)">'+actFat.toFixed(1)+'</b> + 肌肉+水分糖原 <b style="color:var(--blue)">'+actLean.toFixed(1)+' kg</b>。'+
-    ' 减掉部分脂肪占比 <b style="color:'+gradeC+'">'+(actW>0.05?(fatPct*100).toFixed(1)+'%':'—')+'</b>（评级 <b style="color:'+gradeC+'">'+grade+'</b>：≥80%优、65-80%良、50-65%中、<50%差）。<br>'+
+    ' 减掉部分脂肪占比 <b style="color:'+gradeC+'">'+(actW>0.05?(fatPct*100).toFixed(1)+'%':'—')+'</b>（评级 <b style="color:'+gradeC+'">'+grade+'</b>：≥75%极好、65-75%好、55-65%平均水平、<55%差）。<br>'+
     '<span style="color:var(--text-3)">历史整体比率：每kg脂肪需 '+(fHist?Math.round(fHist).toLocaleString()+' kcal':'—')+'、每kg体重需 '+(wHist?Math.round(wHist).toLocaleString()+' kcal':'—')+'。</span>'+
     '</div>';
   
