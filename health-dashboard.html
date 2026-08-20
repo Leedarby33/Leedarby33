@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260820b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260820c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1910,7 +1910,6 @@ function initNav(){
 function initWeightCompare(todayStr){
   const todayEntry=WD.find(d=>d.date===todayStr);
   const curW=parseFloat(todayEntry?todayEntry.weight:(WD.length>0?WD[WD.length-1].weight:0))||0;
-  const startW=89.85;
   // Current week: find Monday of current week
   const now=getEffNow();const dow=now.getDay()||7;
   const mon=new Date(now);mon.setDate(now.getDate()-(dow-1));
@@ -2121,12 +2120,12 @@ function initOverview(){
   const deficit=totalExp-totalIntake;
   $('heatDeficit').innerHTML=deficit.toLocaleString()+'<span class="unit"> kcal</span>';
   $('heatDeficitSub').textContent='总消耗 '+totalExp.toLocaleString()+' - 总摄入 '+totalIntake.toLocaleString();
-  // 累计减重构成：起始(89.85kg/31.5%) → 当前最新体测
+  // 累计减重构成：起始(6/7 87.8kg/31.1%) → 当前最新体测（减脂起点统一为6/7）
   const lastBfRec=WD.filter(d=>d.bf!=null).pop();
-  const curWAll=WD.length?WD[WD.length-1].weight:89.85;
-  const curBfAll=lastBfRec?lastBfRec.bf:31.5;
-  const actFat=Math.max(0,89.85*31.5/100-curWAll*curBfAll/100);
-  const actW=Math.max(0,89.85-curWAll);
+  const curWAll=WD.length?WD[WD.length-1].weight:87.8;
+  const curBfAll=lastBfRec?lastBfRec.bf:31.1;
+  const actFat=Math.max(0,87.8*31.1/100-curWAll*curBfAll/100);
+  const actW=Math.max(0,87.8-curWAll);
   const actLean=Math.max(0,actW-actFat);           // 肌肉+水分糖原=减重-减脂
   const fatPct=actW>0.05?actFat/actW:0;             // 脂肪占比
   // 评级：脂肪占比越高越好（减掉的绝大部分是脂肪）
@@ -2140,7 +2139,7 @@ function initOverview(){
   const fHist=actFat>0.05?deficit/actFat:0;
   const wHist=actW>0.05?deficit/actW:0;
   $('heatDeficitCompare').innerHTML=
-    '<div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px">📉 累计减重构成（起始89.85kg/31.5% → 当前'+curWAll+'kg/'+curBfAll+'%）</div>'+
+    '<div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px">📉 累计减重构成（起始87.8kg/31.1% → 当前'+curWAll+'kg/'+curBfAll+'%）</div>'+
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
     '<div style="background:var(--card);border-radius:10px;padding:8px 10px;text-align:center">'+
       '<div style="font-size:18px;font-weight:900;color:var(--orange)">'+actW.toFixed(1)+'<span class="unit"> kg</span></div>'+
@@ -2157,17 +2156,19 @@ function initOverview(){
   
   // 双进度对比已移除（与体测Tab「减脂达成率」重复，达成率统一在体测Tab展示）
   
-  // KPI cards
-  const curW=WD.length?WD[WD.length-1].weight:89.85;
+  // KPI cards（累计数据统一以6/7为减脂起点）
+  const TR_START='2026-06-07';
+  const trSince=TD.filter(t=>t.date>=TR_START);           // 6/7起的训练记录
+  const curW=WD.length?WD[WD.length-1].weight:87.8;
   const latest=WD.filter(d=>d.bf!=null).pop();
   const latestDim2=DIM[DIM.length-1];
   const kpis=[
-    {v:fmt(89.85-curW),l:'累计减重',u:'kg',c:'var(--orange)',sub:'89.85→'+curW},
-    {v:fmt(31.5-(latest?latest.bf:29.2)),l:'体脂下降',u:'%',c:'var(--green)',sub:'31.5%→'+(latest?latest.bf:29.2)+'%'},
+    {v:fmt(87.8-curW),l:'累计减重',u:'kg',c:'var(--orange)',sub:'87.8→'+curW},
+    {v:fmt(31.1-(latest?latest.bf:29.2)),l:'体脂下降',u:'%',c:'var(--green)',sub:'31.1%→'+(latest?latest.bf:29.2)+'%'},
     {v:fmt(101.5-(latestDim2?latestDim2.waist:94.5)),l:'腰围缩小',u:'cm',c:'var(--orange)',sub:'101.5→'+(latestDim2?latestDim2.waist:94.5)},
-    {v:fmt(61.5-(latest?latest.ffm:59.0)),l:'去脂体重变化',u:'kg',c:'var(--blue)',sub:'61.5→'+(latest?latest.ffm:59.0)},
-    {v:TD.length,l:'累计训练',u:'天',c:'var(--green)',sub:'自5/31起'},
-    {v:fmt(TD.reduce((s,t)=>s+t.dur,0)/60,1),l:'训练总时长',u:'h',c:'var(--red)',sub:'自5/31起'},
+    {v:fmt(60.5-(latest?latest.ffm:59.0)),l:'去脂体重变化',u:'kg',c:'var(--blue)',sub:'60.5→'+(latest?latest.ffm:59.0)},
+    {v:trSince.length,l:'累计训练',u:'天',c:'var(--green)',sub:'自6/7起'},
+    {v:fmt(trSince.reduce((s,t)=>s+t.dur,0)/60,1),l:'训练总时长',u:'h',c:'var(--red)',sub:'自6/7起'},
   ];
   $('overviewKpis').innerHTML=kpis.map(k=>'<div class="kpi-item"><div class="kpi-value" style="color:'+k.c+'">'+k.v+'<span class="unit"> '+k.u+'</span></div><div class="kpi-label">'+k.l+'</div><div style="font-size:10px;color:var(--text-3);margin-top:2px">'+k.sub+'</div></div>').join('');
   
@@ -2960,16 +2961,16 @@ function filterBody(){
   rc+='</div>';
   $('refCompareArea').innerHTML=rc;
   
-  // Achievement rate → 序时进度达成率
-  const startW=89.85,targetW=70,targetBF=21;
+  // Achievement rate → 序时进度达成率（减脂起点统一为6/7）
+  const startW=87.8,targetW=70,targetBF=21;
   const curW=latest.weight,curBF=latest.bf;
   const lostW=startW-curW,needLoseW=startW-targetW;
-  const lostBF=31.5-curBF,needLoseBF=31.5-targetBF;
+  const lostBF=31.1-curBF,needLoseBF=31.1-targetBF;
   const wPct=Math.min(100,lostW/needLoseW*100);
   const bfPct=Math.min(100,lostBF/needLoseBF*100);
   const overallPct=(wPct+bfPct)/2;
-  // 时间进度：起始5/31 → 目标2/1
-  const startD=new Date('2026-05-31'),endD=new Date('2027-02-01');
+  // 时间进度：起始6/7 → 目标2/1
+  const startD=new Date('2026-06-07'),endD=new Date('2027-02-01');
   const nowT=new Date();
   const totalDays=Math.floor((endD-startD)/86400000);
   const passedDays=Math.max(0,Math.min(totalDays,Math.floor((nowT-startD)/86400000)));
