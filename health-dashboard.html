@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260820d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260821c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1932,7 +1932,9 @@ function initWeightCompare(todayStr){
   const wTarget=lastWeekAvg>0?Math.max(0,lastWeekAvg-currentRateTarget()):weekWeightTarget();
   const vsTarget=thisWeekAvg>0?(thisWeekAvg-wTarget):0;
   // 本周剩余天数测算：剩余需补掉=当前本周均值-目标，摊到剩余天数
-  const daysLeftInWeek=Math.max(1,(sunStr.localeCompare(dstr(now))>=0)?(Math.round((parseD(sunStr)-parseD(dstr(now)))/86400000)+1):0);
+  // 今天若已称体重，对"剩余可调节天数"已无意义，从剩余天数里剔除
+  const todayWeightRec=thisWeekData.some(w=>w.date===dstr(now));
+  const daysLeftInWeek=Math.max(1,(sunStr.localeCompare(dstr(now))>=0)?(Math.round((parseD(sunStr)-parseD(dstr(now)))/86400000)+1-(todayWeightRec?1:0)):0);
   const needDrop=Math.max(0,thisWeekAvg-wTarget);
   const needAvg=needDrop>0?(thisWeekAvg-needDrop/daysLeftInWeek):wTarget;
   let h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
@@ -2587,7 +2589,7 @@ function renderWeeklyAdjust(){
     '<div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+Math.min(100,wd.deficit/target*100).toFixed(1)+'%"></div></div>'+
     '<div style="font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.6">'+
       (remain>0
-        ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，已达成 <b>'+wd.deficit.toLocaleString()+'</b>，还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>（含今天'+(trainDaysLeft>0?'· '+trainDaysLeft+'训练日':'')+(restDaysLeft>0?(trainDaysLeft>0?'、':'')+restDaysLeft+'休息日':'')+'）。<br>'+
+        ?'📊 本周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>，已达成 <b>'+wd.deficit.toLocaleString()+'</b>，还差 <b style="color:var(--orange)">'+remain.toLocaleString()+' kcal</b> · 剩余 <b>'+daysLeft+'天</b>（含今天，还没过完'+(trainDaysLeft>0?'· '+trainDaysLeft+'训练日':'')+(restDaysLeft>0?(trainDaysLeft>0?'、':'')+restDaysLeft+'休息日':'')+'）。<br>'+
          '<span style="color:var(--green)">🥗 按近期平均摄入（训练日 '+avg.trainAvg.toLocaleString()+'/'+(avg.trN?('近'+avg.trN+'天均值'):'默认')+'、休息日 '+avg.restAvg.toLocaleString()+'/'+(avg.reN?('近'+avg.reN+'天均值'):'默认')+'，不含今天）可贡献饮食缺口约 <b>'+dietGapTotal.toLocaleString()+' kcal</b></span>'+
          (sportNeeded>0
            ?'<br><span style="color:var(--blue)">🏃 还需运动补充约 <b>'+sportNeeded.toLocaleString()+' kcal</b>'+(sportTrainDaysLeft>0?'，均摊到剩余 '+sportTrainDaysLeft+' 个待运动训练日约 <b>'+sportPerTrain.toLocaleString()+' kcal/次</b>（≈'+Math.round(sportPerTrain/8)+'min中高强度）':'（本周剩余无待运动训练日，需在休息日加练或下周补）')+(todayIsTrainDay&&todayTrained?'（今天已训练，从待运动日中剔除）':(todayIsTrainDay?'（今天未记录训练，已计入待运动日）':''))+'</span>'
@@ -3417,6 +3419,82 @@ function renderBodyTrendChart(s,e){
       latest.hr+' bpm <span style="font-size:12px;color:'+(trend>0?'var(--green)':'var(--red)')+'">较起始'+(trend>0?'↓'+trend:'↑'+Math.abs(trend))+'</span>')+svg;
   })();
   html+=rhrHtml;
+
+  // ===== 图5 内脏脂肪·精细估算曲线（实线=秤的粗等级读数；虚线带=内脏占比模型外推的精细参考） =====
+  // 为什么：家用秤内脏等级是离散整数+滞回，看不到连续下降。用 体重×体脂%→总脂肪×内脏占比(随体脂爬升) 给出连续估算。
+  // 模型：内脏占比 p(体脂%) = 23.01 - 0.37×bf（男性常模，用用户6/7→8/21锚点校准过）。
+  const vfHtml=(()=>{
+    const vfRecs=WD.filter(d=>d.date>=s&&d.date<=e&&d.vf!=null).sort((a,b)=>a.date.localeCompare(b.date));
+    // 历史体成分记录（用于总脂肪趋势）
+    const bfRecsAll=WD.filter(d=>d.date>=s&&d.date<=e&&d.bf!=null&&d.weight!=null).sort((a,b)=>a.date.localeCompare(b.date));
+    if(vfRecs.length<1||bfRecsAll.length<2)return '';
+    // 内脏占比模型
+    const visRatio=bf=>23.01-0.37*bf;         // 返回百分数
+    const visKg=d=>(d.weight*d.bf/100)*(visRatio(d.bf)/100);
+    // 等级阈值（锚点校准）：13→12临界≈3.03kg，12→11≈2.71kg，11→10≈2.39kg(逐级等差0.32)
+    const TH={13:3.03,12:2.71,11:2.39,10:2.07,9:1.75};
+    const lvlFromKg=v=>{for(let l=13;l>=9;l--){if(v>=TH[l])return l;}return 9;};
+    // 纵向：覆盖等级9~13（含健康级10）
+    const vfMin=9, vfMax=13;
+    const YV=v=>pad.t+ch*(1-(v-vfMin)/(vfMax-vfMin));
+    const last=vfRecs[vfRecs.length-1];
+    const lastBf=bfRecsAll[bfRecsAll.length-1];
+    const curVis=visKg(lastBf);
+    const curLvl=lvlFromKg(curVis);
+    const drop=13-curLvl;
+    const zones=[
+      {from:13,to:12,label:'超标区',color:'rgba(255,45,85,0.13)'},
+      {from:12,to:10,label:'偏高区',color:'rgba(255,138,0,0.15)'},
+      {from:10,to:9,label:'健康区',color:'rgba(0,179,104,0.18)'}
+    ];
+    let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
+    svg+=zoneBands(YV,vfMin,vfMax,zones,z=>(z.from===13?'>12':(z.to===9?'≤10':z.from+'-'+z.to))+'级');
+    svg+=gridAndTicks(vfMin,vfMax,'#7A3EB1');
+    svg+='<line x1="'+pad.l+'" y1="'+YV(10)+'" x2="'+(chartW-pad.r)+'" y2="'+YV(10)+'" stroke="#00B368" stroke-width="1.6" stroke-dasharray="6,4"/>';
+    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YV(10)+4)+'" fill="#00B368" font-size="12" font-weight="800">健康级10</text>';
+    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
+    // 历史实测等级（实线+圆点，粗刻度）
+    let pthR='';
+    vfRecs.forEach((p,i)=>{pthR+=(i?'L':'M')+X(p.date).toFixed(1)+','+YV(p.vf).toFixed(1);});
+    svg+='<path d="'+pthR+'" fill="none" stroke="#8B5CF6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>';
+    vfRecs.forEach(p=>{svg+='<circle cx="'+X(p.date)+'" cy="'+YV(p.vf)+'" r="3.4" fill="#8B5CF6" stroke="#fff" stroke-width="1.2"/>';});
+    // 精细估算外推（虚线带）：从最近体成分点，按掉速0.55/周外推到2/1
+    // 外推模型：体重按0.55kg/周降，体脂随减脂每kg体重-0.32%降，反推内脏kg→等级
+    const projPts=[];
+    const lastW=lastBf.weight, lastBF=lastBf.bf;
+    const nDays=(dayN(END)-dayN(lastBf.date))/86400000;
+    const nSteps=Math.max(20,Math.round(nDays/14));
+    for(let i=1;i<=nSteps;i++){
+      const dd=new Date(dayN(lastBf.date)+i*(nDays/nSteps)*86400000);
+      const ds=dd.toISOString().slice(0,10);
+      if(ds>END)break;
+      const w=Math.max(70,lastW-0.55*(i*(nDays/nSteps)/7));
+      const bf=lastBF-(lastW-w)*0.32;
+      const v=visKg({weight:w,bf:bf});
+      projPts.push({date:ds,v:lvlFromKg(v),kg:v});
+    }
+    if(projPts.length>=2){
+      let pthP='';
+      projPts.forEach((p,i)=>{pthP+=(i?'L':'M')+Math.min(X(p.date),targetX).toFixed(1)+','+YV(p.v).toFixed(1);});
+      svg+='<path d="'+pthP+'" fill="none" stroke="#B08DFF" stroke-width="2.4" stroke-dasharray="7,5" opacity="0.85"/>';
+      // 预测时间带：11级与10级交点
+      const bandOpts=[{lvl:11,color:'#B08DFF'},{lvl:10,color:'#00B368'}];
+      bandOpts.forEach(b=>{
+        let hit=projPts.find(p=>p.v<=b.lvl);
+        if(hit){
+          const hx=Math.min(X(hit.date),targetX), hy=YV(b.lvl);
+          svg+='<circle cx="'+hx+'" cy="'+hy+'" r="4.5" fill="'+b.color+'" stroke="#fff" stroke-width="1.4"/>';
+          svg+='<text x="'+(hx+6)+'" y="'+(hy-8)+'" fill="'+b.color+'" font-size="11" font-weight="900">'+b.lvl+'级 '+hit.date.slice(5).replace('-','/')+'</text>';
+        }
+      });
+    }
+    svg+=axisFrame();
+    svg+='</svg>';
+    const note='<div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.5">实线=秤实测等级(粗刻度) · 虚线=内脏占比模型外推(精细参考)。估算有±2-3周误差，仅供参考。想最准地追踪内脏趋势，每周量腰围(脐周)更可靠。</div>';
+    return sectionHead('🎯 内脏脂肪·精细估算','实线=实测级 · 虚线=模型外推(精细参考) · 标出11/10级预测','#7A3EB1',
+      curLvl+'级 <span style="font-size:12px;color:'+(drop>0?'var(--green)':'var(--red)')+'">(估算,内脏'+curVis.toFixed(2)+'kg)'+(drop>0?' 较起始↓'+drop:'')+'</span>')+svg+note;
+  })();
+  html+=vfHtml;
 
   if(!html)html='<div style="color:var(--text-3);text-align:center;padding:20px">暂无趋势数据</div>';
   el.innerHTML=html;
