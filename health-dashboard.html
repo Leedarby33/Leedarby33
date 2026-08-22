@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260821c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260822a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1928,8 +1928,9 @@ function initWeightCompare(todayStr){
   const weekChange=lastWeekAvg>0?(thisWeekAvg-lastWeekAvg):0;
   let weekNote=lastWeekAvg>0?'('+lastWeekAvg.toFixed(2)+')':'';
   if(thisWeekData.length<7)weekNote+=' 目前'+thisWeekData.length+'天';
-  // 本周目标体重 = 上周周均体重 − 当前阶段掉速目标(kg/周)；上周无数据时退化为当前阶段锚点推算
-  const wTarget=lastWeekAvg>0?Math.max(0,lastWeekAvg-currentRateTarget()):weekWeightTarget();
+  // 本周目标体重 = 上周周均体重 − 滚动掉速(含超跌/欠跌结转，见滚动总账)；上周无数据时退化为锚点推算
+  const acct=rollingAccount();
+  const wTarget=lastWeekAvg>0?Math.max(0,lastWeekAvg-acct.rollingRate):weekWeightTarget();
   const vsTarget=thisWeekAvg>0?(thisWeekAvg-wTarget):0;
   // 本周剩余天数测算：剩余需补掉=当前本周均值-目标，摊到剩余天数
   // 今天若已称体重，对"剩余可调节天数"已无意义，从剩余天数里剔除
@@ -1942,6 +1943,19 @@ function initWeightCompare(todayStr){
   h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(weekChange<=0?'var(--green)':'var(--red)')+'">'+(weekChange>0?'+':'')+weekChange.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">周均较上周'+weekNote+'</div></div>';
   h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(vsTarget<=0?'var(--green)':'var(--orange)')+'">'+(vsTarget>0?'+':'')+vsTarget.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">较本周目标('+wTarget.toFixed(2)+')</div></div>';
   h+='<div class="kpi-item"><div class="kpi-value" style="color:'+(needDrop>0?'var(--orange)':'var(--green)')+'">≤'+needAvg.toFixed(2)+'<span class="unit"> kg</span></div><div class="kpi-label">'+(needDrop>0?('剩'+daysLeftInWeek+'天需均值低于'):'已低于本周目标')+'</div></div>';
+  h+='</div>';
+  // 滚动总账说明：主口径=周结转(下周目标=阶段速度−累计超跌)；辅口径=平滑参考(摊到阶段终点)，两个数字都给，通盘决策
+  h+='<div style="margin-top:8px;padding:7px 9px;border-radius:8px;background:var(--inset);font-size:11px;line-height:1.75;color:var(--text-2)">';
+  h+='📒 <b>滚动总账</b> · 阶段基准 <b>'+acct.rate.toFixed(3)+'</b> kg/周';
+  if(acct.settled>0){
+    h+=' · 已结算'+acct.settled+'周 累计'+(acct.carry>=0?('<b style="color:var(--green)">超跌+'+acct.carry.toFixed(2)+'kg</b>（下周减负）'):('<b style="color:var(--orange)">欠跌'+acct.carry.toFixed(2)+'kg</b>（下周加压）'));
+    h+='<br>本周滚动目标 <b style="color:var(--blue)">'+acct.rollingRate.toFixed(2)+'</b> kg/周（结转后） · 平滑参考 <b>'+acct.smoothRate.toFixed(2)+'</b> kg/周（摊至阶段终点）';
+  }else{
+    h+=' · 本阶段首个结算周，滚动目标=阶段基准';
+  }
+  if(acct.preview&&Math.abs(acct.preview.drop-acct.rate)>=0.02){
+    h+='<br>🔍 本周进行中：当前周均降幅 <b>'+acct.preview.drop.toFixed(2)+'</b> kg，若保持至周日 → 下周滚动目标 ≈ <b style="color:var(--blue)">'+acct.preview.nextRolling.toFixed(2)+'</b> · 平滑参考 ≈ <b>'+acct.preview.nextSmooth.toFixed(2)+'</b> kg/周';
+  }
   h+='</div>';
   $('weightCompare').innerHTML=h;
 }
@@ -2359,6 +2373,65 @@ function currentRateTarget(){
   }
   return RATE_STAGES[RATE_STAGES.length-1].rate;
 }
+// ===== 滚动总账（周结转制）=====
+// 主口径：周对周结算。从阶段锚点周起，每个完整周(周一~周日)收盘后：
+//   结转额 += (实际周均降幅 − 该周应掉速度)；正=超跌(下周目标减负)，负=欠跌(下周目标加压)
+// 本周滚动目标 = 当前阶段速度 − 累计结转额
+// 辅口径：平滑参考 = 阶段速度 − 结转额/剩余周数（把偏差摊到阶段终点，防单周爆表），仅展示供通盘决策
+function currentStageObj(){
+  const now=getEffNow();
+  for(const s of RATE_STAGES){
+    if(now>=parseD(s.from)&&now<parseD(s.to)) return s;
+  }
+  return RATE_STAGES[RATE_STAGES.length-1];
+}
+function rateForMonday(m){ // 某周(周一起点)所属阶段掉速
+  for(const s of RATE_STAGES){
+    if(m>=parseD(s.from)&&m<parseD(s.to)) return s.rate;
+  }
+  return RATE_STAGES[RATE_STAGES.length-1].rate;
+}
+function weekAvgOf(monday){ // 某周(周一~周日)晨重均值，无记录返回null
+  let sw=0,c=0;
+  for(let d=new Date(monday);d<=addDays(monday,6);d=addDays(d,1)){
+    const rec=WD.find(x=>x.date===dstr(d));
+    if(rec&&rec.weight!=null){sw+=parseFloat(rec.weight)||0;c++;}
+  }
+  return c>0?sw/c:null;
+}
+function rollingAccount(){
+  const now=getEffNow();
+  const rate=currentRateTarget();
+  const stage=currentStageObj();
+  const thisMonday=mondayOfDate(now);
+  const anchorMonday=mondayOfDate(parseD(stage.from)); // 阶段锚点所在周
+  // 从锚点次周起，结算所有已完整结束的周
+  let carry=0,settled=0;
+  let m=addDays(anchorMonday,7);
+  while(m<thisMonday){
+    const avg=weekAvgOf(m),prev=weekAvgOf(addDays(m,-7));
+    if(avg!=null&&prev!=null){
+      carry+=(prev-avg)-rateForMonday(m);
+      settled++;
+    }
+    m=addDays(m,7);
+  }
+  const rollingRate=Math.max(0.1,rate-carry);            // 本周滚动目标掉速
+  const weeksLeft=Math.max(1,(parseD(stage.to)-thisMonday)/604800000);
+  const smoothRate=Math.max(0.1,rate-carry/weeksLeft);   // 平滑参考掉速
+  // 本周进行中预览：若当前周均降幅保持到周日，下周滚动目标与平滑参考
+  let preview=null;
+  if(thisMonday.getTime()!==anchorMonday.getTime()){
+    const curAvg=weekAvgOf(thisMonday),prevAvg=weekAvgOf(addDays(thisMonday,-7));
+    if(curAvg!=null&&prevAvg!=null){
+      const curDrop=prevAvg-curAvg;
+      const nextCarry=carry+(curDrop-rate);
+      const weeksAfter=Math.max(1,(parseD(stage.to)-addDays(thisMonday,7))/604800000);
+      preview={drop:curDrop,nextRolling:Math.max(0.1,rate-nextCarry),nextSmooth:Math.max(0.1,rate-nextCarry/weeksAfter)};
+    }
+  }
+  return {carry,settled,rollingRate,smoothRate,preview,rate};
+}
 // 本周目标体重（兜底）：仅当上周无周均体重数据时使用。
 // 以当前阶段锚点体重为起点，按当前阶段掉速目标(kg/周)推算到本周日应达到的体重。
 // 正常情况下（有上周周均）不调用本函数，直接取「上周周均−掉速」。
@@ -2448,8 +2521,15 @@ function renderWeekTracker(){
         (ok?'✅':'⚠️')+' <b>动态预警</b>：按近4周实测系数（每kg体重'+rates.weightCoef.toLocaleString()+' kcal）执行周目标 '+target.toLocaleString()+'，当前节奏 <b>'+wkLossNow.toFixed(2)+' kg/周</b>，预计'+(isPhase2?'2/1':'12/1')+'达 <b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+predW.toFixed(1)+' kg</b>'+(ok?('（领先目标'+endW+'，余量'+(endW-predW).toFixed(1)+'kg）'):('（距目标'+endW+'差'+(predW-endW).toFixed(1)+'kg，需加大力度或调整预期）'))+
         '</div>';
     }
+    // 滚动总账摘要（与今日tab同源）
+    const acct2=rollingAccount();
+    let rollLine='<br>📒 滚动总账：本周滚动掉速 <b style="color:var(--blue)">'+acct2.rollingRate.toFixed(2)+'kg</b>/周';
+    if(acct2.settled>0)rollLine+='（累计'+(acct2.carry>=0?'超跌+':'欠跌')+acct2.carry.toFixed(2)+'kg，阶段基准'+acct2.rate.toFixed(3)+'）';
+    else rollLine+='（=阶段基准'+acct2.rate.toFixed(3)+'，本阶段首周）';
+    if(acct2.preview&&Math.abs(acct2.preview.drop-acct2.rate)>=0.02)rollLine+=' · 若本周保持，下周≈<b style="color:var(--blue)">'+acct2.preview.nextRolling.toFixed(2)+'</b>';
+    rollLine+=' · 平滑参考 <b>'+acct2.smoothRate.toFixed(2)+'</b>kg/周';
     $('weekRemainHint').innerHTML=
-      '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b> · 周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>（≈'+theoW.toFixed(2)+'kg体重/周·目标掉速）<br>'+
+      '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b> · 周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>（≈'+theoW.toFixed(2)+'kg体重/周·目标掉速）'+rollLine+'<br>'+
       '💡 预计减脂/减重 = 本周累计缺口 ÷ 实测掉秤比率'+rateNote+'；缺口明细见下方「本周缺口 & 周内调节」'+warnHtml;
   }else{
     $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 <b style="color:var(--orange)">'+wd.deficit.toLocaleString()+' kcal</b>，目标 '+target.toLocaleString()+' kcal';
