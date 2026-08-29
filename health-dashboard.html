@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260822a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260829a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -273,6 +273,13 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 
 <!-- TAB 3: 训练 -->
 <div class="tab-content" id="tab-training">
+<div class="card" id="deviceSwitchBanner" style="display:none;background:linear-gradient(135deg,#e3f2fd,#fff8e1);border:1px solid rgba(0,122,255,0.25)">
+<div style="font-size:12px;color:#007AFF;margin-bottom:4px">📱 训练设备口径切换标记 · 2026-08-29</div>
+<div style="font-size:11.5px;line-height:1.7;color:var(--text-2)">
+<b>2026-08-28 及之前</b>的训练记录（dyn/总消耗）来自 <b>Apple Watch 7</b>；<b>2026-08-29 起</b>全部来自 <b>华为 GT 7 Pro</b>。<br>
+两块表的卡路里算法不同，数值口径存在系统性偏差。近4周实测倒推系数（rollingRates）自 8/29 起进入「混合期」，<b>约 9/25 后才恢复纯华为口径</b>。混合期内该系数的波动先当噪声看，不作为调参依据。
+</div>
+</div>
 <div class="card" style="background:linear-gradient(135deg,#e8f5e9,#f5f5f7)">
 <div style="font-size:12px;color:var(--orange);margin-bottom:6px">⚡ 全口径总消耗</div>
 <div class="big-num" id="totalExpBig" style="color:var(--orange)">—<span class="unit"> kcal</span></div>
@@ -2521,6 +2528,13 @@ function renderWeekTracker(){
         (ok?'✅':'⚠️')+' <b>动态预警</b>：按近4周实测系数（每kg体重'+rates.weightCoef.toLocaleString()+' kcal）执行周目标 '+target.toLocaleString()+'，当前节奏 <b>'+wkLossNow.toFixed(2)+' kg/周</b>，预计'+(isPhase2?'2/1':'12/1')+'达 <b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+predW.toFixed(1)+' kg</b>'+(ok?('（领先目标'+endW+'，余量'+(endW-predW).toFixed(1)+'kg）'):('（距目标'+endW+'差'+(predW-endW).toFixed(1)+'kg，需加大力度或调整预期）'))+
         '</div>';
     }
+    // 设备口径混合期提示：8/29起AW7→华为GT7Pro，近4周窗口约至9/25才纯华为
+    const _nowDev=getEffNow();
+    if(_nowDev>=parseD('2026-08-29')&&_nowDev<parseD('2026-09-26')){
+      warnHtml+='<div style="margin-top:4px;padding:6px 8px;border-radius:8px;background:rgba(0,122,255,0.10);font-size:11.5px;line-height:1.6">'+
+        '📱 <b>设备口径混合期</b>：8/29 起训练消耗改由华为 GT 7 Pro 记录（此前为 AW7），近4周窗口混有两表口径，本系数暂含噪声，<b>约 9/26 后恢复纯华为口径再作依据</b>。'+
+        '</div>';
+    }
     // 滚动总账摘要（与今日tab同源）
     const acct2=rollingAccount();
     let rollLine='<br>📒 滚动总账：本周滚动掉速 <b style="color:var(--blue)">'+acct2.rollingRate.toFixed(2)+'kg</b>/周';
@@ -2688,6 +2702,12 @@ function renderWeeklyAdjust(){
 
 
 function filterTraining(){
+  // 设备切换横幅：2026-08-29~2026-10-15 期间显示，之后自动隐藏
+  var _banner=$('deviceSwitchBanner');
+  if(_banner){
+    var _n=getEffNow();
+    _banner.style.display=(_n>=parseD('2026-08-29')&&_n<parseD('2026-10-16'))?'':'none';
+  }
   const s=$('trainStart').value,e=$('trainEnd').value;
   // TD already contains both training.json and localStorage data (merged by mergeTrainingLS)
   var combined=TD.filter(function(t){return t.date>=s&&t.date<=e;});
@@ -2717,7 +2737,18 @@ function filterTraining(){
   
   // Table
   const tbody=document.querySelector('#trainTable tbody');
-  tbody.innerHTML=combined.map(function(t){return '<tr><td>'+t.date.slice(5)+'</td><td>'+t.type+'</td><td>'+t.dur+'min</td><td>'+t.dyn+'kcal</td><td>'+t.total+'kcal</td></tr>';}).join('');
+  var switchSeen=false;
+  tbody.innerHTML=combined.map(function(t){
+    var row='';
+    var isHW=!switchSeen&&t.date>='2026-08-29';
+    if(isHW){
+      switchSeen=true;
+      row+='<tr><td colspan="5" style="background:rgba(0,122,255,0.08);color:#007AFF;font-size:11px;text-align:center;padding:5px">📱 2026-08-29 起：华为 GT 7 Pro 口径（此前为 Apple Watch 7）</td></tr>';
+    }
+    var dateCell=t.date.slice(5)+(t.date>='2026-08-29'?' <span style="color:#007AFF;font-size:10px">📱</span>':'');
+    row+='<tr><td>'+dateCell+'</td><td>'+t.type+'</td><td>'+t.dur+'min</td><td>'+t.dyn+'kcal</td><td>'+t.total+'kcal</td></tr>';
+    return row;
+  }).join('');
 
   // 每日训练消耗柱状图
   const barEl=$('trainBarChart');
