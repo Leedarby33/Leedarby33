@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260902a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260904a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1955,13 +1955,15 @@ function initWeightCompare(todayStr){
   h+='<div style="margin-top:8px;padding:7px 9px;border-radius:8px;background:var(--inset);font-size:11px;line-height:1.75;color:var(--text-2)">';
   h+='📒 <b>滚动总账</b> · 阶段基准 <b>'+acct.rate.toFixed(3)+'</b> kg/周';
   if(acct.settled>0){
-    h+=' · 已结算'+acct.settled+'周 累计'+(acct.carry>=0?('<b style="color:var(--green)">超跌+'+acct.carry.toFixed(2)+'kg</b>（下周减负）'):('<b style="color:var(--orange)">欠跌'+acct.carry.toFixed(2)+'kg</b>（下周加压）'));
-    h+='<br>本周滚动目标 <b style="color:var(--blue)">'+acct.rollingRate.toFixed(2)+'</b> kg/周（结转后） · 平滑参考 <b>'+acct.smoothRate.toFixed(2)+'</b> kg/周（摊至阶段终点）';
+    h+=' · 已结算'+acct.settled+'周，累计'+(acct.carry>=0?('<b style="color:var(--green)">超跌+'+acct.carry.toFixed(2)+'kg</b>'):('<b style="color:var(--orange)">欠跌'+acct.carry.toFixed(2)+'kg</b>'))+'（已折入下方本周目标）';
+    h+='<br>本周滚动目标 <b style="color:var(--blue)">'+acct.rollingRate.toFixed(2)+'</b> = '+acct.rate.toFixed(3)+' − 结转'+(acct.carry>=0?'+':'')+acct.carry.toFixed(2)+' · 平滑参考 <b>'+acct.smoothRate.toFixed(2)+'</b>（把结转平摊到阶段剩余周数，每周还一点）';
   }else{
     h+=' · 本阶段首个结算周，滚动目标=阶段基准';
   }
-  if(acct.preview&&Math.abs(acct.preview.drop-acct.rate)>=0.02){
-    h+='<br>🔍 本周进行中：当前周均降幅 <b>'+acct.preview.drop.toFixed(2)+'</b> kg，若保持至周日 → 下周滚动目标 ≈ <b style="color:var(--blue)">'+acct.preview.nextRolling.toFixed(2)+'</b> · 平滑参考 ≈ <b>'+acct.preview.nextSmooth.toFixed(2)+'</b> kg/周';
+  if(acct.preview){
+    const pv=acct.preview;
+    const diff=pv.drop-acct.rollingRate;
+    h+='<br>🔍 本周至今降幅 <b>'+pv.drop.toFixed(2)+'</b> vs 本周目标 <b>'+acct.rollingRate.toFixed(2)+'</b>（'+(diff>=0?'超出 ':'还差 ')+Math.abs(diff).toFixed(2)+'）→ 若保持至周日，下周滚动目标 ≈ <b style="color:var(--blue)">'+pv.nextRolling.toFixed(2)+'</b> · 平滑 ≈ <b>'+pv.nextSmooth.toFixed(2)+'</b>';
   }
   h+='</div>';
   $('weightCompare').innerHTML=h;
@@ -2538,7 +2540,7 @@ function renderWeekTracker(){
     // 滚动总账摘要（与今日tab同源）
     const acct2=rollingAccount();
     let rollLine='<br>📒 滚动总账：本周滚动掉速 <b style="color:var(--blue)">'+acct2.rollingRate.toFixed(2)+'kg</b>/周';
-    if(acct2.settled>0)rollLine+='（累计'+(acct2.carry>=0?'超跌+':'欠跌')+acct2.carry.toFixed(2)+'kg，阶段基准'+acct2.rate.toFixed(3)+'）';
+    if(acct2.settled>0)rollLine+='（= 基准'+acct2.rate.toFixed(3)+' − 结转'+(acct2.carry>=0?'+':'')+acct2.carry.toFixed(2)+'）';
     else rollLine+='（=阶段基准'+acct2.rate.toFixed(3)+'，本阶段首周）';
     if(acct2.preview&&Math.abs(acct2.preview.drop-acct2.rate)>=0.02)rollLine+=' · 若本周保持，下周≈<b style="color:var(--blue)">'+acct2.preview.nextRolling.toFixed(2)+'</b>';
     rollLine+=' · 平滑参考 <b>'+acct2.smoothRate.toFixed(2)+'</b>kg/周';
