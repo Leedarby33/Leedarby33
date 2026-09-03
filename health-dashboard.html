@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260904a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260904b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1956,7 +1956,7 @@ function initWeightCompare(todayStr){
   h+='📒 <b>滚动总账</b> · 阶段基准 <b>'+acct.rate.toFixed(3)+'</b> kg/周';
   if(acct.settled>0){
     h+=' · 已结算'+acct.settled+'周，累计'+(acct.carry>=0?('<b style="color:var(--green)">超跌+'+acct.carry.toFixed(2)+'kg</b>'):('<b style="color:var(--orange)">欠跌'+acct.carry.toFixed(2)+'kg</b>'))+'（已折入下方本周目标）';
-    h+='<br>本周滚动目标 <b style="color:var(--blue)">'+acct.rollingRate.toFixed(2)+'</b> = '+acct.rate.toFixed(3)+' − 结转'+(acct.carry>=0?'+':'')+acct.carry.toFixed(2)+' · 平滑参考 <b>'+acct.smoothRate.toFixed(2)+'</b>（把结转平摊到阶段剩余周数，每周还一点）';
+    h+='<br>本周滚动目标 <b style="color:var(--blue)">'+acct.rollingRate.toFixed(2)+'</b> = '+acct.rate.toFixed(3)+' − 结转'+(acct.carry>=0?'+':'')+acct.carry.toFixed(2)+' · 平滑参考 <b>'+acct.smoothRate.toFixed(2)+'</b>（结转平摊到本阶段结束 '+acct.stageEnd+'，剩'+acct.weeksLeft+'周；阶段切换后结转清零，领先体现在绝对体重上）';
   }else{
     h+=' · 本阶段首个结算周，滚动目标=阶段基准';
   }
@@ -2389,16 +2389,18 @@ function currentRateTarget(){
 // 辅口径：平滑参考 = 阶段速度 − 结转额/剩余周数（把偏差摊到阶段终点，防单周爆表），仅展示供通盘决策
 function currentStageObj(){
   const now=getEffNow();
+  let cur=RATE_STAGES[0];
   for(const s of RATE_STAGES){
-    if(now>=parseD(s.from)&&now<parseD(s.to)) return s;
+    if(now>=parseD(s.from)) cur=s;   // 取最后一个 from<=now 的段；阶段间隙(如9/15~9/17)归前一段，避免fallthrough到最后阶段
   }
-  return RATE_STAGES[RATE_STAGES.length-1];
+  return cur;
 }
 function rateForMonday(m){ // 某周(周一起点)所属阶段掉速
+  let cur=RATE_STAGES[0];
   for(const s of RATE_STAGES){
-    if(m>=parseD(s.from)&&m<parseD(s.to)) return s.rate;
+    if(m>=parseD(s.from)) cur=s;
   }
-  return RATE_STAGES[RATE_STAGES.length-1].rate;
+  return cur.rate;
 }
 function weekAvgOf(monday){ // 某周(周一~周日)晨重均值，无记录返回null
   let sw=0,c=0;
@@ -2428,6 +2430,7 @@ function rollingAccount(){
   const rollingRate=Math.max(0.1,rate-carry);            // 本周滚动目标掉速
   const weeksLeft=Math.max(1,(parseD(stage.to)-thisMonday)/604800000);
   const smoothRate=Math.max(0.1,rate-carry/weeksLeft);   // 平滑参考掉速
+  const stageEnd=stage.to.slice(5).replace('-','/');      // 阶段结束日(M/D)供展示
   // 本周进行中预览：若当前周均降幅保持到周日，下周滚动目标与平滑参考
   let preview=null;
   if(thisMonday.getTime()!==anchorMonday.getTime()){
@@ -2439,7 +2442,7 @@ function rollingAccount(){
       preview={drop:curDrop,nextRolling:Math.max(0.1,rate-nextCarry),nextSmooth:Math.max(0.1,rate-nextCarry/weeksAfter)};
     }
   }
-  return {carry,settled,rollingRate,smoothRate,preview,rate};
+  return {carry,settled,rollingRate,smoothRate,preview,rate,stageEnd,weeksLeft:Math.ceil(weeksLeft)};
 }
 // 本周目标体重（兜底）：仅当上周无周均体重数据时使用。
 // 以当前阶段锚点体重为起点，按当前阶段掉速目标(kg/周)推算到本周日应达到的体重。
