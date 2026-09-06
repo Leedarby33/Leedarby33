@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260904c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260907a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1968,6 +1968,8 @@ function initWeightCompare(todayStr){
     const pv=acct.preview;
     const diff=pv.drop-acct.rollingRate;
     h+='<br>🔍 本周至今降幅 <b>'+pv.drop.toFixed(2)+'</b> vs 本周目标 <b>'+acct.rollingRate.toFixed(2)+'</b>（'+(diff>=0?'超出 ':'还差 ')+Math.abs(diff).toFixed(2)+'）→ 若保持至周日收盘，下周目标 ≈ <b style="color:var(--blue)">'+pv.nextRolling.toFixed(2)+'</b>';
+  }else if(acct.settled>0&&thisWeekData.length>0&&thisWeekData.length<3){
+    h+='<br>🔍 下周预览：本周称重仅'+thisWeekData.length+'次，单日晨重噪声会被外推放大，满3次后再看（预览从周三起有效）';
   }
   h+='<br><span style="color:var(--text-3)">机制：超跌→下周全额减负 · 欠跌→分'+AMORT_WEEKS+'周摊还（防平台期单周爆表）· 按本周目标达标=返还用完 · 按基准速度掉=返还保留 · 结算按阶段基准记账 · 阶段切换结转清零（领先/落后体现在绝对体重）</span>';
   h+='</div>';
@@ -2439,10 +2441,16 @@ function rollingAccount(){
     :Math.max(0.1,rate-carry/AMORT_WEEKS);
   const stageEnd=stage.to.slice(5).replace('-','/');
   // 本周进行中预览：若当前周均降幅保持到周日，按结算公式(阶段基准)推下周目标，同一不对称公式
+  // 门槛：本周称重≥3次才生成预览——周一/周二单日晨重噪声会被外推放大成整周趋势(如周一略涨→下周目标幻觉式变严)
   let preview=null;
   if(thisMonday.getTime()!==anchorMonday.getTime()){
+    let cnt=0;
+    for(let d=new Date(thisMonday);d<=addDays(thisMonday,6);d=addDays(d,1)){
+      const rec=WD.find(x=>x.date===dstr(d));
+      if(rec&&rec.weight!=null)cnt++;
+    }
     const curAvg=weekAvgOf(thisMonday),prevAvg=weekAvgOf(addDays(thisMonday,-7));
-    if(curAvg!=null&&prevAvg!=null){
+    if(curAvg!=null&&prevAvg!=null&&cnt>=3){
       const curDrop=prevAvg-curAvg;
       const nextCarry=carry+(curDrop-rate);
       const nextRolling=nextCarry>=0
