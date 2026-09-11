@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260907b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260911a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2565,11 +2565,13 @@ function renderWeekTracker(){
         :'（= 基准'+acct2.rate.toFixed(3)+' + '+(Math.abs(acct2.carry)/AMORT_WEEKS).toFixed(3)+'·欠跌'+Math.abs(acct2.carry).toFixed(2)+'分'+AMORT_WEEKS+'周摊还）';
     }else rollLine+='（=阶段基准'+acct2.rate.toFixed(3)+'，本阶段首周）';
     if(acct2.preview&&Math.abs(acct2.preview.nextRolling-acct2.rollingRate)>=0.02)rollLine+=' · 若保持收盘，下周≈<b style="color:var(--blue)">'+acct2.preview.nextRolling.toFixed(2)+'</b>'+(acct2.preview.cnt<3?'<span style="color:var(--text-3)">(仅'+acct2.preview.cnt+'次称重)</span>':'');
+    const mgLine=muscleGuardHtml(monday); // 肌肉护栏：状态行+最近8周环比趋势条
     $('weekRemainHint').innerHTML=
       '🎯 当前阶段：<b style="color:var(--orange)">'+phase.name+'</b> · 周目标缺口 <b style="color:var(--orange)">'+target.toLocaleString()+' kcal</b>（≈'+theoW.toFixed(2)+'kg体重/周·目标掉速）'+rollLine+'<br>'+
+      mgLine+'<br>'+
       '💡 预计减脂/减重 = 本周累计缺口 ÷ 实测掉秤比率'+rateNote+'；缺口明细见下方「本周缺口 & 周内调节」'+warnHtml;
   }else{
-    $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 <b style="color:var(--orange)">'+wd.deficit.toLocaleString()+' kcal</b>，目标 '+target.toLocaleString()+' kcal';
+    $('weekRemainHint').innerHTML='📅 历史周回顾：实际缺口 <b style="color:var(--orange)">'+wd.deficit.toLocaleString()+' kcal</b>，目标 '+target.toLocaleString()+' kcal'+muscleGuardHtml(monday);
   }
 }
 function shiftWeek(d){
@@ -2621,6 +2623,94 @@ function weeklyLoss(monday){
     fLoss=(prev.wAvg*prevBf/100)-(cur.wAvg*curBf/100);
   }
   return {fLoss, wLoss, curWAvg:cur.wAvg, prevWAvg:prev.wAvg};
+}
+
+// ===== 肌肉护栏（保肌信号监控）=====
+// 口径：肌肉量周均（周一制，仅统计有muscle记录的天）；环比 = 上周周均 − 本周周均（正=掉肌肉）
+// 阈值：单周降幅≥0.5kg 黄色预警；连续两周≥0.5 或 最近两周累计≥1.0 红色告警（收手信号三件套之一）
+// 规则：视角周称量<3次不判定（BIA噪声大，历史单日最大波动0.60）；环比回升(≥0)不报警
+const MUSCLE_WARN=0.5; // 单周肌肉周均降幅告警阈值(kg)
+function muscleWeekStat(monday){ // 某周(周一~周日)肌肉量周均+称量次数，无记录返回null
+  let sm=0,c=0;
+  for(let d=new Date(monday);d<=addDays(monday,6);d=addDays(d,1)){
+    const rec=WD.find(x=>x.date===dstr(d));
+    if(rec&&rec.muscle!=null){sm+=parseFloat(rec.muscle)||0;c++;}
+  }
+  return c>0?{mAvg:sm/c,cnt:c}:null;
+}
+function muscleGuard(asOf){ // asOf:视角周(周一起点)，缺省=本周；返回最近8周序列+两级状态
+  const thisMonday=asOf||mondayOfDate(getEffNow());
+  const N=8,weeks=[];
+  for(let i=N-1;i>=0;i--){
+    const m=addDays(thisMonday,-7*i),st=muscleWeekStat(m);
+    weeks.push(st?{monday:m,mAvg:st.mAvg,cnt:st.cnt,drop:null,isCur:i===0}
+                 :{monday:m,mAvg:null,cnt:0,drop:null,isCur:i===0});
+  }
+  for(let i=1;i<N;i++){ // 环比：与上一周周均相比，两周均有数据才算
+    if(weeks[i].mAvg!=null&&weeks[i-1].mAvg!=null)weeks[i].drop=+(weeks[i-1].mAvg-weeks[i].mAvg).toFixed(2);
+  }
+  const cur=weeks[N-1];
+  let status='insufficient',msg='';
+  if(cur.mAvg==null){msg='本周无肌肉量记录，无法监控';}
+  else if(cur.cnt<3){msg='本周仅'+cur.cnt+'次称量(<3)，BIA噪声大，暂不判定';}
+  else if(cur.drop==null){msg='上周无周均数据，无法环比';}
+  else if(cur.drop<=0){status='ok';msg='环比回升+'+Math.abs(cur.drop).toFixed(2)+'kg，保肌信号正常';}
+  else if(cur.drop<MUSCLE_WARN){status='ok';msg='环比−'+cur.drop.toFixed(2)+'kg，正常区间(<0.5)';}
+  else{
+    let prevDrop=null;
+    for(let i=N-2;i>=0;i--){if(weeks[i].drop!=null){prevDrop=weeks[i].drop;break;}}
+    const twoSum=prevDrop!=null?+(cur.drop+prevDrop).toFixed(2):null;
+    if((prevDrop!=null&&prevDrop>=MUSCLE_WARN)||(twoSum!=null&&twoSum>=1.0)){
+      status='alarm';
+      msg='连续/累计跌破阈值'+(twoSum!=null?'（两周合计−'+twoSum.toFixed(2)+'kg）':'')+'，收手信号三件套之一：优先排查蛋白质摄入与训练容量';
+    }else{
+      status='warn';msg='单周跌破0.5阈值，下周重点关注（蛋白质/训练容量/睡眠）';
+    }
+  }
+  return {weeks,status,msg,cur};
+}
+// 肌肉护栏渲染（形式B：状态行 + 最近8周周均环比迷你趋势条）
+function muscleGuardHtml(monday){
+  const g=muscleGuard(monday),w=g.weeks;
+  const SCALE=0.8,HALF=15; // 柱高映射：环比0.8kg→15px封顶
+  const stMap={ok:['✅','var(--green)'],warn:['⚠️','var(--orange)'],alarm:['🚨','var(--red)'],insufficient:['⏳','var(--text-3)']};
+  const st=stMap[g.status];
+  let line='<br>🛡️ 肌肉护栏（保肌信号）：';
+  if(g.cur.mAvg!=null){
+    line+='本周肌肉周均 <b>'+g.cur.mAvg.toFixed(2)+'kg</b>（'+g.cur.cnt+'次称量）';
+    if(g.cur.drop!=null)line+=' · 环比 '+(g.cur.drop<0?'+':'−')+Math.abs(g.cur.drop).toFixed(2)+'kg'; // drop正=掉肌，展示取反(涨+掉−)
+    line+=' → <b style="color:'+st[1]+'">'+st[0]+' '+g.msg+'</b>';
+  }else{
+    line+='<b style="color:'+st[1]+'">'+st[0]+' '+g.msg+'</b>';
+  }
+  let bars='',labels='';
+  w.forEach(function(wk){
+    const lab=(wk.monday.getMonth()+1)+'/'+wk.monday.getDate();
+    const chg=wk.drop!=null?-wk.drop:null; // 肌肉变化量：正=涨，负=掉（drop口径相反）
+    const tip=lab+'周：'+(wk.mAvg!=null?'肌肉周均'+wk.mAvg.toFixed(2)+'kg（'+wk.cnt+'次）':'无肌肉记录')
+      +(chg!=null?' · 环比'+(chg>0?'+':'−')+Math.abs(chg).toFixed(2)+'kg':' · 无环比');
+    if(chg==null){
+      bars+='<div title="'+tip+'" style="flex:1;height:34px;position:relative">'
+        +'<div style="position:absolute;top:16px;left:15%;right:15%;height:2px;background:var(--text-3);opacity:.3;border-radius:1px"></div></div>';
+    }else{
+      const h=Math.max(2,Math.min(Math.abs(chg)/SCALE,1)*HALF);
+      const col=chg>=0?'var(--green)':(Math.abs(chg)>=MUSCLE_WARN?'var(--red)':(Math.abs(chg)>=0.2?'var(--orange)':'rgba(0,122,255,0.55)'));
+      const pos=chg>=0?'bottom:17px':'top:17px';
+      bars+='<div title="'+tip+'" style="flex:1;height:34px;position:relative">'
+        +'<div style="position:absolute;left:15%;right:15%;'+pos+';height:'+h.toFixed(1)+'px;background:'+col+';border-radius:2px'+(wk.cnt<3?';opacity:.4':'')+'"></div></div>';
+    }
+    labels+='<div style="flex:1;text-align:center;font-size:8.5px;color:'+(wk.isCur?'var(--orange)':'var(--text-3)')
+      +';font-weight:'+(wk.isCur?'700':'400')+';white-space:nowrap;overflow:hidden">'+lab+'</div>';
+  });
+  const chart='<div style="margin-top:5px;padding:5px 6px 4px;border-radius:8px;background:rgba(0,122,255,0.06)">'
+    +'<div style="position:relative;display:flex;gap:2px">'+bars
+    +'<div style="position:absolute;left:0;right:0;top:16px;height:1px;background:var(--text-3);opacity:.35"></div>'
+    +'<div style="position:absolute;left:0;right:0;top:'+(17+MUSCLE_WARN/SCALE*HALF).toFixed(1)+'px;border-top:1px dashed var(--red);opacity:.45"></div>'
+    +'</div>'
+    +'<div style="display:flex;gap:2px;margin-top:2px">'+labels+'</div>'
+    +'<div style="margin-top:2px;font-size:9px;color:var(--text-3)">最近8周肌肉周均环比（0线居中 · 红虚线=−0.5告警线 · 绿=回升 · 橙=当前周 · 半透明=称量<3次）</div>'
+    +'</div>';
+  return line+chart;
 }
 
 // 周内调节器：本周每日缺口明细 + 剩余调节
