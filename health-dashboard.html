@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260913d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260914a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2430,9 +2430,12 @@ function rollingAccount(){
   const stage=currentStageObj();
   const thisMonday=mondayOfDate(now);
   const anchorMonday=mondayOfDate(parseD(stage.from)); // 阶段锚点所在周
-  // 从锚点次周起，结算所有已完整结束的周（结算基准=该周所属阶段基准）
+  const firstMonday=mondayOfDate(parseD(RATE_STAGES[0].from)); // 总账起点：首个阶段锚点所在周
+  // 跨阶段连续结算（2026-09-14修订）：从首个锚点次周起结算所有已完整结束的周，
+  // 各周按其所属阶段基准rateForMonday；阶段切换不清零结转额
+  // （原实现只结算当前阶段内，切换阶段时上一阶段最后一周的欠跌/超跌被吞掉）
   let carry=0,settled=0;
-  let m=addDays(anchorMonday,7);
+  let m=addDays(firstMonday,7);
   while(m<thisMonday){
     const avg=weekAvgOf(m),prev=weekAvgOf(addDays(m,-7));
     if(avg!=null&&prev!=null){
