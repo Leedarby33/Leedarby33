@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260913b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260913c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -385,14 +385,9 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 <div id="bodyRecordDetail" style="display:none;margin-top:10px;background:var(--inset);border-radius:10px;padding:12px"></div>
 <div style="font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.7">📌 <b>体重/体脂/腰围/静息心率</b>四个独立走势图，各自独立纵轴（纵轴均延伸至目标值可见）；横轴统一延伸至目标终点2027/2/1。色块=各指标的区间等级（大字标注），红色虚线=目标值，橙色虚线+终点圆点=当前趋势外推（终点标注能否达标）。体脂对应减脂部位、腰围对应健康等级、心率对应训练水平。心率每周在「今日-记录中心」录入。</div>
 </div>
-<!-- 围度概览：肌肉指数 -->
+<!-- 围度走势：唯一围度板块（徽章状态+实测+计划走廊+硬底） -->
 <div class="card">
-<div class="card-title">📐 围度概览 · 肌肉指数</div>
-<div id="bodyPartDistance"></div>
-</div>
-<!-- 围度走势走廊 -->
-<div class="card">
-<div class="card-title">📉 围度走势 · 计划走廊</div>
+<div class="card-title">📐 围度走势 · 计划走廊</div>
 <div id="dimTrendCorridor"></div>
 </div>
 <!-- 卡片4: 体检风险 -->
@@ -719,7 +714,6 @@ function saveDimRecord(){
   document.getElementById('dimFeedback').innerHTML='<span style="color:var(--green)">✓ 围度已记录 '+todayStr+'</span>';
   ['dimWaist','dimHip','dimChest','dimThigh','dimArmFlex','dimArmRelax','dimNote'].forEach(function(id){document.getElementById(id).value='';});
   if(typeof filterBody==='function')filterBody();
-  if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
 }
 
 // ===== 体成分录入 =====
@@ -3163,7 +3157,6 @@ function filterBody(){
   
   // 心率图已并入 renderBodyTrendChart
   
-  renderBodyPartDistance();
   try{renderDimTrendCorridor();}catch(err){console.warn('围度走势走廊失败:',err);}
   
   // Reference comparison
@@ -3357,69 +3350,7 @@ function dimPlanAt(corr,dateStr,mode,key){ // 计划值插值：mode='girth'|'in
   }
   return val(pts[pts.length-1]);
 }
-function renderBodyPartDistance(){
-  const corr=dimCorridor();
-  const dimRecs=DIM.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const latestDim=dimRecs.length?dimRecs[dimRecs.length-1]:null;
-  const prevDim=dimRecs.length>1?dimRecs[dimRecs.length-2]:null;
-  if(!latestDim){$('bodyPartDistance').innerHTML='<div style="color:var(--text-3);text-align:center;padding:20px">暂无围度记录</div>';return;}
-  const A=DIM_CORRIDOR;
-  let h='<div class="metric-grid">';
-  A.parts.forEach(p=>{
-    const cur=latestDim[p.key];
-    if(cur==null)return;
-    const prev=prevDim?prevDim[p.key]:null;
-    const dCur=prev!=null?cur-prev:null;
-    const bf=dimBfAt(latestDim.date);
-    const idx=bf!=null?cur*(1-bf/100):null;
-    let dIdx=null;
-    if(prev!=null&&bf!=null){
-      const pbf=dimBfAt(prevDim.date);
-      if(pbf!=null)dIdx=idx-prev*(1-pbf/100);
-    }
-    let badge='—',badgeCls='badge-orange';
-    if(corr){
-      if(p.side==='muscle'&&idx!=null){
-        const plan=dimPlanAt(corr,latestDim.date,'index',p.key);
-        const fl=corr.floor[p.key];
-        if(plan!=null&&idx>=plan){badge='肌肉保持';badgeCls='badge-green';}
-        else if(fl!=null&&idx>=fl){badge='观察';badgeCls='badge-orange';}
-        else{badge='流失警示';badgeCls='badge-red';}
-      }else{
-        const plan=dimPlanAt(corr,latestDim.date,'girth',p.key);
-        if(plan!=null&&cur<=plan){badge='快于计划';badgeCls='badge-green';}
-        else if(plan!=null&&cur<=plan+3){badge='慢于计划';badgeCls='badge-orange';}
-        else if(plan!=null){badge='明显落后';badgeCls='badge-red';}
-      }
-    }
-    h+='<div class="metric-card">';
-    h+='<div class="metric-card-head"><div class="metric-card-name">'+p.icon+' '+p.name+'</div><span class="badge '+badgeCls+'">'+badge+'</span></div>';
-    h+='<div><div class="metric-card-value">'+cur+'<span class="unit">cm</span></div>';
-    let ref='';
-    if(idx!=null){
-      ref+='肌肉指数 <b style="color:var(--text)">'+idx.toFixed(1)+'</b>';
-      if(dIdx!=null){const up=dIdx>=0;ref+=' <span style="color:'+(up?'var(--green)':'var(--orange)')+'">'+(up?'↑':'↓')+Math.abs(dIdx).toFixed(1)+'</span>';}
-    }
-    if(p.tgt!=null)ref+=(ref?' · ':'')+'距目标'+p.tgt+'还有 <b style="color:var(--blue)">'+(cur-p.tgt).toFixed(1)+'</b>';
-    h+='<div class="metric-card-ref">'+(ref||'—')+'</div></div>';
-    let tr='';
-    if(dCur!=null)tr+='较上次 '+(dCur<=0?'↓':'↑')+Math.abs(dCur).toFixed(1)+'cm';
-    if(corr){
-      if(p.side==='muscle'&&corr.planEndIdx[p.key]!=null){
-        tr+=(tr?' · ':'')+'12/1指数计划 '+corr.planEndIdx[p.key].toFixed(1)+'（硬底'+corr.floor[p.key].toFixed(1)+'）';
-      }else{
-        const endG=dimPlanAt(corr,A.end,'girth',p.key);
-        if(endG!=null)tr+=(tr?' · ':'')+'12/1围度计划 '+endG.toFixed(1)+'cm';
-      }
-    }
-    h+='<div class="metric-card-trend">'+(tr||'—')+'</div>';
-    h+='</div>';
-  });
-  h+='</div>';
-  h+='<div class="formula-note">💡 肌肉指数=围度×(1-当天体脂率)：围度里"非脂肪部分"的近似。腰/臀（脂肪侧）看围度掉速，快=好；胸/臂/腿（肌肉侧）看指数别跌破计划线，跌破硬底=肌肉流失警示（查蛋白/睡眠/缺口）。</div>';
-  $('bodyPartDistance').innerHTML=h;
-}
-// ===== 围度走势走廊（每部位：实测折线+计划曲线+硬底护栏） =====
+// ===== 围度走势走廊（唯一围度板块：状态徽章+实测折线+计划曲线+硬底护栏） =====
 function renderDimTrendCorridor(){
   const el=$('dimTrendCorridor');
   if(!el)return;
@@ -3440,86 +3371,186 @@ function renderDimTrendCorridor(){
     });
     actual[p.key]={g:g,ix:ix};
   });
+  function badgeOf(key,side){
+    const lastDim=dimRecs[dimRecs.length-1];
+    const cur=lastDim?lastDim[key]:null;
+    if(cur==null)return {t:'—',c:'badge-orange'};
+    if(side==='muscle'){
+      const bf=dimBfAt(lastDim.date);
+      const idx=bf!=null?cur*(1-bf/100):null;
+      if(idx==null)return {t:'—',c:'badge-orange'};
+      const plan=dimPlanAt(corr,lastDim.date,'index',key);
+      const fl=corr.floor[key];
+      if(plan!=null&&idx>=plan)return {t:'肌肉保持',c:'badge-green'};
+      if(fl!=null&&idx>=fl)return {t:'观察',c:'badge-orange'};
+      return {t:'流失警示',c:'badge-red'};
+    }
+    const plan=dimPlanAt(corr,lastDim.date,'girth',key);
+    if(plan!=null&&cur<=plan)return {t:'快于计划',c:'badge-green'};
+    if(plan!=null&&cur<=plan+3)return {t:'慢于计划',c:'badge-orange'};
+    if(plan!=null)return {t:'明显落后',c:'badge-red'};
+    return {t:'—',c:'badge-orange'};
+  }
   const charts=[
     {key:'waist',mode:'girth',icon:'📏',name:'腰围',unit:'cm',goal:78},
-    {key:'hip',mode:'index',icon:'🍑',name:'臀肌指数',unit:''},
-    {key:'chest',mode:'girth',icon:'🫁',name:'胸围',unit:'cm'},
-    {key:'chest',mode:'index',icon:'🫁',name:'胸肌指数',unit:''},
-    {key:'armFlex',mode:'index',icon:'💪',name:'上臂肌指数',unit:''},
-    {key:'thigh',mode:'index',icon:'🦵',name:'大腿肌指数',unit:''}
+    {key:'hip',mode:'index',icon:'🍑',name:'臀围 · 肌肉指数'},
+    {key:'chest',mode:'both',icon:'🫁',name:'胸围 · 胸肌指数'},
+    {key:'armFlex',mode:'index',icon:'💪',name:'上臂 · 肌肉指数'},
+    {key:'thigh',mode:'index',icon:'🦵',name:'大腿 · 肌肉指数'}
   ];
   const W=520,H=175,pad={l:42,r:56,t:14,b:22};
   const cw=W-pad.l-pad.r,chh=H-pad.t-pad.b;
   const X=d=>pad.l+cw*(dayN(d)-t0)/(t1-t0);
-  let html='';
-  charts.forEach(c=>{
-    const act=c.mode==='girth'?actual[c.key].g:actual[c.key].ix;
-    const plan=corr.pts.map(p=>({date:p.date,v:p.C[c.key]==null?null:(c.mode==='girth'?p.C[c.key]:p.C[c.key]*(1-p.bf))})).filter(p=>p.v!=null);
-    const floorV=c.mode==='index'?corr.floor[c.key]:null;
-    let vals=act.map(p=>p.v).concat(plan.map(p=>p.v));
-    if(floorV!=null)vals.push(floorV);
-    if(c.goal!=null)vals.push(c.goal);
-    if(!vals.length)return;
-    let mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
+  const planPts=key=>corr.pts.map(p=>({date:p.date,C:p.C[key],bf:p.bf})).filter(p=>p.C!=null);
+  function niceRange(vals){
+    const mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals);
     const marg=(mx-mn)*0.06||1;
-    mn-=marg;mx+=marg;
-    const Y=v=>pad.t+chh*(1-(v-mn)/(mx-mn));
+    return [mn-marg,mx+marg];
+  }
+  function niceStep(mn,mx){
     const raw=(mx-mn)/5;
     const pow=Math.pow(10,Math.floor(Math.log10(raw>0?raw:1)));
     let step=10*pow;
-    [1,2,2.5,5,10].forEach(m=>{if(m*pow>=raw&&step===10*pow&&m<10)step=m*pow;});
+    [1,2,2.5,5].forEach(m=>{if(m*pow>=raw&&step===10*pow)step=m*pow;});
     if(step===10*pow&&raw<=5*pow)step=5*pow;
+    return step;
+  }
+  const fmtV=(v,step)=>step<1?v.toFixed(1):Math.round(v);
+  let html='';
+  charts.forEach(c=>{
+    const side=(A.parts.find(p=>p.key===c.key)||{}).side;
+    const bdg=badgeOf(c.key,side);
+    const gAct=actual[c.key].g,iAct=actual[c.key].ix;
+    const gPlan=planPts(c.key).map(p=>({date:p.date,v:p.C}));
+    const iPlan=planPts(c.key).map(p=>({date:p.date,v:p.C*(1-p.bf)}));
+    const floorV=side==='muscle'?corr.floor[c.key]:null;
+    const endIdx=corr.planEndIdx[c.key];
+    const endG=dimPlanAt(corr,A.end,'girth',c.key);
+    if(!gAct.length&&!gPlan.length)return;
+    const gLast=gAct.length?gAct[gAct.length-1]:null;
+    const iLast=iAct.length?iAct[iAct.length-1]:null;
+    const gPrev=gAct.length>1?gAct[gAct.length-2]:null;
+    const iPrev=iAct.length>1?iAct[iAct.length-2]:null;
+    const dTxt=(v,pv,dec)=>{if(v==null)return '—';let s=v.toFixed(dec);if(pv!=null&&Math.abs(v-pv)>=0.05)s+=(v-pv<0?' ↓':' ↑')+Math.abs(v-pv).toFixed(dec);return s;};
+    let headR='';
+    if(c.mode==='both'){
+      headR='围 '+dTxt(gLast&&gLast.v,gPrev&&gPrev.v,1)+' · 指 '+dTxt(iLast&&iLast.v,iPrev&&iPrev.v,1)+' · 12/1计划 '+(endG!=null?endG.toFixed(1):'—')+' / '+(endIdx!=null?endIdx.toFixed(1):'—');
+    }else if(c.mode==='girth'){
+      headR='当前 '+dTxt(gLast&&gLast.v,gPrev&&gPrev.v,1)+'cm · 12/1计划 '+(endG!=null?endG.toFixed(1):'—')+(c.goal!=null?' · 目标 '+c.goal:'');
+    }else{
+      headR='当前 '+dTxt(iLast&&iLast.v,iPrev&&iPrev.v,1)+' · 12/1计划 '+(endIdx!=null?endIdx.toFixed(1):'—')+(floorV!=null?' · 硬底 '+floorV.toFixed(1):'');
+    }
+    html+='<div style="margin-bottom:14px">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px">';
+    html+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div style="font-size:13px;font-weight:700;color:var(--text)">'+c.icon+' '+c.name+'</div><span class="badge '+bdg.c+'" style="font-size:10px">'+bdg.t+'</span></div>';
+    html+='<div style="font-size:10.5px;color:var(--text-2);font-weight:600">'+headR+'</div>';
+    html+='</div>';
+    if(c.mode==='both')html+='<div style="font-size:10px;color:var(--text-3);margin:0 0 3px">黑/蓝=胸围（左轴）· 灰/绿=肌肉指数（右轴）· 红虚=指数硬底</div>';
     let svg='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block">';
+    let mn,mx,mn2=null,mx2=null,Y,Y2=null;
+    if(c.mode==='both'){
+      const rg=niceRange(gAct.map(p=>p.v).concat(gPlan.map(p=>p.v)));
+      mn=rg[0];mx=rg[1];
+      const iv=iAct.map(p=>p.v).concat(iPlan.map(p=>p.v));
+      if(floorV!=null)iv.push(floorV);
+      if(iv.length){const ri=niceRange(iv);mn2=ri[0];mx2=ri[1];}
+    }else{
+      const act=c.mode==='girth'?gAct:iAct;
+      const plan=c.mode==='girth'?gPlan:iPlan;
+      let vals=act.map(p=>p.v).concat(plan.map(p=>p.v));
+      if(c.mode==='index'&&floorV!=null)vals.push(floorV);
+      if(c.goal!=null)vals.push(c.goal);
+      const r=niceRange(vals);mn=r[0];mx=r[1];
+    }
+    const step=niceStep(mn,mx);
+    Y=v=>pad.t+chh*(1-(v-mn)/(mx-mn));
+    if(c.mode==='both'&&mn2!=null){
+      const step2=niceStep(mn2,mx2);
+      Y2=v=>pad.t+chh*(1-(v-mn2)/(mx2-mn2));
+      let gy2=Math.ceil(mn2/step2)*step2,n2=0;
+      for(let v=gy2;v<=mx2&&n2<8;v+=step2,n2++){
+        svg+='<text x="'+(W-pad.r+5)+'" y="'+(Y2(v)+3).toFixed(1)+'" fill="#34D399" font-size="9" font-weight="700" text-anchor="start">'+fmtV(v,step2)+'</text>';
+      }
+    }
     let gy=Math.ceil(mn/step)*step,gridN=0;
     for(let v=gy;v<=mx&&gridN<8;v+=step,gridN++){
       svg+='<line x1="'+pad.l+'" y1="'+Y(v).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+Y(v).toFixed(1)+'" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>';
-      svg+='<text x="'+(pad.l-5)+'" y="'+(Y(v)+3).toFixed(1)+'" fill="#9aa1ad" font-size="9" text-anchor="end">'+(step<1?v.toFixed(1):Math.round(v))+'</text>';
+      svg+='<text x="'+(pad.l-5)+'" y="'+(Y(v)+3).toFixed(1)+'" fill="#9aa1ad" font-size="9" text-anchor="end">'+fmtV(v,step)+'</text>';
     }
     const ax=X(A.anchor);
     svg+='<line x1="'+ax.toFixed(1)+'" y1="'+pad.t+'" x2="'+ax.toFixed(1)+'" y2="'+(pad.t+chh)+'" stroke="rgba(0,0,0,0.10)" stroke-width="1" stroke-dasharray="3,3"/>';
-    if(c.goal!=null){
-      svg+='<line x1="'+pad.l+'" y1="'+Y(c.goal).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+Y(c.goal).toFixed(1)+'" stroke="#34D399" stroke-width="1.5" stroke-dasharray="6,4"/>';
-      svg+='<text x="'+(W-pad.r+3)+'" y="'+(Y(c.goal)+3).toFixed(1)+'" fill="#34D399" font-size="9" font-weight="600">目标'+c.goal+'</text>';
-    }
-    if(floorV!=null){
-      svg+='<line x1="'+pad.l+'" y1="'+Y(floorV).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+Y(floorV).toFixed(1)+'" stroke="#FF5A5A" stroke-width="1.5" stroke-dasharray="6,4"/>';
-      svg+='<text x="'+(W-pad.r+3)+'" y="'+(Y(floorV)+3).toFixed(1)+'" fill="#FF5A5A" font-size="9" font-weight="600">硬底'+floorV.toFixed(1)+'</text>';
-    }
-    let pd='';
-    plan.forEach((p,i)=>{pd+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
-    svg+='<path d="'+pd+'" fill="none" stroke="#2F6BFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
-    const pe=plan[plan.length-1];
-    svg+='<circle cx="'+X(pe.date).toFixed(1)+'" cy="'+Y(pe.v).toFixed(1)+'" r="3" fill="#2F6BFF"/>';
-    svg+='<text x="'+(X(pe.date)-6).toFixed(1)+'" y="'+(Y(pe.v)-6).toFixed(1)+'" fill="#2F6BFF" font-size="9.5" font-weight="700" text-anchor="end">'+pe.v.toFixed(1)+'</text>';
-    if(act.length){
-      let ad='';
-      act.forEach((p,i)=>{ad+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
-      svg+='<path d="'+ad+'" fill="none" stroke="#1a1d26" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
-      act.forEach(p=>{svg+='<circle cx="'+X(p.date).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="3" fill="#1a1d26" stroke="#fff" stroke-width="1.2"/>';});
-      const la=act[act.length-1];
-      svg+='<text x="'+X(la.date).toFixed(1)+'" y="'+(Y(la.v)-7).toFixed(1)+'" fill="#1a1d26" font-size="9.5" font-weight="700" text-anchor="middle">'+la.v.toFixed(1)+'</text>';
+    if(c.mode==='both'){
+      let pd='';
+      gPlan.forEach((p,i)=>{pd+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
+      svg+='<path d="'+pd+'" fill="none" stroke="#2F6BFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+      if(Y2&&iPlan.length){
+        let id2='';
+        iPlan.forEach((p,i)=>{id2+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y2(p.v).toFixed(1);});
+        svg+='<path d="'+id2+'" fill="none" stroke="#34D399" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>';
+      }
+      const pg=gPlan[gPlan.length-1];
+      if(pg){
+        svg+='<circle cx="'+X(pg.date).toFixed(1)+'" cy="'+Y(pg.v).toFixed(1)+'" r="3" fill="#2F6BFF"/>';
+        svg+='<text x="'+(X(pg.date)-6).toFixed(1)+'" y="'+(Y(pg.v)-6).toFixed(1)+'" fill="#2F6BFF" font-size="9.5" font-weight="700" text-anchor="end">'+pg.v.toFixed(1)+'</text>';
+      }
+      if(Y2&&floorV!=null){
+        svg+='<line x1="'+pad.l+'" y1="'+Y2(floorV).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+Y2(floorV).toFixed(1)+'" stroke="#FF5A5A" stroke-width="1.5" stroke-dasharray="6,4"/>';
+        svg+='<text x="'+(pad.l+4)+'" y="'+(Y2(floorV)-4).toFixed(1)+'" fill="#FF5A5A" font-size="9" font-weight="600">硬底'+floorV.toFixed(1)+'</text>';
+      }
+      if(gAct.length){
+        let ad='';
+        gAct.forEach((p,i)=>{ad+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
+        svg+='<path d="'+ad+'" fill="none" stroke="#1a1d26" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+        gAct.forEach(p=>{svg+='<circle cx="'+X(p.date).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="3" fill="#1a1d26" stroke="#fff" stroke-width="1.2"/>';});
+        const la=gAct[gAct.length-1];
+        svg+='<text x="'+X(la.date).toFixed(1)+'" y="'+(Y(la.v)-7).toFixed(1)+'" fill="#1a1d26" font-size="9.5" font-weight="700" text-anchor="middle">'+la.v.toFixed(1)+'</text>';
+      }
+      if(Y2&&iAct.length){
+        let ad2='';
+        iAct.forEach((p,i)=>{ad2+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y2(p.v).toFixed(1);});
+        svg+='<path d="'+ad2+'" fill="none" stroke="#6B7280" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>';
+        iAct.forEach(p=>{svg+='<circle cx="'+X(p.date).toFixed(1)+'" cy="'+Y2(p.v).toFixed(1)+'" r="2.5" fill="#fff" stroke="#6B7280" stroke-width="1.5"/>';});
+        const la2=iAct[iAct.length-1];
+        svg+='<text x="'+X(la2.date).toFixed(1)+'" y="'+Math.min(Y2(la2.v)+14,H-6).toFixed(1)+'" fill="#6B7280" font-size="9.5" font-weight="700" text-anchor="middle">'+la2.v.toFixed(1)+'</text>';
+      }
+    }else{
+      const act=c.mode==='girth'?gAct:iAct;
+      const plan=c.mode==='girth'?gPlan:iPlan;
+      if(c.goal!=null){
+        svg+='<line x1="'+pad.l+'" y1="'+Y(c.goal).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+Y(c.goal).toFixed(1)+'" stroke="#34D399" stroke-width="1.5" stroke-dasharray="6,4"/>';
+        svg+='<text x="'+(W-pad.r+3)+'" y="'+(Y(c.goal)+3).toFixed(1)+'" fill="#34D399" font-size="9" font-weight="600">目标'+c.goal+'</text>';
+      }
+      if(c.mode==='index'&&floorV!=null){
+        svg+='<line x1="'+pad.l+'" y1="'+Y(floorV).toFixed(1)+'" x2="'+(W-pad.r)+'" y2="'+Y(floorV).toFixed(1)+'" stroke="#FF5A5A" stroke-width="1.5" stroke-dasharray="6,4"/>';
+        svg+='<text x="'+(W-pad.r+3)+'" y="'+(Y(floorV)+3).toFixed(1)+'" fill="#FF5A5A" font-size="9" font-weight="600">硬底'+floorV.toFixed(1)+'</text>';
+      }
+      let pd='';
+      plan.forEach((p,i)=>{pd+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
+      svg+='<path d="'+pd+'" fill="none" stroke="#2F6BFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+      const pe=plan[plan.length-1];
+      if(pe){
+        svg+='<circle cx="'+X(pe.date).toFixed(1)+'" cy="'+Y(pe.v).toFixed(1)+'" r="3" fill="#2F6BFF"/>';
+        svg+='<text x="'+(X(pe.date)-6).toFixed(1)+'" y="'+(Y(pe.v)-6).toFixed(1)+'" fill="#2F6BFF" font-size="9.5" font-weight="700" text-anchor="end">'+pe.v.toFixed(1)+'</text>';
+      }
+      if(act.length){
+        let ad='';
+        act.forEach((p,i)=>{ad+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
+        svg+='<path d="'+ad+'" fill="none" stroke="#1a1d26" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+        act.forEach(p=>{svg+='<circle cx="'+X(p.date).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="3" fill="#1a1d26" stroke="#fff" stroke-width="1.2"/>';});
+        const la=act[act.length-1];
+        svg+='<text x="'+X(la.date).toFixed(1)+'" y="'+(Y(la.v)-7).toFixed(1)+'" fill="#1a1d26" font-size="9.5" font-weight="700" text-anchor="middle">'+la.v.toFixed(1)+'</text>';
+      }
     }
     svg+='<text x="'+pad.l+'" y="'+(H-6)+'" fill="#9aa1ad" font-size="9">'+dimRecs[0].date.slice(5).replace('-','/')+'</text>';
     svg+='<text x="'+ax.toFixed(1)+'" y="'+(H-6)+'" fill="#9aa1ad" font-size="9" text-anchor="middle">锚点'+A.anchor.slice(5).replace('-','/')+'</text>';
     svg+='<text x="'+(W-pad.r)+'" y="'+(H-6)+'" fill="#9aa1ad" font-size="9" text-anchor="end">'+A.end.slice(5).replace('-','/')+'</text>';
     svg+='</svg>';
-    const cur=act.length?act[act.length-1].v:null;
-    let sub='';
-    if(c.mode==='index'&&corr.planEndIdx[c.key]!=null){
-      sub='当前 '+(cur!=null?cur.toFixed(1):'—')+' → 12/1计划 '+corr.planEndIdx[c.key].toFixed(1)+(floorV!=null?' · 硬底 '+floorV.toFixed(1):'');
-    }else{
-      const pg=dimPlanAt(corr,A.end,'girth',c.key);
-      sub='当前 '+(cur!=null?cur.toFixed(1):'—')+' → 12/1计划 '+(pg!=null?pg.toFixed(1):'—')+(c.goal!=null?' · 目标 '+c.goal:'');
-    }
-    html+='<div style="margin-bottom:14px">';
-    html+='<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;flex-wrap:wrap;gap:4px">';
-    html+='<div style="font-size:13px;font-weight:700;color:var(--text)">'+c.icon+' '+c.name+(c.unit?'（'+c.unit+'）':'')+'</div>';
-    html+='<div style="font-size:10.5px;color:var(--text-3)">'+sub+'</div>';
-    html+='</div>'+svg+'</div>';
+    html+=svg+'</div>';
   });
-  html+='<div class="formula-note">黑线=实测（指数=围度×(1-当天或之前最近体脂率)，全按录入数据算）· 蓝线=计划走廊（按掉速分阶段折算：前陡后缓，后段趋平或回升=肌肉保持的正常形态）· 红虚线=硬底护栏（跌破=围度收缩超出脂肪能解释的范围+3%容忍，肌肉流失警示）· 绿虚线=目标<br>腰/臀看围度掉速（脂肪侧，快=好）；胸/臂/腿看指数（肌肉侧，别跌破计划线）。每周末跟体测一起录围度，状态自动重算。</div>';
+  html+='<div class="formula-note">黑线=实测（指数=围度×(1-当天或之前最近体脂率)，全按录入数据算）· 蓝线=计划走廊（按掉速分阶段折算：前陡后缓）· 红虚线=硬底护栏（肌肉侧跌破=流失警示，查蛋白/睡眠/缺口）· 绿虚线=目标<br>腰/臀看围度掉速（脂肪侧，快=好）；胸/臂/腿看指数（肌肉侧，别跌破计划线）。胸围图为双轴双线：黑/蓝=围度（左轴），灰/绿=指数（右轴）。每周末跟体测一起录围度，状态自动重算。</div>';
   el.innerHTML=html;
 }
+
 // ===== 体测增强图表：体重/体脂/腰围/静息心率 四图一卡 =====
 // 设计：图做大(520×240) · 纵轴必含目标值 · 外推线到2027/2/1并标注能否达标
 //      · 区间色块标签平铺居中填在色块内(大字加粗高对比深色)
@@ -4892,7 +4923,6 @@ function saveHistDim(dt){
   if(di>=0){DIM[di]=ls[idx];}
   loadHistData();
   if(typeof filterBody==='function')filterBody();
-  if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
   flashHint('已修改'+dt+' 围度');
 }
 function deleteHistDim(dt){
@@ -4905,7 +4935,6 @@ function deleteHistDim(dt){
   if(di>=0)DIM.splice(di,1);
   loadHistData();
   if(typeof filterBody==='function')filterBody();
-  if(typeof renderBodyPartDistance==='function')renderBodyPartDistance();
   flashHint('已删除'+dt+' 围度');
 }
 // 餐次标签更新
