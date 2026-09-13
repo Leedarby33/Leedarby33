@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260913c';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260913d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1563,10 +1563,10 @@ function updateDietSummary(){
     const _dow=getEffNow().getDay();
     const isTrainDay=_dow!==0&&_dow!==3; // 周日(0)和周三(3)为休息日
     const targetCal=isTrainDay?1300:1050;
-    const targetC=isTrainDay?130:80;
+    const targetC=isTrainDay?150:80;
     const targetSF=20;
     const remain=targetCal-totalCal;
-    const remainP=130-totalP;
+    const remainP=(isTrainDay?130:105)-totalP;
     const remainC=targetC-totalC;
     const remainSF=targetSF-totalSf;
     const calEl=$('remainCal');
@@ -1587,7 +1587,7 @@ function updateDietSummary(){
       rsfEl.style.color=remainSF<0?'var(--red)':'';
     }
     const hintEl=$('macroHint');
-    if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥130g | 碳水'+targetC+'g（训练日120-150g/休息日80g） | 饱和脂肪≤20g';
+    if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥'+(isTrainDay?130:105)+'g | 碳水'+(isTrainDay?'80-150g':'0-80g（不吃主食自然达标）')+' | 饱和脂肪≤20g';
   }
 }
 // 今日剩余额度微型进度条
@@ -1596,10 +1596,10 @@ function renderTodayProgressBars(cal,p,sf,fr,c){
   if(!el)return;
   const _dow=getEffNow().getDay();
   const isTrain=_dow!==0&&_dow!==3;
-  const tCal=isTrain?1300:1050, tP=130, tC=isTrain?130:80, tSF=20;
+  const tCal=isTrain?1300:1050, tP=isTrain?130:105, tC=isTrain?150:80, tSF=20;
   const bars=[
     {label:'热量',val:cal,max:tCal,unit:'kcal',color:cal>tCal?'var(--red)':'var(--orange)'},
-    {label:'蛋白',val:p,max:tP,unit:'g',color:p>=tP?'var(--green)':'var(--green)'},
+    {label:'蛋白',val:p,max:tP,unit:'g',color:p>=tP?'var(--green)':'var(--gold)'},
     {label:'碳水',val:c,max:tC,unit:'g',color:c>tC?'var(--red)':'var(--blue)'},
     {label:'饱和脂',val:sf,max:tSF,unit:'g',color:sf>tSF?'var(--red)':'var(--gold)'}
   ];
@@ -1859,14 +1859,14 @@ function initNav(){
   const isTrainDay=_dowNav!==0&&_dowNav!==3; // 周日(0)和周三(3)为休息日
   const bmr=getLatestBMR();const nee=getNEAT();
   const targetCal=isTrainDay?1300:1050;
-  const targetC=isTrainDay?130:80;
+  const targetC=isTrainDay?150:80;
   const targetSF=20;
   const consumed=todayDiet?todayDiet.t.cal:0;
   const consumedP=todayDiet?todayDiet.t.p:0;
   const consumedC=todayDiet?(todayDiet.t.c||0):0;
   const consumedSF=todayDiet?(todayDiet.t.sf||0):0;
   const remain=targetCal-consumed;
-  const remainP=130-consumedP;
+  const remainP=(isTrainDay?130:105)-consumedP;
   const remainC=targetC-consumedC;
   const remainSF=targetSF-consumedSF;
   const calEl=$('remainCal');
@@ -1887,7 +1887,7 @@ function initNav(){
     rsfEl.style.color=remainSF<0?'var(--red)':'';
   }
   const hintEl=$('macroHint');
-  if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥130g | 碳水'+targetC+'g（训练日120-150g/休息日80g） | 饱和脂肪≤20g';
+  if(hintEl) hintEl.textContent='建议摄入：热量'+targetCal+'kcal | 蛋白≥'+(isTrainDay?130:105)+'g | 碳水'+(isTrainDay?'80-150g':'0-80g（不吃主食自然达标）')+' | 饱和脂肪≤20g';
 
   // Weight comparison
   initWeightCompare(todayStr);
