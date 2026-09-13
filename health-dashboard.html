@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260911b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260913a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -2320,9 +2320,12 @@ function rollingRates(){
     const mondays=[];
     for(let i=4;i>=1;i--){mondays.push(mondayOfDate(addDays(now,-7*i)));}
     const start=mondays[0];
-    // 近4周累计实际缺口
+    const end=mondayOfDate(now); // 本周一
+    // 近4周累计实际缺口——窗口与掉秤跨度对称对齐：
+    //   掉秤=起点周均(中心≈start+3天)→本周周均(中心≈end+3天)，跨度28天；
+    //   缺口同样从start+3累计到end+3（旧版从start累计到now，分子35天/分母28天，系数虚高约23%）
     let deficit=0, dietDays=0;
-    for(let d=new Date(start);d<=now;d=addDays(d,1)){
+    for(let d=addDays(start,3);d<=addDays(end,3);d=addDays(d,1)){
       const ds=dstr(d);
       const diet=DD.find(x=>x.date===ds);
       const train=TD.find(x=>x.date===ds);
@@ -2343,8 +2346,9 @@ function rollingRates(){
     }
     const a1=wkAvg(start,addDays(start,6));                 // 起点周（4周前那完整周：周一~周日）
     const a2=wkAvg(mondayOfDate(now),now);                  // 终点周（本周一至今天）
-    // 可靠性校验：近4周需有足够缺口记录(≥14天)，起点/终点周各至少2天体重
-    if(deficit>0&&dietDays>=14&&a1&&a2&&a1.cnt>=2&&a2.cnt>=2){
+    // 可靠性校验：近4周需有足够缺口记录(≥14天)，起点周至少2天体重；终点周≥1天即可
+    //   （旧版要求终点周≥2天，导致每周一仅1次称重时系数回退理论值17885，周目标虚高一整天）
+    if(deficit>0&&dietDays>=14&&a1&&a2&&a1.cnt>=2&&a2.cnt>=1){
       const weightLoss=a1.avg-a2.avg;      // 近4周实际体重下降
       // 合理区间：4周掉秤 0.05~3.5kg
       if(weightLoss>0.05&&weightLoss<3.5){
@@ -2374,12 +2378,13 @@ function currentPhase(){
 //   掉速目标来自参考线的"前快后慢"分阶段速率；动态系数来自近4周实测倒推(rollingRates)
 //   无动态系数时用理论默认系数(GOAL_CFG.coef×fatRatio)
 const RATE_STAGES=[ // 掉速目标 kg/周，随体脂下降前快后慢
-  {from:'2026-08-14',to:'2026-09-15',rate:0.621},
-  {from:'2026-09-15',to:'2026-10-15',rate:0.595},
-  {from:'2026-10-15',to:'2026-11-15',rate:0.569},
-  {from:'2026-11-15',to:'2026-12-15',rate:0.543},
-  {from:'2026-12-15',to:'2027-01-15',rate:0.517},
-  {from:'2027-01-15',to:'2027-02-01',rate:0.491}
+  // 切换点对齐周一（取离每月15号最近的周一），避免周中切当周目标：9/14、10/12、11/16、12/14、1/18
+  {from:'2026-08-14',to:'2026-09-14',rate:0.621},
+  {from:'2026-09-14',to:'2026-10-12',rate:0.595},
+  {from:'2026-10-12',to:'2026-11-16',rate:0.569},
+  {from:'2026-11-16',to:'2026-12-14',rate:0.543},
+  {from:'2026-12-14',to:'2027-01-18',rate:0.517},
+  {from:'2027-01-18',to:'2027-02-01',rate:0.491}
 ];
 function currentRateTarget(){
   const now=getEffNow();
