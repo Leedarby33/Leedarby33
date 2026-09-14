@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260914b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260914d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -383,7 +383,7 @@ svg text{font-family:-apple-system,'PingFang SC',sans-serif}
 </div>
 <div id="bodyTrendChart"></div>
 <div id="bodyRecordDetail" style="display:none;margin-top:10px;background:var(--inset);border-radius:10px;padding:12px"></div>
-<div style="font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.7">📌 <b>体重/体脂/腰围/静息心率</b>四个独立走势图，各自独立纵轴（纵轴均延伸至目标值可见）；横轴统一延伸至目标终点2027/2/1。色块=各指标的区间等级（大字标注），红色虚线=目标值，橙色虚线+终点圆点=当前趋势外推（终点标注能否达标）。体脂对应减脂部位、腰围对应健康等级、心率对应训练水平。心率每周在「今日-记录中心」录入。</div>
+<div style="font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.7">📌 <b>体重/体脂/静息心率</b>三个独立走势图，各自独立纵轴（纵轴均延伸至目标值可见）；横轴统一延伸至目标终点2027/2/1。色块=各指标的区间等级（大字标注），红色虚线=目标值，橙色虚线+终点圆点=当前趋势外推。深色节点=10/1·11/1·12/1·1/1·2/1 五个阶段目标（按当前掉速推算）。腰围走势已合并到下方「围度走势」板块统一查看。心率每周在「今日-记录中心」录入。</div>
 </div>
 <!-- 围度走势：唯一围度板块（徽章状态+实测+计划走廊+硬底） -->
 <div class="card">
@@ -3279,7 +3279,7 @@ function filterBody(){
 // 硬底护栏 = 计划终点×0.97：FFM按27%构成流失的容忍下界，跌破=肌肉流失警示。
 const DIM_CORRIDOR={
   anchor:'2026-09-13',
-  end:'2026-12-01',
+  end:'2027-02-01',   // 2026-09-14改：终点从12/1延到2/1，与体重/体脂走势时间轴统一（节点10/1-2/1）
   alpha:{waist:1.8,hip:1.0,chest:0.8,thigh:0.77,armFlex:0.57},
   fatRatio:0.73,
   floorRatio:0.97,
@@ -3369,6 +3369,9 @@ function renderDimTrendCorridor(){
   const A=DIM_CORRIDOR;
   const dayN=d=>new Date(d+'T00:00:00').getTime();
   const t0=dayN(dimRecs[0].date),t1=dayN(A.end);
+  // 阶段节点：10/1 11/1 12/1 1/1 2/1（与体重/体脂走势同一套时间节点）
+  // 注：corr.pts按周生成不含月初，节点值在绘制时用dimPlanAt按日期+部位插值取
+  const NODE_DATES=[{date:'2026-10-01',label:'10/1'},{date:'2026-11-01',label:'11/1'},{date:'2026-12-01',label:'12/1'},{date:'2027-01-01',label:'1/1'},{date:'2027-02-01',label:'2/1'}];
   const actual={};
   A.parts.forEach(p=>{
     const g=[],ix=[];
@@ -3497,6 +3500,15 @@ function renderDimTrendCorridor(){
         iPlan.forEach((p,i)=>{id2+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y2(p.v).toFixed(1);});
         svg+='<path d="'+id2+'" fill="none" stroke="#34D399" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>';
       }
+      // 阶段节点：10/1 11/1 12/1 1/1 2/1（胸围围度轴上打点+标签）
+      NODE_DATES.forEach(nd=>{
+        const gv=dimPlanAt(corr,nd.date,'girth',c.key);
+        if(gv==null)return;
+        const nx=X(nd.date),ny=Y(gv);
+        svg+='<line x1="'+nx.toFixed(1)+'" y1="'+pad.t+'" x2="'+nx.toFixed(1)+'" y2="'+(pad.t+chh)+'" stroke="rgba(47,107,255,0.16)" stroke-width="1" stroke-dasharray="3,3"/>';
+        svg+='<circle cx="'+nx.toFixed(1)+'" cy="'+ny.toFixed(1)+'" r="2.8" fill="#2F6BFF" stroke="#fff" stroke-width="1"/>';
+        svg+='<text x="'+nx.toFixed(1)+'" y="'+(pad.t+8).toFixed(1)+'" fill="#2F6BFF" font-size="8.5" font-weight="700" text-anchor="middle">'+nd.label+'</text>';
+      });
       const pg=gPlan[gPlan.length-1];
       if(pg){
         svg+='<circle cx="'+X(pg.date).toFixed(1)+'" cy="'+Y(pg.v).toFixed(1)+'" r="3" fill="#2F6BFF"/>';
@@ -3536,6 +3548,16 @@ function renderDimTrendCorridor(){
       let pd='';
       plan.forEach((p,i)=>{pd+=(i?'L':'M')+X(p.date).toFixed(1)+','+Y(p.v).toFixed(1);});
       svg+='<path d="'+pd+'" fill="none" stroke="#2F6BFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+      // 阶段节点：10/1 11/1 12/1 1/1 2/1（计划曲线上打点+竖虚线+顶部标签）
+      NODE_DATES.forEach(nd=>{
+        const nv=dimPlanAt(corr,nd.date,c.mode==='girth'?'girth':'index',c.key);
+        if(nv==null)return;
+        const nx=X(nd.date),ny=Y(nv);
+        if(nx<pad.l||nx>W-pad.r)return;
+        svg+='<line x1="'+nx.toFixed(1)+'" y1="'+pad.t+'" x2="'+nx.toFixed(1)+'" y2="'+(pad.t+chh)+'" stroke="rgba(47,107,255,0.16)" stroke-width="1" stroke-dasharray="3,3"/>';
+        svg+='<circle cx="'+nx.toFixed(1)+'" cy="'+ny.toFixed(1)+'" r="2.8" fill="#2F6BFF" stroke="#fff" stroke-width="1"/>';
+        svg+='<text x="'+nx.toFixed(1)+'" y="'+(pad.t+8).toFixed(1)+'" fill="#2F6BFF" font-size="8.5" font-weight="700" text-anchor="middle">'+nd.label+'</text>';
+      });
       const pe=plan[plan.length-1];
       if(pe){
         svg+='<circle cx="'+X(pe.date).toFixed(1)+'" cy="'+Y(pe.v).toFixed(1)+'" r="3" fill="#2F6BFF"/>';
@@ -3694,12 +3716,11 @@ function renderBodyTrendChart(s,e){
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
     // 分阶段参考线：体重阶段目标（前快后慢衰减模型，终点对齐70硬杠杆）
     const wMilestones=[
-      {d:'2026-09-15',v:80.8,label:'9月中 80.8'},
-      {d:'2026-10-15',v:78.2,label:'10月中 78.2'},
-      {d:'2026-11-15',v:75.7,label:'11月中 75.7'},
-      {d:'2026-12-15',v:73.4,label:'12月中 73.4'},
-      {d:'2027-01-15',v:71.1,label:'1月中 71.1'},
-      {d:'2027-02-01',v:70.0,label:'2/1春节 70'}
+      {d:'2026-10-01',v:79.3,label:'10/1 79.3'},
+      {d:'2026-11-01',v:76.7,label:'11/1 76.7'},
+      {d:'2026-12-01',v:74.3,label:'12/1 74.3'},
+      {d:'2027-01-01',v:72.0,label:'1/1 72.0'},
+      {d:'2027-02-01',v:69.7,label:'2/1 69.7'}
     ];
     const wLabels=placeMilestoneLabels(wMilestones,YW);
     wMilestones.forEach((m,i)=>{
@@ -3731,7 +3752,7 @@ function renderBodyTrendChart(s,e){
     svg+='<circle cx="'+X(lastW.date)+'" cy="'+YW(lastW.v)+'" r="4" fill="#FFB400" stroke="#fff" stroke-width="1.5"/>';
     svg+=axisFrame();
     svg+='</svg>';
-    html+=sectionHead('⚖️ 体重走势','7日均线·kg · 虚线=外推至2/1','#B8860B',lastW.v+' kg','0')+svg;
+    html+=sectionHead('⚖️ 体重走势','7日均线·kg · 节点=10/1→2/1阶段目标 · 虚线=外推至2/1','#B8860B',lastW.v+' kg','0')+svg;
   }
 
   // ===== 图2 体脂率（区间色块，纵轴含21%目标） =====
@@ -3757,12 +3778,11 @@ function renderBodyTrendChart(s,e){
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
     // 分阶段参考线：体脂率从体重推导（保肌肉减脂，前快后慢）
     const bfMilestones=[
-      {d:'2026-09-15',v:27.2,label:'9月中 27.2'},
-      {d:'2026-10-15',v:25.5,label:'10月中 25.5'},
-      {d:'2026-11-15',v:24.1,label:'11月中 24.1'},
-      {d:'2026-12-15',v:22.5,label:'12月中 22.5'},
-      {d:'2027-01-15',v:21.3,label:'1月中 21.3'},
-      {d:'2027-02-01',v:20.4,label:'2/1春节 20.4'}
+      {d:'2026-10-01',v:26.7,label:'10/1 26.7'},
+      {d:'2026-11-01',v:25.1,label:'11/1 25.1'},
+      {d:'2026-12-01',v:23.6,label:'12/1 23.6'},
+      {d:'2027-01-01',v:22.0,label:'1/1 22.0'},
+      {d:'2027-02-01',v:20.3,label:'2/1 20.3'}
     ];
     const bfLabels=placeMilestoneLabels(bfMilestones,YB);
     bfMilestones.forEach((m,i)=>{
@@ -3793,72 +3813,10 @@ function renderBodyTrendChart(s,e){
     svg+=projLine(ext,YB,21,'#00B368');
     svg+=axisFrame();
     svg+='</svg>';
-    html+=sectionHead('📉 体脂率走势','色块=减脂部位区间 · % · 虚线=外推至2/1','#00875A',lastBf.bf+' %')+svg;
+    html+=sectionHead('📉 体脂率走势','色块=减脂部位区间 · % · 节点=10/1→2/1阶段目标','#00875A',lastBf.bf+' %')+svg;
   }
 
-  // ===== 图3 腰围（区间色块，纵轴含87cm目标） =====
-  if(dimRecs.length>=2){
-    const vals=dimRecs.map(d=>d.waist);
-    // y轴下限须覆盖参考线终点77.8（含下方标签空间），避免标签落到横轴以下
-    const dMin=Math.min(...vals,77), dMax=Math.max(...vals,90.3)+1.5;
-    const YD=v=>pad.t+ch*(1-(v-dMin)/(dMax-dMin));
-    const lastDim=dimRecs[dimRecs.length-1];
-    const ext=extrapolate(dimRecs.map(d=>({date:d.date,v:d.waist})));
-    const dzones=[
-      {from:110,to:96,label:'腹型肥胖',color:'rgba(255,45,85,0.14)'},
-      {from:96,to:90,label:'中心型',color:'rgba(255,138,0,0.16)'},
-      {from:90,to:85,label:'达标边缘',color:'rgba(255,180,0,0.18)'},
-      {from:85,to:75,label:'健康腰围',color:'rgba(0,179,104,0.18)'}
-    ];
-    let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
-    svg+=zoneBands(YD,dMin,dMax,dzones,z=>z.from+'-'+z.to+'cm');
-    svg+=gridAndTicks(dMin,dMax,'#2F5BD8');
-    svg+='<line x1="'+pad.l+'" y1="'+YD(87)+'" x2="'+(chartW-pad.r)+'" y2="'+YD(87)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
-    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YD(87)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标87</text>';
-    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
-    // 分阶段参考线：腰围从体重推导（历史腰围/体重回归），前快后慢
-    const dMilestones=[
-      {d:'2026-09-15',v:90.3,label:'9月中 90.3'},
-      {d:'2026-10-15',v:87.3,label:'10月中 87.3'},
-      {d:'2026-11-15',v:84.5,label:'11月中 84.5'},
-      {d:'2026-12-15',v:81.8,label:'12月中 81.8'},
-      {d:'2027-01-15',v:79.2,label:'1月中 79.2'},
-      {d:'2027-02-01',v:77.8,label:'2/1春节 77.8'}
-    ];
-    const dLabels=placeMilestoneLabels(dMilestones,YD);
-    dMilestones.forEach((m,i)=>{
-      const mx=Math.min(X(m.d),targetX), my=YD(m.v);
-      if(mx<=pad.l)return;
-      svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(47,91,216,0.30)" stroke-width="1.4" stroke-dasharray="4,4"/>';
-      svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#2F5BD8" stroke="#fff" stroke-width="1.1"/>';
-      const atEnd=m.d==='2027-02-01';
-      if(atEnd){
-        svg+='<text x="'+(mx-6).toFixed(1)+'" y="'+(chartH-10).toFixed(1)+'" fill="#2F5BD8" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
-      }else{
-        // 非终点节点：按奇偶交替上下，相邻过近时自动推开
-        const n=dLabels.get(m);
-        let ty=n?n.ty:(my+(i%2===1?22:-14));
-        ty=Math.max(12,Math.min(chartH-12,ty));
-        const nearEnd=(targetX-mx)<45;
-        if(nearEnd){
-          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#2F5BD8" font-size="9" font-weight="800" text-anchor="middle" transform="rotate(-25,'+mx.toFixed(1)+','+ty.toFixed(1)+')">'+m.label+'</text>';
-        }else{
-          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#2F5BD8" font-size="10.5" font-weight="800" text-anchor="middle">'+m.label+'</text>';
-        }
-      }
-    });
-    let pth='';
-    dimRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YD(p.waist).toFixed(1);});
-    svg+='<path d="'+pth+'" fill="none" stroke="#2F6BFF" stroke-width="2.8" stroke-linejoin="round"/>';
-    dimRecs.forEach(p=>{svg+='<circle cx="'+X(p.date)+'" cy="'+YD(p.waist)+'" r="3.2" fill="#2F6BFF" stroke="#fff" stroke-width="1.2"/>';});
-    svg+=projLine(ext,YD,87,'#2F6BFF');
-    svg+=axisFrame();
-    svg+='</svg>';
-    const whr=(lastDim.waist/1.74).toFixed(2);
-    html+=sectionHead('📏 腰围走势','色块=健康区间 · cm · 腰高比'+whr+' · 虚线=外推至2/1','#2F5BD8',lastDim.waist+' cm')+svg;
-  }
-
-  // ===== 图4 静息心率（周均，训练水平区间色块，并入本卡） =====
+  // ===== 图3 静息心率（周均，训练水平区间色块，并入本卡） =====
   const rhrHtml=(()=>{
     const hist=[
       {date:'2026-06-06',hr:84},{date:'2026-06-13',hr:87},{date:'2026-06-20',hr:81},
