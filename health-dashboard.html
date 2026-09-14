@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20260914d';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20260914e';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <title>健康管理工作台</title>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi5YGl5bq3566h55CG5bel5L2c5Y+wIiwic2hvcnRfbmFtZSI6IuWBpeW6t+WPsCIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2Y1ZjVmNyIsInRoZW1lX2NvbG9yIjoiI2Y1ZjVmNyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJz48Y2lyY2xlIGN4PScyNTYnIGN5PScyNTYnIHI9JzEwMCcgZmlsbD0nI2Y1ZjVmNycvPjxwYXRoIGQ9J00yNTYgMTUwYTYwIDYwIDAgMCAxIDYwIDYwIDYwIDYwIDAgMCAxLTYwIDYweicgZmlsbD0nIzAwN0FGRicvPjwvc3ZnPiIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0=">
 <style>
@@ -1644,7 +1644,7 @@ function renderPlanForDate(dateStr){
   if(plan.activate && plan.activate.length>0){modules.push('激活'+(mt.activate?mt.activate+'min':''));totalMt+=mt.activate||0;}
   if(plan.w.length>0){modules.push('主项'+(mt.w?mt.w+'min':''));totalMt+=mt.w||0;}
   if(plan.zone2){modules.push('Zone2'+(mt.zone2?mt.zone2+'min':''));totalMt+=mt.zone2||0;}
-  if((plan.scapula && plan.scapula.length>0) || (plan.note && plan.note.includes('肩胛协议'))){modules.push('肩胛'+(mt.scapula?mt.scapula+'min':''));totalMt+=mt.scapula||0;}
+  if((plan.scapula && plan.scapula.length>0) || (plan.note && /(已|要|需|应|安排|排入|加入|新增|移入|改为)(做)?肩胛协议|肩胛协议[^。；]{0,6}(做|安排|执行)|在(本|今)日/.test(plan.note))){modules.push('肩胛'+(mt.scapula?mt.scapula+'min':''));totalMt+=mt.scapula||0;}
   if(plan.core && plan.core.length>0){modules.push('核心'+(mt.core?mt.core+'min':''));totalMt+=mt.core||0;}
   if(plan.hiit && (typeof plan.hiit==='string'?plan.hiit:plan.hiit.length>0)){modules.push('HIIT'+(mt.hiit?mt.hiit+'min':''));totalMt+=mt.hiit||0;}
   if(plan.rehab && plan.rehab.length>0){modules.push('康复'+(mt.rehab?mt.rehab+'min':''));totalMt+=mt.rehab||0;}
@@ -1685,7 +1685,7 @@ function renderPlanForDate(dateStr){
     if(plan.scapula && plan.scapula.length>0){
       html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议'+(mt.scapula?' ('+mt.scapula+'min)':' (20min)')+'</div>';
       plan.scapula.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+(a.w?' | '+a.w:'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
-    } else if(plan.note && plan.note.includes('肩胛协议')){
+    } else if(plan.note && /(已|要|需|应|安排|排入|加入|新增|移入|改为)(做)?肩胛协议|肩胛协议[^。；]{0,6}(做|安排|执行)|在(本|今)日/.test(plan.note)){
       html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:10px 0 6px">🛡️ 肩胛协议'+(mt.scapula?' ('+mt.scapula+'min)':' (20min)')+'</div>';
       if(typeof SCAP_PROTOCOL!=='undefined')SCAP_PROTOCOL.forEach(a=>{html+='<div class="action-card" style="border-left:3px solid var(--blue)"><div class="action-name" style="font-size:13px">'+a.n+'</div><div class="action-meta">'+(a.s||'')+'</div><div class="action-detail">'+a.t+'</div></div>';});
     }
