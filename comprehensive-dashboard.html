@@ -138,6 +138,7 @@ input::placeholder{color:var(--text-3)}
     <div class="main-tab" data-main="paipan" onclick="switchMain('paipan')">奇门排盘</div>
     <div class="main-tab active" data-main="jizhang" onclick="switchMain('jizhang')">记账</div>
     <div class="main-tab" data-main="wishlist" onclick="switchMain('wishlist')">愿望清单</div>
+    <div class="main-tab" data-main="backup" onclick="switchMain('backup')">数据管理</div>
   </div>
 
   <!-- 排盘 Panel -->
@@ -240,6 +241,36 @@ input::placeholder{color:var(--text-3)}
     </div>
     <!-- 眼镜选配（愿望清单） -->
     <div id="daigou-glasses"></div>
+  </div>
+
+  <!-- 数据管理 Panel（2026-10-01新增：换机/备份用） -->
+  <div class="main-panel" id="panel-backup">
+    <div class="card" style="margin-top:12px;border-left:4px solid var(--green)">
+      <div class="card-title">💾 数据备份与恢复</div>
+      <div style="font-size:12px;color:var(--text-3);line-height:1.8;margin-bottom:12px">
+        记账数据保存在本浏览器本地，换手机或换浏览器时必须手动搬迁。<br>
+        <b style="color:var(--orange)">⚠️ 任何时候不要在浏览器里"清除数据/清理缓存"</b>，那会把记账记录一起清掉。
+      </div>
+      <div id="backupStat" style="font-size:13px;color:var(--text-2);margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="exportLedger()" style="flex:1;min-width:130px;padding:11px;background:var(--green);color:#0f1115;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">📤 导出备份文件</button>
+        <button onclick="exportLedgerText()" style="flex:1;min-width:130px;padding:11px;background:var(--blue);color:#0f1115;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">📋 导出为文本（备用）</button>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr)">
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:8px">🔄 从备份文本恢复（粘贴下方后点恢复）</div>
+        <textarea id="restoreText" placeholder="把导出的备份文本粘贴到这里..." style="width:100%;height:90px;background:var(--inset);color:var(--text);border:1px solid var(--bdr2);border-radius:8px;padding:10px;font-size:11px;font-family:monospace;outline:none;resize:vertical"></textarea>
+        <button onclick="importLedgerText()" style="width:100%;margin-top:8px;padding:11px;background:var(--orange);color:#0f1115;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">📥 恢复（将覆盖现有数据）</button>
+      </div>
+      <div id="backupFeedback" style="font-size:12px;margin-top:10px;line-height:1.7"></div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <div class="card-title">📌 说明：哪些数据需要迁移</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.9">
+        ✅ <b>记账流水</b>——存在本地，必须迁移（本页负责）<br>
+        ⚪ <b>奇门排盘 / 试炼之地翻牌</b>——每次打开按当前时辰实时计算，<b>无需迁移</b><br>
+        ⚪ <b>愿望清单 / 眼镜选配</b>——写在页面代码里，<b>换机自动带上</b>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -791,6 +822,7 @@ function quickFill(item, amount, category) {
 function switchMain(name) {
   document.querySelectorAll('.main-tab').forEach(el => el.classList.toggle('active', el.dataset.main === name));
   document.querySelectorAll('.main-panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + name));
+  if(name==='backup' && typeof refreshBackupStat==='function') refreshBackupStat();
 }
 
 function switchSub(name) {
@@ -1310,6 +1342,95 @@ function renderPZInfo() {
 
 function saveTransactions() {
   localStorage.setItem('comprehensive_transactions', JSON.stringify(transactions));
+}
+
+// ========== 数据备份/恢复（2026-10-01新增） ==========
+function ledgerBackupObject(){
+  return {
+    app:'comprehensive-dashboard',
+    version:1,
+    exportDate:new Date().toISOString(),
+    count:transactions.length,
+    transactions:transactions
+  };
+}
+function refreshBackupStat(){
+  var el=document.getElementById('backupStat');
+  if(!el)return;
+  var total=transactions.filter(function(t){return !isIncome(t);}).reduce(function(s,t){return s+(t.amount||0);},0);
+  var inc=transactions.filter(function(t){return isIncome(t);}).reduce(function(s,t){return s+(t.amount||0);},0);
+  el.innerHTML='当前共 <b style="color:var(--green)">'+transactions.length+'</b> 条记录 ｜ 支出合计 <b>¥'+total.toFixed(2)+'</b> ｜ 收入合计 <b>¥'+inc.toFixed(2)+'</b>';
+}
+function exportLedger(){
+  try{
+    var blob=new Blob([JSON.stringify(ledgerBackupObject(),null,2)],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    var d=new Date();
+    var fname='ledger_backup_'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'.json';
+    a.href=url;a.download=fname;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    var fb=document.getElementById('backupFeedback');
+    if(fb)fb.innerHTML='<span style="color:var(--green)">✓ 已导出 '+fname+'（'+transactions.length+' 条），请保存好</span>';
+  }catch(e){
+    var fb=document.getElementById('backupFeedback');
+    if(fb)fb.innerHTML='<span style="color:var(--red)">导出失败：'+e.message+'　→ 请改用「导出为文本（备用）」</span>';
+  }
+}
+function exportLedgerText(){
+  try{
+    var txt=btoa(unescape(encodeURIComponent(JSON.stringify(ledgerBackupObject()))));
+    var fb=document.getElementById('backupFeedback');
+    var ok=function(){
+      if(fb)fb.innerHTML='<span style="color:var(--green)">✓ 备份文本已复制到剪贴板（'+transactions.length+' 条），粘贴到微信/备忘录保存即可</span>';
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(ok).catch(function(){
+        fallbackCopy(txt,ok,fb);
+      });
+    }else{ fallbackCopy(txt,ok,fb); }
+  }catch(e){
+    var fb=document.getElementById('backupFeedback');
+    if(fb)fb.innerHTML='<span style="color:var(--red)">导出文本失败：'+e.message+'</span>';
+  }
+}
+function fallbackCopy(txt,ok,fb){
+  var ta=document.getElementById('restoreText');
+  if(ta){ta.value=txt;ta.select();}
+  try{
+    var done=document.execCommand('copy');
+    if(done){ok();}
+    else if(fb){fb.innerHTML='<span style="color:var(--orange)">已把文本填到下方输入框，请手动长按全选复制</span>';}
+  }catch(e){
+    if(fb){fb.innerHTML='<span style="color:var(--orange)">已把文本填到下方输入框，请手动长按全选复制</span>';}
+  }
+}
+function importLedgerText(){
+  var ta=document.getElementById('restoreText');
+  var fb=document.getElementById('backupFeedback');
+  var raw=(ta&&ta.value||'').trim();
+  if(!raw){if(fb)fb.innerHTML='<span style="color:var(--red)">请先粘贴备份文本</span>';return;}
+  var data=null;
+  try{
+    var jsonStr;
+    try{ jsonStr=decodeURIComponent(escape(atob(raw))); }
+    catch(e1){ jsonStr=raw; }
+    data=JSON.parse(jsonStr);
+  }catch(e){
+    if(fb)fb.innerHTML='<span style="color:var(--red)">解析失败：内容不是有效的备份文本</span>';
+    return;
+  }
+  var arr=data&&data.transactions?data.transactions:(Array.isArray(data)?data:null);
+  if(!arr||!arr.length){if(fb)fb.innerHTML='<span style="color:var(--red)">备份内容为空或格式不对</span>';return;}
+  var oldN=transactions.length;
+  if(!confirm('即将用备份中的 '+arr.length+' 条记录覆盖当前 '+oldN+' 条记录。\n此操作不可撤销，确定继续？'))return;
+  transactions=arr;
+  saveTransactions();
+  recalcTotals();
+  refreshBackupStat();
+  if(fb)fb.innerHTML='<span style="color:var(--green)">✓ 恢复成功：'+arr.length+' 条记录已写入。页面即将刷新...</span>';
+  setTimeout(function(){location.reload();},1200);
 }
 
 function recalcTotals() {
