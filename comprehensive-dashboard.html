@@ -12,7 +12,7 @@
 <script>
 // 强制缓存刷新：版本号变更时自动重载
 (function(){
-  var VER='20261017b';
+  var VER='20261017c';
   try{
     var s=sessionStorage.getItem('_cd_ver');
     if(s&&s!==VER){sessionStorage.removeItem('_cd_ver');location.reload(true);return;}
@@ -1371,10 +1371,32 @@ function checkGeju(dp,tp,mp,sp,hg,hz){
   }
   // 去重
   const ut=[...new Set(tags)];
-  return{tags:ut,isFiltered:f,filterReason:fr,shiganGong:sg};
+  // 每个宫的吉格映射（翻牌建议要求：位置/门/神/格必须是同一个宫）
+  const tagMap={};
+  for(const g of Object.keys(tp)){
+    const gi=parseInt(g);if(gi===5)continue;
+    const tg=tp[g],dgn=dp[g],m=mp[g],sh=sp[g];const gt=[];
+    if(['乙','丙','丁'].includes(tg)&&dgn===dg)gt.push('三奇得使('+tg+')');
+    if(tg==='丁'&&m==='开')gt.push('玉女守门');
+    if(tg==='丁'&&m==='休'&&sh==='太阴')gt.push('人遁');
+    if(tg==='丙'&&m==='生'&&dgn==='丁')gt.push('天遁');
+    if(tg==='乙'&&m==='开'&&dgn==='己')gt.push('地遁');
+    if(tg==='丙'&&m==='生'&&sh==='九天')gt.push('神遁');
+    if(tg==='丁'&&(m==='杜'||m==='开')&&sh==='九地')gt.push('鬼遁');
+    if(tg==='乙'&&(m==='开'||m==='休'||m==='生')&&(dgn==='癸'||gi===1))gt.push('龙遁');
+    if(tg==='乙'&&(m==='休'||m==='生')&&dgn==='辛'&&gi===8)gt.push('虎遁');
+    if((m==='开'||m==='休'||m==='生')&&['乙','丙','丁'].includes(tg)){
+      if(sh==='太阴')gt.push('真诈');else if(sh==='九地')gt.push('重诈');else if(sh==='六合')gt.push('休诈');
+    }
+    if(tg==='乙'&&gi===3)gt.push('乙奇升殿');
+    if(tg==='丙'&&gi===9)gt.push('丙奇升殿');
+    if(tg==='丁'&&gi===7)gt.push('丁奇升殿');
+    if(gt.length)tagMap[gi]=[...new Set(gt)];
+  }
+  return{tags:ut,isFiltered:f,filterReason:fr,shiganGong:sg,tagMap:tagMap};
 }
 // 主排盘（原始——基于当前日期日干）
-function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,tags,isFiltered,filterReason};}
+function paiPan(ds,hz){const dg=getDayGZ(ds);const hg=getHourGZ(dg.gan,hz);const{jq,yuan}=getJieqiYuan(ds);const ju=getJu(jq,yuan);const isYang=YANG_DUN.has(jq);const dp=flyGong(ju,isYang);const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);const mp=getBamen(zhifuGong,hg.gan,hz,isYang);const sp=getBashen(zhifuGong,isYang);const{tags,isFiltered,filterReason,shiganGong,tagMap}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);return{date:ds,hourZhi:hz,dayGz:dg.gz,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,menMap:mp,tpanMap:tpan,tagMap:tagMap,tags,isFiltered,filterReason};}
 // 账号独立排盘——用账号建号日的日干替代当前日期日干，实现每账号独立排盘
 // 节气/局数仍基于当前日期 ds（局数按节气走），但日干/时干基于账号建号日
 function paiPanForAccount(ds,hz,accountDayGan){
@@ -1389,12 +1411,12 @@ function paiPanForAccount(ds,hz,accountDayGan){
   const{tpan,zhifuGong}=getTianpan(dp,hg.gan,hz,isYang);
   const mp=getBamen(zhifuGong,hg.gan,hz,isYang);
   const sp=getBashen(zhifuGong,isYang);
-  const{tags,isFiltered,filterReason,shiganGong}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);
-  return{date:ds,hourZhi:hz,dayGz:accountDayGan,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,tags,isFiltered,filterReason};
+  const{tags,isFiltered,filterReason,shiganGong,tagMap}=checkGeju(dp,tpan,mp,sp,hg.gan,hz);
+  return{date:ds,hourZhi:hz,dayGz:accountDayGan,hourGz:hg.gz,jq,yuan,ju,isYang,shiganGong,tpanGan:tpan[shiganGong]||'?',menAtGong:mp[shiganGong]||'?',shenAtGong:sp[shiganGong]||'?',shenMap:sp,menMap:mp,tpanMap:tpan,tagMap:tagMap,tags,isFiltered,filterReason};
 }
 function getAccountRg(cs){return getDayGZ(cs.slice(0,10)).gan;}
 // 周排盘
-function getWeekDates(){const t=new Date();const dow=t.getDay()||7;const m=new Date(t);m.setDate(t.getDate()-dow+1);const dates=[];for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);dates.push(d.toISOString().slice(0,10));}return dates;}
+function getWeekDates(){const t=new Date();const dow=t.getDay()||7;const m=new Date(t);m.setDate(m.getDate()-dow+1);const dates=[];for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);dates.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));}return dates;}
 function getWeekNumber(){const t=new Date();const s=new Date(t.getFullYear(),0,1);return Math.ceil(((t-s)/86400000+s.getDay()+1)/7);}
 function generateWeekSchedule(){
   const dates=getWeekDates();
@@ -1443,7 +1465,7 @@ function getHourRange(t){
 function isFutureEntry(entry){
   const now=new Date();
   const d=new Date(entry.dateStr+'T00:00:00');
-  const todayStr=now.toISOString().slice(0,10);
+  const todayStr=localTodayStr();
   if(entry.dateStr>todayStr)return true;
   if(entry.dateStr<todayStr)return false;
   const[hs,he]=getHourRange(entry.t);
@@ -1461,7 +1483,7 @@ function generateFlipAdvice(schedule){
   const h=now.getHours();
   const hzMap={23:'子',0:'子',1:'丑',2:'丑',3:'寅',4:'寅',5:'卯',6:'卯',7:'辰',8:'辰',9:'巳',10:'巳',11:'午',12:'午',13:'未',14:'未',15:'申',16:'申',17:'酉',18:'酉',19:'戌',20:'戌',21:'亥',22:'亥'};
   const curHz=hzMap[h]||'子';
-  const todayStr=now.toISOString().slice(0,10);
+  const todayStr=localTodayStr();
   const curLabel=HOUR_LABELS[curHz]||curHz;
   // 关键改动：每个账号独立排盘，不再共享
   schedule.accounts.forEach(a=>{
@@ -1472,8 +1494,8 @@ function generateFlipAdvice(schedule){
       advice[a.name]={pos:'暂缓',posIdx:undefined,isPast:false,bestTime:'当前 '+curLabel,gong:entry.gong,men:entry.men,tag:entry.tag||'无吉格',shen:entry.shen,reason:'当前时辰'+r.filterReason.join('+')+'，不宜翻牌，建议等下一个吉时'};
       return;
     }
-    // ===== 日干差异化翻牌位置 =====
-    // 对每个八神，综合"八神权重 + 八神落宫对日干五行生克"算分
+    // ===== 日干差异化翻牌位置（自洽版）=====
+    // 评分只看"八神权重 + 该宫对日干生克 + 该宫吉格加成"，位置/门/神/格全部取自同一个宫
     const ganWx=GAN_WX[a.rg]||'土';
     let bestShen=null,bestScore=-99,bestGong=null;
     for(const[gongNum,shenName] of Object.entries(r.shenMap)){
@@ -1481,19 +1503,24 @@ function generateFlipAdvice(schedule){
       if(gn===5)continue; // 中宫无八神
       const sr=SR[shenName]||0;
       const gongWx=GONG_WX[gn]||'土';
-      const ws=wxScore(gongWx,ganWx); // 生克分
-      const score=sr+ws; // 综合分
+      const ws=wxScore(gongWx,ganWx);
+      // 吉格加成：这个宫自己带吉格才加分（位置与格一致的关键）
+      const gTags=(r.tagMap&&r.tagMap[gn])||[];
+      const tgBonus=gTags.length*3;
+      const score=sr+ws+tgBonus;
       if(score>bestScore){bestScore=score;bestShen=shenName;bestGong=gn;}
     }
-    // 最优八神落宫→翻牌位置
-    const pi=GONG_POS[bestGong]!==undefined?GONG_POS[bestGong]:2;
-    const sqMatch=a.isSanqi&&r.tags.some(t=>t.includes('三奇得使')&&t.includes(a.rg));
+    // 该宫自己的门/天盘干/吉格——不再借用时干宫的
     const bestGongNm=GONG_NM[bestGong]||'?';
-    const wxDesc=bestScore>=6?'大吉':bestScore>=4?'吉':bestScore>=2?'小吉':bestScore>=0?'平':'慎';
+    const bestMen=(r.menMap&&r.menMap[bestGong]?r.menMap[bestGong]:'?')+'门';
+    const bestTags=(r.tagMap&&r.tagMap[bestGong])||[];
+    const pi=GONG_POS[bestGong]!==undefined?GONG_POS[bestGong]:2;
+    const sqMatch=a.isSanqi&&bestTags.some(t=>t.includes('三奇得使')&&t.includes(a.rg));
+    const wxDesc=bestScore>=9?'大吉':bestScore>=6?'吉':bestScore>=3?'小吉':bestScore>=0?'平':'慎';
     advice[a.name]={pos:PN[pi],posIdx:pi,isPast:false,bestTime:'当前 '+curLabel,
-      gong:bestGongNm,men:entry.men,tag:entry.tag||'★吉门',shen:bestShen,
-      reason:bestShen+'加临'+bestGongNm+'（'+wxDesc+'，综合分'+bestScore+'），日干'+a.rg+'('+ganWx+')与宫'+GONG_WX[bestGong]+'('+gongWxLabel(ganWx,GONG_WX[bestGong])+')'
-      +(sqMatch?'，三奇得使⚡':'')+(entry.tag?'，'+entry.tag:'')};
+      gong:bestGongNm,men:bestMen,tag:bestTags.length?bestTags.join('+'):'★吉位',shen:bestShen,
+      reason:bestShen+'加临'+bestGongNm+'（'+wxDesc+'，综合分'+bestScore+'），该宫'+bestMen+(bestTags.length?'，'+bestTags.join('、'):'')
+      +(sqMatch?'，三奇得使⚡':'')+'，日干'+a.rg+'('+ganWx+')与宫'+GONG_WX[bestGong]+'('+gongWxLabel(ganWx,GONG_WX[bestGong])+')'};
   });
   return advice;
 }
@@ -2048,9 +2075,9 @@ function init() {
   loadUserCats();
   // Set header date
   const now = new Date();
-  document.getElementById('headerDate').textContent = now.toISOString().slice(0,10);
+  document.getElementById('headerDate').textContent = localTodayStr();
   // Set default date for add form
-  document.getElementById('add-date').value = now.toISOString().slice(0,10);
+  document.getElementById('add-date').value = localTodayStr();
   // Initialize category options
   switchTxType('expense');
 
