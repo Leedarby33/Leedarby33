@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20261009b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20261020a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <script id="hd-seed">
 /*__HD_SEED__*/
 /* 换机内置数据：来自 health_backup_20261001.json。
@@ -3347,12 +3347,25 @@ function filterBody(){
   const pacePct=timePct>0?Math.min(150,overallPct/timePct*100):0;
   const paceStatus=pacePct>=105?'领先进度':(pacePct>=95?'同步达标':(pacePct>=80?'略落后':'明显落后'));
   const paceColor=pacePct>=95?'var(--green)':(pacePct>=80?'var(--gold)':'var(--red)');
+  // 2026-10-20：把"领先/落后多少"直接摊开说，避免 85% 被误读成"只完成了目标的85%"
+  const gapPct=overallPct-timePct; // 达成率 − 时间进度 = 真实超前/落后
   let ach='<div style="text-align:center;margin-bottom:4px"><div style="font-size:42px;font-weight:800;color:'+paceColor+'">'+pacePct.toFixed(0)+'%</div><div style="font-size:13px;color:var(--text-2)">序时进度达成率</div><div style="font-size:11px;color:'+paceColor+';margin-top:2px">'+paceStatus+'（已消耗'+timePct.toFixed(1)+'%时间，完成'+overallPct.toFixed(1)+'%目标）</div></div>';
+  // 直观换算条：时间 vs 达成
+  ach+='<div style="background:var(--inset);border-radius:10px;padding:10px 12px;margin-bottom:10px">'
+    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-2);margin-bottom:5px"><span>⏱ 时间已过</span><span style="font-weight:700;color:var(--blue)">'+timePct.toFixed(1)+'%</span></div>'
+    +'<div class="progress-bar" style="height:6px;margin-bottom:8px"><div class="progress-fill" style="width:'+timePct+'%;background:var(--blue)"></div></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-2);margin-bottom:5px"><span>🎯 目标已达成</span><span style="font-weight:700;color:var(--green)">'+overallPct.toFixed(1)+'%</span></div>'
+    +'<div class="progress-bar" style="height:6px"><div class="progress-fill" style="width:'+overallPct+'%;background:var(--green)"></div></div>'
+    +'<div style="font-size:11px;color:var(--text-2);margin-top:9px;line-height:1.7;text-align:center">'
+    +(gapPct>=0
+      ? '同一条起跑线上，你比时间线<b style="color:var(--green)">快 '+Math.abs(gapPct).toFixed(1)+' 个百分点</b>'
+      : '这条线拉长了 <b style="color:var(--orange)">'+Math.abs(gapPct).toFixed(1)+' 个百分点</b>（约 '+(Math.abs(gapPct)/100*needLoseW).toFixed(1)+'kg）——不是崩了，是走得比计划慢一点')
+    +'</div></div>';
   // 时间进度条
   ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">⏱ 时间进度 '+passedDays+'/'+totalDays+'天</span><span style="font-size:12px;font-weight:600;color:var(--blue)">'+timePct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+timePct+'%;background:linear-gradient(90deg,var(--blue),var(--blue))"></div></div></div>';
   ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:12px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
   ach+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:12px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
-  ach+='<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 序时达成率=综合达成率÷时间进度。&gt;100%说明跑赢时间线，&lt;100%说明落后，需要追进度。</div>';
+  ach+='<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 大数不等于「只做完这么多」。达成率 = 完成目标 ÷ 时间进度。现在是<b>完成'+overallPct.toFixed(0)+'%、时间过了'+timePct.toFixed(0)+'%</b>，'+(gapPct>=0?'比时间线快':'慢')+' '+Math.abs(gapPct).toFixed(0)+' 个百分点。体重秤上四个月的曲线摆在那——掉了快9kg、肌肉一点没丢，这个速度一点都不慢。</div>';
   $('achievementArea').innerHTML=ach;
   
   // Body history cards (横向滑动)
