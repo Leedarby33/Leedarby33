@@ -9,7 +9,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<script>(function(){var V='20261026a';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
+<script>(function(){var V='20261026b';try{var s=sessionStorage.getItem('_hd_v');if(s&&s!==V){sessionStorage.removeItem('_hd_v');location.reload(true);return;}sessionStorage.setItem('_hd_v',V);}catch(e){}})();</script>
 <script id="hd-seed">
 /*__HD_SEED__*/
 /* 换机内置数据：来自 health_backup_20261001.json。
@@ -2370,20 +2370,20 @@ function getNEAT(){
 // ===== 热血目标体系：个人化系数 + 周目标 + 非线性曲线 =====
 // 参数：当前体重/目标/体脂率目标/掉速构成/个人化系数
 const GOAL_CFG = {
-  startW: 83.05,        // 当前体重(8/14)
-  dec1W: 75,            // 12/1目标
-  feb1W: 70,            // 2/1目标
-  bfTarget: 21,         // 体脂率目标(单一)
+  // ===== 2026/10/26 主人重设目标 =====
+  // 阶段目标：2026-12-31 体重 73.5kg；终极目标：67kg；不设体脂率目标
+  startW: 78.05,        // 锚点体重(2026/10/26 重设当日实测)
+  startWDate:'2026-10-26',
+  dec1W: 75.6,          // 12/1 节点(线性插值)
+  feb1W: 73.5,          // 12/31 阶段目标
+  ultimateW: 67,        // 终极目标体重
+  bfTarget: null,       // 不设体脂率目标(2026/10/26主人要求)
   fatRatio: 0.73,       // 掉速构成：73%脂肪/27%FFM
   coef: 24500,          // 个人化系数 kcal/kg脂肪(自动更新)
-  // 非线性曲线：分3段(攻坚/过渡/精修)。weekDeficit为固定周缺口目标(kcal)，
-  // 依目标倒推并校准物理上限（训练日缺口1200-1500×5 + 休息日~970×2 ≈ 9,200封顶）：
-  //   攻坚期 8/14-11/1 目标9,000（12/1达75kg所需≈9,250，贴上限进取）
-  //   过渡/精修期随体重下降BMR缩水逐级下调；对应掉速≈0.50/0.48/0.45kg体重/周(按理论系数17,885)
   phases: [
-    {name:'攻坚期', from:'2026-08-14', to:'2026-11-01', weekDeficit:9000},
-    {name:'过渡期', from:'2026-11-01', to:'2026-12-01', weekDeficit:8500},
-    {name:'精修期', from:'2026-12-01', to:'2027-02-01', weekDeficit:8000}
+    {name:'冲刺期', from:'2026-10-26', to:'2026-11-16', weekDeficit:9000},
+    {name:'收官期', from:'2026-11-16', to:'2026-12-14', weekDeficit:8500},
+    {name:'达标期', from:'2026-12-14', to:'2026-12-31', weekDeficit:8000}
   ]
 };
 let _weekOffset=0; // 周导航偏移，0=本周
@@ -2505,14 +2505,11 @@ function currentPhase(){
 // 本周目标缺口（动态）：= 当前阶段掉速目标(kg/周) × 动态系数(每kg体重需缺口)
 //   掉速目标来自参考线的"前快后慢"分阶段速率；动态系数来自近4周实测倒推(rollingRates)
 //   无动态系数时用理论默认系数(GOAL_CFG.coef×fatRatio)
-const RATE_STAGES=[ // 掉速目标 kg/周，随体脂下降前快后慢
-  // 切换点对齐周一（取离每月15号最近的周一），避免周中切当周目标：9/14、10/12、11/16、12/14、1/18
-  {from:'2026-08-14',to:'2026-09-14',rate:0.621},
-  {from:'2026-09-14',to:'2026-10-12',rate:0.595},
-  {from:'2026-10-12',to:'2026-11-16',rate:0.569},
-  {from:'2026-11-16',to:'2026-12-14',rate:0.543},
-  {from:'2026-12-14',to:'2027-01-18',rate:0.517},
-  {from:'2027-01-18',to:'2027-02-01',rate:0.491}
+const RATE_STAGES=[ // 掉速目标 kg/周（2026/10/26 目标重设后按新终点12/31倒推）
+  // 78.05→73.5 需 4.55kg / 9.43周 ≈ 0.483 kg/周；取前快后慢，合计约 4.5kg
+  {from:'2026-10-26',to:'2026-11-16',rate:0.51},
+  {from:'2026-11-16',to:'2026-12-14',rate:0.48},
+  {from:'2026-12-14',to:'2026-12-31',rate:0.45}
 ];
 function currentRateTarget(){
   const now=getEffNow();
@@ -2556,7 +2553,7 @@ function rollingAccount(){
   const stage=currentStageObj();
   const thisMonday=mondayOfDate(now);
   const anchorMonday=mondayOfDate(parseD(stage.from)); // 阶段锚点所在周
-  const firstMonday=mondayOfDate(parseD(RATE_STAGES[0].from)); // 总账起点：首个阶段锚点所在周
+  const firstMonday=mondayOfDate(parseD('2026-10-26')); // 总账起点：目标重设日(旧计划欠跌清零，按12/31新目标重新结算)
   // 跨阶段连续结算（2026-09-14修订）：从首个锚点次周起结算所有已完整结束的周，
   // 各周按其所属阶段基准rateForMonday；阶段切换不清零结转额
   // （原实现只结算当前阶段内，切换阶段时上一阶段最后一周的欠跌/超跌被吞掉）
@@ -2672,9 +2669,8 @@ function renderWeekTracker(){
     let warnHtml='';
     if(rates){
       const now2=getEffNow();
-      const isPhase2=now2>=parseD('2026-12-01');
-      const endD=parseD(isPhase2?'2027-02-01':'2026-12-01');
-      const endW=isPhase2?GOAL_CFG.feb1W:GOAL_CFG.dec1W;
+      const endD=parseD('2026-12-31');
+      const endW=GOAL_CFG.feb1W;
       const weeksLeft=Math.max(0,(endD-now2)/604800000);
       const wkLossNow=target/rates.weightCoef;               // 按目标缺口的每周掉秤
       const wlNow=weeklyLoss(monday);
@@ -2682,7 +2678,7 @@ function renderWeekTracker(){
       const predW=curAvg-wkLossNow*weeksLeft;
       const ok=predW<=endW;
       warnHtml='<div style="margin-top:6px;padding:6px 8px;border-radius:8px;background:'+(ok?'rgba(0,179,104,0.12)':'rgba(255,45,85,0.10)')+';font-size:11.5px;line-height:1.6">'+
-        (ok?'✅':'⚠️')+' <b>动态预警</b>：按近4周实测系数（每kg体重'+rates.weightCoef.toLocaleString()+' kcal）执行周目标 '+target.toLocaleString()+'，当前节奏 <b>'+wkLossNow.toFixed(2)+' kg/周</b>，预计'+(isPhase2?'2/1':'12/1')+'达 <b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+predW.toFixed(1)+' kg</b>'+(ok?('（领先目标'+endW+'，余量'+(endW-predW).toFixed(1)+'kg）'):('（距目标'+endW+'差'+(predW-endW).toFixed(1)+'kg，需加大力度或调整预期）'))+
+        (ok?'✅':'⚠️')+' <b>动态预警</b>：按近4周实测系数（每kg体重'+rates.weightCoef.toLocaleString()+' kcal）执行周目标 '+target.toLocaleString()+'，当前节奏 <b>'+wkLossNow.toFixed(2)+' kg/周</b>，预计12/31达 <b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+predW.toFixed(1)+' kg</b>'+(ok?('（领先目标'+endW+'，余量'+(endW-predW).toFixed(1)+'kg）'):('（距目标'+endW+'差'+(predW-endW).toFixed(1)+'kg，需加大力度或调整预期）'))+
         '</div>';
     }
     // 设备口径混合期提示：8/29起AW7→华为GT7Pro，近4周窗口约至9/25才纯华为
@@ -3294,12 +3290,12 @@ function filterBody(){
   const latestDim=DIM[DIM.length-1]||{};
   const dimFirst=DIM[0]||{};
   const refs=[
-    {name:'体重',icon:'⚖️',cur:latest.weight,unit:'kg',ref:'≤70',target:70,base:baseline.weight,lower:true},
-    {name:'体脂率',icon:'📉',cur:latest.bf,unit:'%',ref:'阶段21 · 终极<15',target:21,base:baseline.bf,lower:true},
+    {name:'体重',icon:'⚖️',cur:latest.weight,unit:'kg',ref:'12/31≤73.5 · 终极67',target:73.5,base:baseline.weight,lower:true},
+    {name:'体脂率',icon:'📉',cur:latest.bf,unit:'%',ref:'不设目标',target:null,base:baseline.bf,lower:true},
     {name:'内脏脂肪',icon:'🫀',cur:latest.vf,unit:'级',ref:'≤7',target:7,base:baseline.vf,lower:true},
     {name:'腰围',icon:'📏',cur:latestDim?latestDim.waist:null,unit:'cm',ref:'76-80',target:78,base:dimFirst.waist,lower:true},
-    {name:'肌肉量',icon:'💪',cur:latest.muscle,unit:'kg',ref:'守52.8（70kg时预期）',target:52.8,base:baseline.muscle,lower:false,guard:true,floor:52.8},
-    {name:'去脂体重',icon:'🏃',cur:latest.ffm,unit:'kg',ref:'守55.6（70kg时预期）',target:55.6,base:baseline.ffm,lower:false,guard:true,floor:55.6}
+    {name:'肌肉量',icon:'💪',cur:latest.muscle,unit:'kg',ref:'守52.8（73.5kg时预期）',target:52.8,base:baseline.muscle,lower:false,guard:true,floor:52.8},
+    {name:'去脂体重',icon:'🏃',cur:latest.ffm,unit:'kg',ref:'守55.6（73.5kg时预期）',target:55.6,base:baseline.ffm,lower:false,guard:true,floor:55.6}
   ];
   let rc='<div class="metric-grid">';
   refs.forEach(r=>{
@@ -3330,15 +3326,14 @@ function filterBody(){
   $('refCompareArea').innerHTML=rc;
   
   // Achievement rate → 序时进度达成率（减脂起点统一为6/7）
-  const startW=87.8,targetW=70,targetBF=21;
+  // 2026/10/26 主人要求：序时达成率只绑体重，不综合体脂
+  const startW=87.8,targetW=73.5;
   const curW=latest.weight,curBF=latest.bf;
   const lostW=startW-curW,needLoseW=startW-targetW;
-  const lostBF=31.1-curBF,needLoseBF=31.1-targetBF;
   const wPct=Math.min(100,lostW/needLoseW*100);
-  const bfPct=Math.min(100,lostBF/needLoseBF*100);
-  const overallPct=(wPct+bfPct)/2;
-  // 时间进度：起始6/7 → 目标2/1
-  const startD=new Date('2026-06-07'),endD=new Date('2027-02-01');
+  const overallPct=wPct;
+  // 时间进度：起始6/7 → 目标12/31
+  const startD=new Date('2026-06-07'),endD=new Date('2026-12-31');
   const nowT=new Date();
   const totalDays=Math.floor((endD-startD)/86400000);
   const passedDays=Math.max(0,Math.min(totalDays,Math.floor((nowT-startD)/86400000)));
@@ -3351,8 +3346,8 @@ function filterBody(){
   // 时间进度条
   ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">⏱ 时间进度 '+passedDays+'/'+totalDays+'天</span><span style="font-size:12px;font-weight:600;color:var(--blue)">'+timePct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+timePct+'%;background:linear-gradient(90deg,var(--blue),var(--blue))"></div></div></div>';
   ach+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体重 '+curW+'kg → '+targetW+'kg</span><span style="font-size:12px;font-weight:600;color:var(--orange)">'+wPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+wPct+'%;background:linear-gradient(90deg,var(--orange),var(--orange))"></div></div></div>';
-  ach+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体脂 '+curBF+'% → '+targetBF+'%</span><span style="font-size:12px;font-weight:600;color:var(--green)">'+bfPct.toFixed(1)+'%</span></div><div class="progress-bar" style="height:8px"><div class="progress-fill" style="width:'+bfPct+'%;background:linear-gradient(90deg,var(--green),var(--green))"></div></div></div>';
-  ach+='<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 序时达成率=综合达成率÷时间进度。&gt;100%说明跑赢时间线，&lt;100%说明落后，需要追进度。</div>';
+  ach+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--text-2)">体脂 '+curBF+'% <span style="color:var(--text-3)">（不设目标）</span></span></div></div>';
+  ach+='<div style="font-size:10px;color:var(--text-3);margin-top:6px">💡 序时达成率=体重达成率÷时间进度（6/7→12/31，目标73.5kg）。&gt;100%说明跑赢时间线，&lt;100%说明落后，需要追进度。终极目标 67kg。</div>';
   $('achievementArea').innerHTML=ach;
   
   // Body history cards (横向滑动)
@@ -3405,7 +3400,7 @@ function filterBody(){
 // 硬底护栏 = 计划终点×0.97：FFM按27%构成流失的容忍下界，跌破=肌肉流失警示。
 const DIM_CORRIDOR={
   anchor:'2026-09-13',
-  end:'2027-02-01',   // 2026-09-14改：终点从12/1延到2/1，与体重/体脂走势时间轴统一（节点10/1-2/1）
+  end:'2026-12-31',   // 2026-10-26改：终点对齐新阶段目标12/31（体重73.5）
   alpha:{waist:1.8,hip:1.0,chest:0.8,thigh:0.77,armFlex:0.57},
   fatRatio:0.73,
   floorRatio:0.97,
@@ -3497,7 +3492,7 @@ function renderDimTrendCorridor(){
   const t0=dayN(dimRecs[0].date),t1=dayN(A.end);
   // 阶段节点：10/1 11/1 12/1 1/1 2/1（与体重/体脂走势同一套时间节点）
   // 注：corr.pts按周生成不含月初，节点值在绘制时用dimPlanAt按日期+部位插值取
-  const NODE_DATES=[{date:'2026-10-01',label:'10/1'},{date:'2026-11-01',label:'11/1'},{date:'2026-12-01',label:'12/1'},{date:'2027-01-01',label:'1/1'},{date:'2027-02-01',label:'2/1'}];
+  const NODE_DATES=[{date:'2026-10-01',label:'10/1'},{date:'2026-11-01',label:'11/1'},{date:'2026-12-01',label:'12/1'},{date:'2026-12-31',label:'12/31'}];
   const actual={};
   A.parts.forEach(p=>{
     const g=[],ix=[];
@@ -3714,7 +3709,7 @@ function renderDimTrendCorridor(){
 function renderBodyTrendChart(s,e){
   const el=$('bodyTrendChart');
   if(!el)return;
-  const END='2027-02-01'; // 目标终点
+  const END='2026-12-31'; // 目标终点（2026/10/26重设：阶段目标73.5kg）
   const dayN=d=>new Date(d+'T00:00:00').getTime();
   // 数据
   const wRecs=WD.filter(d=>d.date>=s&&d.date<=e&&d.weight!=null).sort((a,b)=>a.date.localeCompare(b.date));
@@ -3814,6 +3809,16 @@ function renderBodyTrendChart(s,e){
       '<div style="font-size:15px;font-weight:800;color:'+color+'">'+title+' <span style="font-size:11px;color:var(--text-3);font-weight:400">'+sub+'</span></div>'+
       '<div style="font-size:16px;font-weight:900;color:'+color+'">'+curVal+'</div></div></div>';
   }
+  // 无目标版外推（不设体脂率目标时）：只画虚线与终点预估值，不做达标判定
+  function projBfLine(ext,Y,stroke){
+    if(!ext)return '';
+    let g='';
+    const projY=Math.max(pad.t,Math.min(pad.t+ch,Y(ext.projV)));
+    g+='<line x1="'+X(ext.last.date)+'" y1="'+Y(ext.last.v)+'" x2="'+targetX+'" y2="'+projY+'" stroke="'+stroke+'" stroke-width="2" stroke-dasharray="6,5" opacity="0.65"/>';
+    g+='<circle cx="'+targetX+'" cy="'+projY+'" r="4" fill="'+stroke+'"/>';
+    g+='<text x="'+(targetX-8)+'" y="'+(projY-10)+'" fill="'+stroke+'" font-size="12.5" font-weight="900" text-anchor="end">外推 '+ext.projV.toFixed(1)+'%</text>';
+    return g;
+  }
   // 外推虚线+终点圆点+达标标注（通用：Y映射、目标值targetV、达标为<=targetV）
   function projLine(ext,Y,targetV,stroke){
     if(!ext)return '';
@@ -3828,25 +3833,26 @@ function renderBodyTrendChart(s,e){
 
   let html='';
 
-  // ===== 图1 体重（7日均线，纵轴含70kg目标） =====
+  // ===== 图1 体重（7日均线，纵轴含73.5kg阶段目标与67kg终极目标） =====
   if(wMA.length>=2){
     const vals=wMA.map(p=>p.v);
-    const wMin=Math.min(...vals,68.4), wMax=Math.max(...vals)+1.2;
+    const wMin=Math.min(...vals,66.5), wMax=Math.max(...vals)+1.2;
     const YW=v=>pad.t+ch*(1-(v-wMin)/(wMax-wMin));
     const lastW=wMA[wMA.length-1];
     const ext=extrapolate(wMA);
     let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
     svg+=gridAndTicks(wMin,wMax,'#B8860B');
-    svg+='<line x1="'+pad.l+'" y1="'+YW(70)+'" x2="'+(chartW-pad.r)+'" y2="'+YW(70)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
-    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YW(70)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标70</text>';
+    svg+='<line x1="'+pad.l+'" y1="'+YW(73.5)+'" x2="'+(chartW-pad.r)+'" y2="'+YW(73.5)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
+    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YW(73.5)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">12/31目标73.5</text>';
+    svg+='<line x1="'+pad.l+'" y1="'+YW(67)+'" x2="'+(chartW-pad.r)+'" y2="'+YW(67)+'" stroke="#5AC8FA" stroke-width="1.4" stroke-dasharray="3,4"/>';
+    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YW(67)+4)+'" fill="#5AC8FA" font-size="11" font-weight="800">终极67</text>';
     svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
     // 分阶段参考线：体重阶段目标（前快后慢衰减模型，终点对齐70硬杠杆）
     const wMilestones=[
       {d:'2026-10-01',v:79.3,label:'10/1 79.3'},
-      {d:'2026-11-01',v:76.7,label:'11/1 76.7'},
-      {d:'2026-12-01',v:74.3,label:'12/1 74.3'},
-      {d:'2027-01-01',v:72.0,label:'1/1 72.0'},
-      {d:'2027-02-01',v:69.7,label:'2/1 69.7'}
+      {d:'2026-11-01',v:77.6,label:'11/1 77.6'},
+      {d:'2026-12-01',v:75.6,label:'12/1 75.6'},
+      {d:'2026-12-31',v:73.5,label:'12/31 73.5'}
     ];
     const wLabels=placeMilestoneLabels(wMilestones,YW);
     wMilestones.forEach((m,i)=>{
@@ -3854,7 +3860,7 @@ function renderBodyTrendChart(s,e){
       if(mx<=pad.l)return;
       svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(184,134,11,0.30)" stroke-width="1.4" stroke-dasharray="4,4"/>';
       svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#B8860B" stroke="#fff" stroke-width="1.1"/>';
-      const atEnd=m.d==='2027-02-01';
+      const atEnd=m.d==='2026-12-31';
       if(atEnd){
         // 终点节点：标签放图表底部，右对齐贴右边界
         svg+='<text x="'+(mx-6).toFixed(1)+'" y="'+(chartH-10).toFixed(1)+'" fill="#B8860B" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
@@ -3874,10 +3880,10 @@ function renderBodyTrendChart(s,e){
     let pth='';
     wMA.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YW(p.v).toFixed(1);});
     svg+='<path d="'+pth+'" fill="none" stroke="#FFB400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
-    svg+=projLine(ext,YW,70,'#FFB400');
+    svg+=projLine(ext,YW,73.5,'#FFB400');
     svg+='<circle cx="'+X(lastW.date)+'" cy="'+YW(lastW.v)+'" r="4" fill="#FFB400" stroke="#fff" stroke-width="1.5"/>';
     // 理论目标线（6/7 87.8 → 2/1 70 匀速）+ 今日理论值标记
-    const theoS='2026-06-07',theoW0=87.8,theoW1=70;
+    const theoS='2026-06-07',theoW0=87.8,theoW1=73.5;
     svg+='<line x1="'+X(theoS).toFixed(1)+'" y1="'+YW(theoW0).toFixed(1)+'" x2="'+targetX.toFixed(1)+'" y2="'+YW(theoW1).toFixed(1)+'" stroke="#8e9aaf" stroke-width="1.3" stroke-dasharray="2,4" opacity="0.85"/>';
     const _nw=new Date(),td=_nw.getFullYear()+'-'+String(_nw.getMonth()+1).padStart(2,'0')+'-'+String(_nw.getDate()).padStart(2,'0');
     const theoToday=theoW0-(theoW0-theoW1)*(dayN(td)-dayN(theoS))/(dayN(END)-dayN(theoS));
@@ -3895,14 +3901,14 @@ function renderBodyTrendChart(s,e){
     if(refRecs.length){
       const wkAvg=refRecs.reduce((a,d)=>a+d.weight,0)/refRecs.length;
       const diff=wkAvg-theoToday;
-      wkNote='<div style="font-size:11px;color:var(--text-2);margin-top:4px;line-height:1.5">📏 灰点线=理论目标线（6/7 87.8 → 2/1 70 匀速） · 本周应达 <b style="color:#8e9aaf">'+theoToday.toFixed(1)+'kg</b> · '+refLabel+' <b>'+wkAvg.toFixed(1)+'kg</b>（'+(diff>=0?'+':'')+diff.toFixed(1)+'kg）</div>';
+      wkNote='<div style="font-size:11px;color:var(--text-2);margin-top:4px;line-height:1.5">📏 灰点线=理论目标线（6/7 87.8 → 12/31 73.5 匀速） · 本周应达 <b style="color:#8e9aaf">'+theoToday.toFixed(1)+'kg</b> · '+refLabel+' <b>'+wkAvg.toFixed(1)+'kg</b>（'+(diff>=0?'+':'')+diff.toFixed(1)+'kg）</div>';
     }
     svg+=axisFrame();
     svg+='</svg>';
-    html+=sectionHead('⚖️ 体重走势','7日均线·kg · 节点=10/1→2/1阶段目标 · 虚线=外推至2/1','#B8860B',lastW.v+' kg','0')+svg+wkNote;
+    html+=sectionHead('⚖️ 体重走势','7日均线·kg · 节点=11/1→12/31阶段目标 · 虚线=外推至12/31','#B8860B',lastW.v+' kg','0')+svg+wkNote;
   }
 
-  // ===== 图2 体脂率（区间色块，纵轴含21%目标） =====
+  // ===== 图2 体脂率（区间色块；2026/10/26起不设体脂率目标） =====
   if(bfRecs.length>=2){
     const vals=bfRecs.map(d=>d.bf);
     const bMin=Math.min(...vals,17), bMax=Math.max(...vals)+1.2;
@@ -3920,47 +3926,17 @@ function renderBodyTrendChart(s,e){
     let svg='<svg viewBox="0 0 '+chartW+' '+chartH+'" class="chart-svg">';
     svg+=zoneBands(YB,bMin,bMax,zones,z=>z.from+'-'+z.to+'%');
     svg+=gridAndTicks(bMin,bMax,'#00875A');
-    svg+='<line x1="'+pad.l+'" y1="'+YB(21)+'" x2="'+(chartW-pad.r)+'" y2="'+YB(21)+'" stroke="#FF2D55" stroke-width="1.6" stroke-dasharray="6,4"/>';
-    svg+='<text x="'+(chartW-pad.r+4)+'" y="'+(YB(21)+4)+'" fill="#FF2D55" font-size="12" font-weight="800">目标21</text>';
-    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(255,45,85,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
-    // 分阶段参考线：体脂率从体重推导（保肌肉减脂，前快后慢）
-    const bfMilestones=[
-      {d:'2026-10-01',v:26.7,label:'10/1 26.7'},
-      {d:'2026-11-01',v:25.1,label:'11/1 25.1'},
-      {d:'2026-12-01',v:23.6,label:'12/1 23.6'},
-      {d:'2027-01-01',v:22.0,label:'1/1 22.0'},
-      {d:'2027-02-01',v:20.3,label:'2/1 20.3'}
-    ];
-    const bfLabels=placeMilestoneLabels(bfMilestones,YB);
-    bfMilestones.forEach((m,i)=>{
-      const mx=Math.min(X(m.d),targetX), my=YB(m.v);
-      if(mx<=pad.l)return;
-      svg+='<line x1="'+mx.toFixed(1)+'" y1="'+pad.t+'" x2="'+mx.toFixed(1)+'" y2="'+(pad.t+ch)+'" stroke="rgba(0,179,104,0.28)" stroke-width="1.4" stroke-dasharray="4,4"/>';
-      svg+='<circle cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="3.6" fill="#00B368" stroke="#fff" stroke-width="1.1"/>';
-      const atEnd=m.d==='2027-02-01';
-      if(atEnd){
-        svg+='<text x="'+(mx-6).toFixed(1)+'" y="'+(chartH-10).toFixed(1)+'" fill="#00B368" font-size="10.5" font-weight="800" text-anchor="end">'+m.label+'</text>';
-      }else{
-        // 非终点节点：按奇偶交替上下，相邻过近时自动推开
-        const n=bfLabels.get(m);
-        let ty=n?n.ty:(my+(i%2===1?22:-14));
-        ty=Math.max(12,Math.min(chartH-12,ty));
-        const nearEnd=(targetX-mx)<45;
-        if(nearEnd){
-          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#00B368" font-size="9" font-weight="800" text-anchor="middle" transform="rotate(-25,'+mx.toFixed(1)+','+ty.toFixed(1)+')">'+m.label+'</text>';
-        }else{
-          svg+='<text x="'+mx.toFixed(1)+'" y="'+ty.toFixed(1)+'" fill="#00B368" font-size="10.5" font-weight="800" text-anchor="middle">'+m.label+'</text>';
-        }
-      }
-    });
+    svg+='<line x1="'+targetX+'" y1="'+pad.t+'" x2="'+targetX+'" y2="'+(pad.t+ch)+'" stroke="rgba(0,179,104,0.25)" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<text x="'+(targetX-4)+'" y="'+(pad.t+12)+'" fill="#00B368" font-size="9.5" font-weight="800" text-anchor="end">12/31（不设体脂目标）</text>';
+    // 不设体脂率目标：不再画目标线与阶段节点
     let pth='';
     bfRecs.forEach((p,i)=>{pth+=(i?'L':'M')+X(p.date).toFixed(1)+','+YB(p.bf).toFixed(1);});
     svg+='<path d="'+pth+'" fill="none" stroke="#00B368" stroke-width="2.8" stroke-linejoin="round"/>';
     bfRecs.forEach(p=>{svg+='<circle cx="'+X(p.date)+'" cy="'+YB(p.bf)+'" r="3.2" fill="#00B368" stroke="#fff" stroke-width="1.2"/>';});
-    svg+=projLine(ext,YB,21,'#00B368');
+    svg+=projBfLine(ext,YB,'#00B368');
     svg+=axisFrame();
     svg+='</svg>';
-    html+=sectionHead('📉 体脂率走势','色块=减脂部位区间 · % · 节点=10/1→2/1阶段目标','#00875A',lastBf.bf+' %')+svg;
+    html+=sectionHead('📉 体脂率走势','色块=减脂部位区间 · % · 虚线=外推至12/31（不设目标）','#00875A',lastBf.bf+' %')+svg;
   }
 
   // ===== 图3 静息心率（周均，训练水平区间色块，并入本卡） =====
@@ -4228,10 +4204,7 @@ function makeBfZoneChart(data,w,h){
     if(yBot<yTop){svg+='<rect x="'+pad.l+'" y="'+yBot+'" width="'+cw+'" height="'+(yTop-yBot)+'" fill="'+z.color+'"/>';}
     svg+='<text x="'+(w-pad.r-4)+'" y="'+(Y(z.from)-3)+'" fill="rgba(0,0,0,0.25)" font-size="8" text-anchor="end">'+z.label+'</text>';
   });
-  // 目标线21%
-  const y21=Y(21);
-  svg+='<line x1="'+pad.l+'" y1="'+y21+'" x2="'+(w-pad.r)+'" y2="'+y21+'" stroke="#FF2D55" stroke-width="1.8" stroke-dasharray="6,4"/>';
-  svg+='<text x="'+(pad.l+4)+'" y="'+(y21-4)+'" fill="#FF2D55" font-size="9" font-weight="700">目标21%</text>';
+  // 2026/10/26起不设体脂率目标，不再画21%目标线
   // 网格
   for(let i=0;i<=4;i++){
     const y=pad.t+ch*(1-i/4),v=yMin+(yMax-yMin)*i/4;
